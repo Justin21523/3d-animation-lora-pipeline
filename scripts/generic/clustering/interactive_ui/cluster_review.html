@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Animation Character Clustering Review</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 250px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .content {
+            display: flex;
+            height: calc(100vh - 400px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cluster-list-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .cluster-list-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .cluster-list-item.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .cluster-list-item.selected-for-merge {
+            background: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .cluster-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .cluster-count {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .main-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .cluster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .cluster-title-section {
+            flex: 1;
+        }
+
+        .cluster-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        .cluster-title.editable {
+            border-bottom: 2px dashed #667eea;
+            cursor: text;
+        }
+
+        .cluster-info {
+            color: #6c757d;
+            font-size: 1em;
+        }
+
+        .cluster-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            background: #f8f9fa;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-card.selected {
+            border-color: #667eea;
+            transform: scale(1.08);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .image-checkbox.checked {
+            background: #667eea;
+            color: white;
+        }
+
+        .image-info {
+            padding: 10px;
+            background: white;
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #212529;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .cluster-target-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .cluster-target-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cluster-target-item:hover {
+            background: #e9ecef;
+        }
+
+        .cluster-target-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            min-width: 300px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.warning {
+            border-left: 4px solid #ffc107;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.2em;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎬 3D Animation Character Clustering Review</h1>
+            <p>Luca Film - Interactive Cluster Management & Refinement</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalClusters">0</div>
+                <div class="stat-label">Total Clusters</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalImages">0</div>
+                <div class="stat-label">Total Images</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="selectedImages">0</div>
+                <div class="stat-label">Selected Images</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="changesCount">0</div>
+                <div class="stat-label">Pending Changes</div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-section">
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search clusters or images...">
+                <button class="btn btn-primary" id="filterBtn">
+                    <span>🔽</span> Filter
+                </button>
+            </div>
+
+            <div class="toolbar-section">
+                <button class="btn btn-primary" id="createClusterBtn">
+                    <span>➕</span> New Cluster
+                </button>
+                <button class="btn btn-warning" id="mergeBtn" disabled>
+                    <span>🔀</span> Merge Clusters
+                </button>
+                <button class="btn btn-warning" id="splitBtn" disabled>
+                    <span>✂️</span> Split Cluster
+                </button>
+                <button class="btn btn-danger" id="deleteBtn" disabled>
+                    <span>🗑️</span> Delete
+                </button>
+            </div>
+
+            <div class="toolbar-section">
+                <button class="btn btn-primary" id="undoBtn" disabled>
+                    <span>↶</span> Undo
+                </button>
+                <button class="btn btn-primary" id="redoBtn" disabled>
+                    <span>↷</span> Redo
+                </button>
+                <button class="btn btn-success" id="saveBtn">
+                    <span>💾</span> Save Changes
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Sidebar: Cluster List -->
+            <div class="sidebar">
+                <div id="clusterList"></div>
+            </div>
+
+            <!-- Main Area: Image Grid -->
+            <div class="main-area">
+                <div class="cluster-header">
+                    <div class="cluster-title-section">
+                        <div class="cluster-title editable" id="clusterTitle" contenteditable="true">
+                            Select a cluster
+                        </div>
+                        <div class="cluster-info" id="clusterInfo">
+                            Click on a cluster from the left panel
+                        </div>
+                    </div>
+                    <div class="cluster-actions">
+                        <button class="btn btn-primary" id="renameBtn" disabled>
+                            <span>✏️</span> Rename
+                        </button>
+                        <button class="btn btn-primary" id="moveImagesBtn" disabled>
+                            <span>↪️</span> Move Selected
+                        </button>
+                    </div>
+                </div>
+
+                <div class="image-grid" id="imageGrid">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📁</div>
+                        <div class="empty-state-text">Select a cluster to view images</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Create Cluster Modal -->
+    <div class="modal" id="createClusterModal">
+        <div class="modal-content">
+            <div class="modal-header">Create New Cluster</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Cluster Name</label>
+                    <input type="text" class="form-control" id="newClusterName" placeholder="e.g., Luca_Human_Form">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea class="form-control" id="newClusterDesc" rows="3" placeholder="Character description..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirmCreateBtn">Create</button>
+                <button class="btn" id="cancelCreateBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move Images Modal -->
+    <div class="modal" id="moveImagesModal">
+        <div class="modal-content">
+            <div class="modal-header">Move Images to Cluster</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Target Cluster</label>
+                    <div class="cluster-target-list" id="targetClusterList"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirmMoveBtn">Move</button>
+                <button class="btn" id="cancelMoveBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div id="notificationText"></div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="cluster_review.js"></script>
+</body>
+</html>
