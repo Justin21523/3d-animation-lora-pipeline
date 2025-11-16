@@ -1,0 +1,4 @@
+# Optuna - Hyperparameter optimization framework
+optuna>=3.5.0
+optuna-dashboard>=0.15.0  # Optional: Web dashboard for visualization
+

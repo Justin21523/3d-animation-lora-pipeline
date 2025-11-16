@@ -1,0 +1,26 @@
+# Character Clustering Dependencies
+
+# CLIP for feature extraction and semantic filtering
+git+https://github.com/openai/CLIP.git
+
+# Face Detection (for pre-filtering)
+retinaface-pytorch  # Best for 3D animated characters
+facenet-pytorch  # MTCNN fallback
+
+# Clustering algorithms
+hdbscan>=0.8.33
+scikit-learn>=1.3.0
+umap-learn>=0.5.4  # For dimensionality reduction
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.18.0  # Interactive visualizations
+
+# Already installed in base environment:
+# torch>=2.0.0
+# torchvision>=0.15.0
+# pillow>=10.0.0
+# numpy>=1.24.0
+# tqdm>=4.65.0
+# opencv-python>=4.8.0

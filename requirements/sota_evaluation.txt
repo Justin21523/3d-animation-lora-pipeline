@@ -1,0 +1,36 @@
+# SOTA Evaluation Models Dependencies
+# For iterative LoRA optimization with state-of-the-art models
+
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.40.0
+diffusers>=0.28.0
+
+# InternVL2 (replaces CLIP)
+# Requires transformers with trust_remote_code=True
+timm>=0.9.0  # For vision encoders
+
+# LAION Aesthetics
+# Uses transformers pipeline
+
+# InsightFace (Character consistency)
+insightface>=0.7.0
+onnxruntime-gpu>=1.16.0  # For GPU acceleration
+opencv-python>=4.8.0
+
+# LPIPS (Perceptual diversity)
+lpips>=0.1.4
+
+# MUSIQ (Image quality)
+pyiqa>=0.1.7  # Includes MUSIQ and many other IQA metrics
+
+# Supporting libraries
+scipy>=1.11.0
+scikit-image>=0.21.0
+pillow>=10.0.0
+numpy>=1.24.0
+
+# Utilities
+tqdm>=4.66.0
+pyyaml>=6.0.0

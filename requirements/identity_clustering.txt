@@ -1,0 +1,35 @@
+# Identity Clustering Dependencies
+# For face-based character identity clustering with ArcFace + HDBSCAN
+
+# ============================================
+# Face Detection & Recognition
+# ============================================
+insightface>=0.7.3
+onnxruntime-gpu>=1.16.0  # For InsightFace GPU acceleration
+
+# Alternative face detection options (optional)
+retinaface-pytorch
+facenet-pytorch
+
+# ============================================
+# Clustering Algorithms
+# ============================================
+# Note: scikit-learn has HDBSCAN since version 1.3+
+scikit-learn>=1.3.0
+umap-learn>=0.5.4
+
+# ============================================
+# Visualization
+# ============================================
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# ============================================
+# Core Dependencies (should already be installed)
+# ============================================
+# torch==2.7.1+cu128  # DO NOT CHANGE - required by user
+# torchvision==0.22.1  # DO NOT CHANGE
+# numpy<2.0  # Already installed
+# Pillow>=10.0.0  # Already installed
+# opencv-python>=4.8.0  # Already installed
+# tqdm>=4.65.0  # Already installed

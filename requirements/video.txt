@@ -1,0 +1,39 @@
+# Video Generation and Processing Dependencies
+# Install with: pip install -r requirements_video.txt
+
+# Core video processing (latest for best quality)
+opencv-python>=4.10.0
+imageio>=2.35.0
+imageio-ffmpeg>=0.5.1
+
+# Stable Diffusion and LoRA inference (optimized versions)
+diffusers>=0.30.0
+transformers>=4.45.0
+accelerate>=0.34.0
+safetensors>=0.4.5
+peft>=0.13.0
+omegaconf>=2.3.0
+
+# PyTorch (CUDA 12.8) - FIXED VERSION FOR QUALITY
+# Install with:
+# pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+torch==2.7.0
+torchvision==0.22.0
+torchaudio==2.7.0
+
+# Frame interpolation (optional but recommended)
+# RIFE implementation - install with:
+# pip install rife-ncnn-vulkan-python
+# If installation fails, basic interpolation fallback is available
+
+# Image processing
+Pillow>=10.0.0
+scikit-image>=0.21.0
+
+# Utilities
+tqdm>=4.65.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Progress and logging
+rich>=13.0.0
