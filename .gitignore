@@ -37,6 +37,10 @@ env/
 .ipynb_checkpoints
 *.ipynb
 
+# Documentation (user requested not to track)
+docs/
+prompts/
+
 # Logs
 logs/
 *.log
