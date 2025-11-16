@@ -95,3 +95,6 @@ desktop.ini
 # Project-specific
 # Keep configs, scripts, docs, requirements
 # Exclude everything else
+
+# External model references (symlinks to AI warehouse)
+scripts/generic/inpainting/lama

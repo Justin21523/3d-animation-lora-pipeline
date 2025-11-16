@@ -1,3 +1,0 @@
-[submodule "scripts/generic/inpainting/lama"]
-	path = scripts/generic/inpainting/lama
-	url = https://github.com/advimman/lama.git
