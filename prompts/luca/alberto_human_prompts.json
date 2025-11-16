@@ -1,0 +1,217 @@
+{
+  "film": "Luca (2021)",
+  "character": "Alberto Scorfano - Human Form",
+  "description": "14-year-old boy from Pixar's Luca, bold and adventurous, messy dark hair, green vest",
+
+  "base_positive": "a 3d animated character, alberto scorfano from pixar luca (2021), smooth shading, pbr materials, studio lighting, italian riviera",
+
+  "base_negative": "2d, anime, cartoon, sketch, watercolor, painting, illustration, blurry, out of focus, jpeg artifacts, watermark, signature, text, logo, duplicate, deformed, ugly, mutated, disfigured, bad anatomy, bad proportions, extra limbs, cloned face, malformed, gross proportions, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, photorealistic, realistic, live action, photography",
+
+  "test_prompts": [
+    {
+      "category": "portrait",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, teenage boy, messy dark brown hair, confident expression, tan skin, green vest over bare chest, close-up portrait, three-quarter view, warm italian sunlight, smooth shading, depth of field",
+          "negative": "{{base_negative}}, sea monster form, scales, fins, orange-green skin"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, big confident smile, cocky expression, hands on hips, warm summer lighting, blue sky background, shoulder-up view",
+          "negative": "{{base_negative}}, shy, nervous, timid, scared"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, determined brave expression, wind in hair, dramatic lighting, heroic pose, looking into distance",
+          "negative": "{{base_negative}}, weak, defeated, crying, sad"
+        }
+      ]
+    },
+    {
+      "category": "full_body",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, full body shot, teenage boy standing confidently, green vest and rolled-up pants, barefoot on beach sand, italian coastal background, warm afternoon light",
+          "negative": "{{base_negative}}, shoes, formal clothing, sitting"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, jumping off cliff into water, dynamic action pose, arms spread wide, excited expression, italian coastline background, motion blur, cinematic angle",
+          "negative": "{{base_negative}}, static pose, standing still, cautious"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, working on makeshift vespa, tools in hand, concentrated expression, abandoned tower setting, warm golden hour lighting",
+          "negative": "{{base_negative}}, clean environment, modern setting"
+        }
+      ]
+    },
+    {
+      "category": "expressions",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, mischievous grin, playful expression, one eyebrow raised, troublemaker energy, soft studio lighting",
+          "negative": "{{base_negative}}, serious, formal, obedient"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, vulnerable sad expression, looking down, rare moment of emotion, soft diffused lighting, emotional scene",
+          "negative": "{{base_negative}}, happy, confident, smiling"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, excited whooping expression, arms raised in celebration, pure joy, dynamic pose, warm lighting",
+          "negative": "{{base_negative}}, calm, composed, neutral"
+        }
+      ]
+    },
+    {
+      "category": "scenes",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, at abandoned tower hideout, surrounded by collected human objects, vespa poster on wall, warm afternoon sunlight streaming through windows",
+          "negative": "{{base_negative}}, modern setting, clean room, organized"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, eating pasta with hands, messy but happy, dinner table scene, warm tungsten lighting, cozy atmosphere",
+          "negative": "{{base_negative}}, using fork properly, clean eating, formal dining"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, teaching luca to walk, gesturing with hands, patient expression, beach setting, soft morning light",
+          "negative": "{{base_negative}}, learning, being taught, passive"
+        }
+      ]
+    },
+    {
+      "category": "character_interaction",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, with luca on vespa, both laughing, wind in hair, italian countryside, action shot, warm sunlight",
+          "negative": "{{base_negative}}, alone, static, indoors"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, talking with massimo, respectful body language, fishing boat setting, soft dawn lighting, father-son dynamic",
+          "negative": "{{base_negative}}, confrontational, angry, disrespectful"
+        }
+      ]
+    },
+    {
+      "category": "signature_poses",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, saluting silenzio bruno pose, confident stance, hand raised, dramatic lighting, motivational energy",
+          "negative": "{{base_negative}}, scared, hesitant, unsure"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, holding umbrella protectively, rain falling, determined to help friend, dramatic lighting, heroic moment",
+          "negative": "{{base_negative}}, running away, hiding, cowardly"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, looking at vespa poster with dreamy expression, hand reaching out, soft lighting, aspirational mood",
+          "negative": "{{base_negative}}, uninterested, distracted, looking away"
+        }
+      ]
+    },
+    {
+      "category": "lighting_variations",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, backlit by golden sunset, strong rim lighting on messy hair, silhouette effect, warm orange sky, beach setting",
+          "negative": "{{base_negative}}, front lighting, flat lighting, no rim light"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, in rain with water droplets, overcast lighting, cool blue tones, dramatic atmosphere, transforming scene",
+          "negative": "{{base_negative}}, dry, sunny, warm lighting"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, firelight from campfire, warm flickering glow on face, night scene, intimate atmosphere",
+          "negative": "{{base_negative}}, daylight, electric lighting, bright"
+        }
+      ]
+    },
+    {
+      "category": "camera_angles",
+      "prompts": [
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, low angle hero shot, looking down at camera with confident grin, sky background, dominant composition",
+          "negative": "{{base_negative}}, eye level, submissive pose, high angle"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, wide shot running towards camera, arms spread wide, dynamic motion, italian coastal town background",
+          "negative": "{{base_negative}}, static, close-up only, walking away"
+        },
+        {
+          "positive": "a 3d animated character, alberto scorfano from pixar luca, dutch angle for energy, off-kilter composition, mid-jump pose, dynamic framing",
+          "negative": "{{base_negative}}, straight horizon, stable composition, static"
+        }
+      ]
+    }
+  ],
+
+  "quality_tags": [
+    "masterpiece",
+    "best quality",
+    "high resolution",
+    "8k uhd",
+    "professional 3d render",
+    "pixar quality",
+    "smooth gradients",
+    "proper subsurface scattering"
+  ],
+
+  "alberto_specific_details": {
+    "physical_traits": [
+      "messy dark brown hair",
+      "tan skin",
+      "confident eyes",
+      "athletic teenager build",
+      "often barefoot",
+      "rebellious energy"
+    ],
+    "clothing": [
+      "green vest (often shirtless underneath)",
+      "rolled-up pants or shorts",
+      "casual disheveled look",
+      "rarely wears shoes"
+    ],
+    "personality_expressions": [
+      "confident and cocky",
+      "mischievous troublemaker",
+      "protective of friends",
+      "rarely shows vulnerability",
+      "free-spirited adventurer",
+      "silenzio bruno attitude"
+    ],
+    "signature_props": [
+      "makeshift vespa",
+      "vespa poster drawing",
+      "collected human junk",
+      "harpoon (as tool)",
+      "umbrella (heroic moment)"
+    ],
+    "settings": [
+      "abandoned tower hideout",
+      "beach and cliffs",
+      "vespa riding locations",
+      "fishing boat with massimo",
+      "portorosso streets",
+      "hillside tracks"
+    ]
+  },
+
+  "advanced_negative_prompts": {
+    "anatomical_errors": "bad hands, missing fingers, extra fingers, fused fingers, mutated hands, poorly drawn hands, poorly drawn face, deformed, ugly, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs",
+
+    "style_contamination": "2d, anime, manga, sketch, drawing, painting, watercolor, cel shading, flat colors, line art, comic style, hand drawn, traditional art",
+
+    "quality_issues": "blurry, out of focus, low quality, low resolution, pixelated, jpeg artifacts, compression artifacts, noise, grainy, worst quality",
+
+    "unwanted_elements": "watermark, signature, text, logo, username, copyright, duplicate, multiple views, before and after",
+
+    "wrong_character_form": "sea monster, scales, fins, tail, orange-green skin, glowing eyes, webbed hands, fish features, underwater",
+
+    "photorealism": "photorealistic, realistic, photography, photo, real life, live action, hyperrealistic"
+  },
+
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-11-10",
+    "purpose": "LoRA training test prompts for Alberto (Human Form)",
+    "recommended_use": "Use {{base_positive}} and {{base_negative}} as foundations, combine with specific scene prompts",
+    "notes": "Alberto is more action-oriented and confident than Luca. Prompts emphasize adventurous, protective, and free-spirited characteristics."
+  }
+}

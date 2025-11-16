@@ -1,0 +1,221 @@
+{
+  "film": {
+    "title": "Luca",
+    "studio": "Disney / Pixar Animation Studios",
+    "director": "Enrico Casarosa",
+    "release_dates": {
+      "disney_plus": "2021-06-18",
+      "theatrical_rerelease": "2024-03-22"
+    },
+    "runtime": "95 minutes",
+    "rating": "PG"
+  },
+
+  "setting": {
+    "location": "Italian Riviera (Liguria)",
+    "town": "Portorosso (fictional)",
+    "inspiration": [
+      "Portovenere",
+      "Monterosso",
+      "Cinque Terre"
+    ],
+    "time_period": "circa 1959",
+    "season": "Summer"
+  },
+
+  "genres": [
+    "Coming-of-age",
+    "Adventure",
+    "Comedy",
+    "Fantasy"
+  ],
+
+  "themes": [
+    "Friendship and identity",
+    "Feeling different / outsider metaphor",
+    "Acceptance and openness",
+    "Childhood freedom",
+    "Cultural differences",
+    "Summer growth and formative years"
+  ],
+
+  "main_characters": [
+    {
+      "name": "Luca Paguro",
+      "role": "Protagonist",
+      "voice_actor": "Jacob Tremblay",
+      "species": "Sea monster (transforms to human)"
+    },
+    {
+      "name": "Alberto Scorfano",
+      "role": "Deuteragonist",
+      "voice_actor": "Jack Dylan Grazer",
+      "species": "Sea monster (transforms to human)"
+    },
+    {
+      "name": "Giulia Marcovaldo",
+      "role": "Main supporting character",
+      "voice_actor": "Emma Berman",
+      "species": "Human"
+    },
+    {
+      "name": "Massimo Marcovaldo",
+      "role": "Supporting character / father figure",
+      "voice_actor": "Marco Barricelli",
+      "species": "Human"
+    },
+    {
+      "name": "Ercole Visconti",
+      "role": "Antagonist",
+      "voice_actor": "Saverio Raimondo",
+      "species": "Human"
+    }
+  ],
+
+  "supporting_characters": [
+    {
+      "name": "Daniela Paguro",
+      "role": "Luca's mother",
+      "voice_actor": "Maya Rudolph"
+    },
+    {
+      "name": "Lorenzo Paguro",
+      "role": "Luca's father",
+      "voice_actor": "Jim Gaffigan"
+    },
+    {
+      "name": "Grandma Paguro",
+      "role": "Luca's grandmother",
+      "voice_actor": "Sandy Martin"
+    },
+    {
+      "name": "Uncle Ugo",
+      "role": "Luca's deep-sea uncle",
+      "voice_actor": "Sacha Baron Cohen"
+    },
+    {
+      "name": "Ciccio",
+      "role": "Ercole's henchman",
+      "voice_actor": "Peter Sohn"
+    },
+    {
+      "name": "Guido",
+      "role": "Ercole's henchman",
+      "voice_actor": "Lorenzo Crisci"
+    }
+  ],
+
+  "key_locations": [
+    {
+      "name": "Portorosso",
+      "type": "Coastal town",
+      "description": "Colorful cliffside Italian fishing village with narrow stone streets"
+    },
+    {
+      "name": "Alberto's Tower",
+      "type": "Hideout",
+      "description": "Abandoned stone tower filled with collected human objects"
+    },
+    {
+      "name": "Underwater Sea Monster Community",
+      "type": "Home",
+      "description": "Luca's family home where goatfish are herded"
+    },
+    {
+      "name": "Marcovaldo House",
+      "type": "Residence",
+      "description": "Massimo's fisherman home with treehouse"
+    },
+    {
+      "name": "Portorosso Plaza",
+      "type": "Town square",
+      "description": "Central plaza with fountain, site of the Portorosso Cup"
+    }
+  ],
+
+  "key_objects": [
+    "Vespa (Italian scooter)",
+    "Telescope",
+    "Astronomy book",
+    "Diving helmet",
+    "Fishing nets and harpoons",
+    "Pasta bowls (trenette al pesto)",
+    "Blue umbrella",
+    "Vespa poster"
+  ],
+
+  "signature_phrases": [
+    "Silenzio, Bruno! (Quiet, Bruno!)",
+    "Piacere, Girolamo Trombetta (Italian greeting)"
+  ],
+
+  "color_palette": {
+    "primary": [
+      "#87CEEB (Sky blue)",
+      "#FFD700 (Warm gold)",
+      "#FF6B4A (Coral/terracotta)",
+      "#2E8B57 (Sea green)"
+    ],
+    "accents": [
+      "#FFA07A (Light salmon)",
+      "#4682B4 (Steel blue)",
+      "#F0E68C (Khaki/sand)"
+    ],
+    "mood": "Warm Mediterranean summer with soft pastels"
+  },
+
+  "music": {
+    "composer": "Dan Romer",
+    "featured_artists": [
+      "Mina",
+      "Edoardo Bennato",
+      "Gianni Morandi",
+      "Rita Pavone",
+      "Quartetto Cetra"
+    ],
+    "opera_pieces": [
+      "Giacomo Puccini",
+      "Gioacchino Rossini (Largo al factotum from The Barber of Seville)"
+    ]
+  },
+
+  "reception": {
+    "rotten_tomatoes": "90% (260 reviews)",
+    "metacritic": "71/100 (generally favorable)",
+    "awards": []
+  },
+
+  "trivia": [
+    "Film celebrates Pixar's 35th anniversary",
+    "Set around 1959",
+    "Inspired by director Enrico Casarosa's childhood in Genoa",
+    "Alberto character based on Casarosa's real childhood friend Alberto Surace",
+    "Name 'Luca' chosen for simplicity and international pronunciation",
+    "Made during COVID-19 pandemic (mostly from home)",
+    "Sea monsters serve as metaphor for feeling different",
+    "Post-credits scene features Uncle Ugo talking to a goatfish"
+  ],
+
+  "easter_eggs": [
+    "Pizza Planet Truck (three-wheeled version)",
+    "A113 on train ticket",
+    "Hidden Mickey in clouds",
+    "Luxo Ball on rooftop",
+    "Grape Soda cap from Up",
+    "La Luna boy cameo in credits",
+    "Pinocchio references",
+    "Marcello Mastroianni photo"
+  ],
+
+  "related_content": {
+    "short_film": "Ciao Alberto (2021-11-12)",
+    "short_film_description": "Follows Alberto and Massimo's relationship in Portorosso"
+  },
+
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-11-11",
+    "purpose": "Structured film metadata for AI pipeline and LoRA training context",
+    "last_updated": "2025-11-11"
+  }
+}

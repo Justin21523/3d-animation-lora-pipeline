@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "film": "Luca (2021)",
+    "studio": "Pixar",
+    "style": "3d_animation",
+    "version": "1.0.0",
+    "created": "2025-11-09",
+    "description": "Motion prompts, scene templates, and character interactions for Luca 3D animation LoRA training and generation"
+  },
+
+  "character_motion_prompts": {
+    "luca": {
+      "signature_motions": [
+        {
+          "id": "luca_bicycle_ride",
+          "prompt": "luca riding bicycle downhill, nervous expression, gripping handlebars tightly, repeating silenzio bruno, cobblestone street, portorosso background, warm afternoon lighting, pixar 3d style, smooth shading, cinematic lighting",
+          "negative": "alberto, confident, still, 2d, flat",
+          "motion_strength": 0.8,
+          "camera": "follow shot, medium distance",
+          "duration": "2-4 seconds"
+        },
+        {
+          "id": "luca_swimming_underwater",
+          "prompt": "luca swimming gracefully underwater in sea monster form, blue-green scales, glowing turquoise body, curious expression, reaching toward sunlight above, volumetric underwater lighting, soft bubbles, pixar 3d animation",
+          "negative": "human form, above water, aggressive",
+          "motion_strength": 0.7,
+          "camera": "slow tracking shot, side view"
+        },
+        {
+          "id": "luca_stargazing",
+          "prompt": "luca looking through telescope at night sky, brown eyes wide with wonder, wavy hair, teal striped shirt, rooftop setting, stars visible, soft moonlight, pixar 3d style, warm nostalgic lighting",
+          "negative": "daytime, indoors, sea monster form",
+          "motion_strength": 0.3,
+          "camera": "close-up, over shoulder"
+        },
+        {
+          "id": "luca_transformation",
+          "prompt": "luca transforming from sea monster to human, scales fading to skin, fins retracting, water droplets falling, magical transformation effect, pixar 3d animation, smooth shader, ethereal lighting",
+          "negative": "instant change, harsh transition",
+          "motion_strength": 0.9,
+          "camera": "medium shot, dramatic angle"
+        },
+        {
+          "id": "luca_herding_goatfish",
+          "prompt": "luca underwater herding goatfish, gentle movements, sea monster form, blue-green scales, concentration expression, kelp forest background, volumetric ocean lighting, pixar 3d style",
+          "negative": "human form, aggressive, fast motion",
+          "motion_strength": 0.6,
+          "camera": "wide shot, following motion"
+        }
+      ],
+      "expressions": [
+        {
+          "id": "luca_curious",
+          "prompt": "luca with curious wide-eyed expression, mouth slightly open, eyebrows raised, brown eyes sparkling, facing camera, pixar 3d character, soft lighting"
+        },
+        {
+          "id": "luca_nervous",
+          "prompt": "luca nervous expression, eyes darting, biting lip, anxious posture, hands fidgeting, pixar 3d style, natural lighting"
+        },
+        {
+          "id": "luca_determined",
+          "prompt": "luca determined expression, eyes focused, jaw set, gripping bicycle handlebars, repeating silenzio bruno, pixar 3d animation"
+        }
+      ]
+    },
+
+    "alberto": {
+      "signature_motions": [
+        {
+          "id": "alberto_vespa_jump",
+          "prompt": "alberto jumping off cliff on makeshift vespa, confident grin, arms spread wide, yellow tank top, curly golden hair flowing, blue sky background, pixar 3d animation, dynamic motion, cinematic lighting",
+          "negative": "scared, hesitant, static, 2d",
+          "motion_strength": 0.9,
+          "camera": "dramatic low angle, tracking jump arc",
+          "duration": "3-5 seconds"
+        },
+        {
+          "id": "alberto_sea_monster_dive",
+          "prompt": "alberto diving into water and transforming mid-air, human to sea monster, periwinkle scales emerging, purple fins extending, water splash, pixar 3d style, dramatic transformation effect",
+          "negative": "slow motion, gentle, above water",
+          "motion_strength": 0.9,
+          "camera": "side view tracking dive"
+        },
+        {
+          "id": "alberto_teaching_walking",
+          "prompt": "alberto teaching luca to walk on land, demonstrating confident strides, gesturing with hands, yellow tank top, lighthouse background, warm sunlight, pixar 3d animation, friendly expression",
+          "negative": "sea monster form, swimming, nighttime",
+          "motion_strength": 0.5,
+          "camera": "medium two-shot"
+        },
+        {
+          "id": "alberto_counting_tallies",
+          "prompt": "alberto sitting alone in lighthouse, counting tally marks on wall, sad expression, curled up posture, dim interior lighting, 383 marks visible, pixar 3d style, melancholic mood",
+          "negative": "happy, active, outdoor",
+          "motion_strength": 0.2,
+          "camera": "close-up on face, pull back to reveal marks"
+        },
+        {
+          "id": "alberto_fishing_massimo",
+          "prompt": "alberto fishing with massimo on boat, learning technique, concentrated expression, yellow tank top, ocean background, morning light, pixar 3d animation, warm father-son moment",
+          "negative": "alone, sea monster form, nighttime",
+          "motion_strength": 0.4,
+          "camera": "wide shot on boat"
+        }
+      ],
+      "expressions": [
+        {
+          "id": "alberto_confident",
+          "prompt": "alberto confident smirk, bright green eyes, one eyebrow raised, hands on hips, pixar 3d character, warm lighting"
+        },
+        {
+          "id": "alberto_jealous",
+          "prompt": "alberto jealous expression, green eyes narrowed, frown, arms crossed, looking away, pixar 3d style, dramatic shadows"
+        },
+        {
+          "id": "alberto_abandoned",
+          "prompt": "alberto sad abandoned expression, green eyes watering, lip trembling, vulnerable posture, pixar 3d animation, soft emotional lighting"
+        }
+      ]
+    },
+
+    "giulia": {
+      "signature_motions": [
+        {
+          "id": "giulia_bicycle_delivery",
+          "prompt": "giulia riding bicycle through portorosso making deliveries, red curly hair flowing, sky-blue beanie, energetic pedaling, waving to townspeople, cobblestone streets, pixar 3d animation, bright midday lighting",
+          "negative": "slow, sad, stationary",
+          "motion_strength": 0.7,
+          "camera": "tracking shot following bicycle"
+        },
+        {
+          "id": "giulia_astronomy_lesson",
+          "prompt": "giulia showing luca telescope, pointing at stars, excited gesturing, red curly hair, sky-blue beanie, rooftop at night, starry sky, pixar 3d style, warm friendship moment",
+          "negative": "daytime, alone, indoors",
+          "motion_strength": 0.3,
+          "camera": "medium two-shot"
+        },
+        {
+          "id": "giulia_swimming_race",
+          "prompt": "giulia swimming competitively, turquoise swimsuit, water goggles, determined expression, splashing water, race setting, pixar 3d animation, dynamic water effects, bright lighting",
+          "negative": "slow, relaxed, above water",
+          "motion_strength": 0.8,
+          "camera": "underwater and above water cuts"
+        },
+        {
+          "id": "giulia_protecting_friends",
+          "prompt": "giulia crashing bicycle into ercole to protect luca and alberto, brave determined expression, sacrificing race, dramatic collision, rain falling, pixar 3d style, heroic moment, cinematic lighting",
+          "negative": "cowardly, hesitant, victory pose",
+          "motion_strength": 0.9,
+          "camera": "dramatic angle, slow-motion impact"
+        }
+      ],
+      "expressions": [
+        {
+          "id": "giulia_excited",
+          "prompt": "giulia excited joyful expression, brown eyes sparkling, wide smile, red curly hair bouncing, pixar 3d character, bright warm lighting"
+        },
+        {
+          "id": "giulia_determined",
+          "prompt": "giulia determined competitive expression, eyes focused, jaw clenched, ready to race, pixar 3d style, dramatic lighting"
+        }
+      ]
+    },
+
+    "ercole": {
+      "signature_motions": [
+        {
+          "id": "ercole_vespa_showoff",
+          "prompt": "ercole riding shiny red vespa through town, pompadour hair perfectly styled, pink sweater draped over shoulders, arrogant smirk, blaring radio music, townspeople annoyed, pixar 3d animation, exaggerated motion",
+          "negative": "humble, walking, defeated",
+          "motion_strength": 0.7,
+          "camera": "tracking shot, low angle emphasizing ego"
+        },
+        {
+          "id": "ercole_bullying",
+          "prompt": "ercole threatening to dunk luca in fountain, menacing expression, hazel eyes cold, dark polo shirt, ciccio and guido flanking, pixar 3d style, tense atmosphere",
+          "negative": "friendly, alone, defeated",
+          "motion_strength": 0.6,
+          "camera": "low angle showing intimidation"
+        },
+        {
+          "id": "ercole_fountain_defeat",
+          "prompt": "ercole thrown into fountain by ciccio and guido, shocked expression, pink sweater getting wet and shrinking, crying over sweater, pixar 3d animation, comedic defeat, bright lighting",
+          "negative": "victorious, dry, confident",
+          "motion_strength": 0.8,
+          "camera": "wide shot capturing humiliation"
+        }
+      ]
+    },
+
+    "massimo": {
+      "signature_motions": [
+        {
+          "id": "massimo_fishing",
+          "prompt": "massimo fishing on boat with large nets, one-armed fisherman, muscular build, light yellow sweater, sea monster tattoo visible, concentrated expression, morning ocean, pixar 3d style, warm lighting",
+          "negative": "two arms, indoors, relaxed",
+          "motion_strength": 0.5,
+          "camera": "medium shot on boat"
+        },
+        {
+          "id": "massimo_cooking_pasta",
+          "prompt": "massimo cooking trenette al pesto, stirring pot with one arm, bushy eyebrows, short mustache, warm kitchen, steam rising, pixar 3d animation, cozy domestic scene",
+          "negative": "outdoors, fishing, formal",
+          "motion_strength": 0.4,
+          "camera": "close-up on cooking, warm interior lighting"
+        },
+        {
+          "id": "massimo_protecting",
+          "prompt": "massimo standing protectively in front of luca alberto and giulia, intimidating glare, muscular silhouette, harpoon ready, facing angry mob, pixar 3d style, dramatic heroic lighting",
+          "negative": "threatening kids, aggressive, alone",
+          "motion_strength": 0.3,
+          "camera": "low angle emphasizing protective presence"
+        }
+      ]
+    }
+  },
+
+  "scene_templates": {
+    "portorosso_town": {
+      "daytime": {
+        "id": "portorosso_day",
+        "prompt": "portorosso italian coastal town, colorful buildings, narrow cobblestone streets, market stalls, fishing boats in harbor, bright mediterranean sunlight, warm pastel colors, pixar 3d animation, detailed environment",
+        "negative": "modern, nighttime, winter, empty",
+        "style_tags": ["italian riviera", "summer", "vibrant", "coastal"]
+      },
+      "nighttime": {
+        "id": "portorosso_night",
+        "prompt": "portorosso at night, warm lamplight from windows, stars visible, quiet streets, moonlight on ocean, pixar 3d style, soft atmospheric lighting, peaceful mood",
+        "negative": "crowded, daytime, rainy",
+        "style_tags": ["nighttime", "peaceful", "starry", "romantic"]
+      },
+      "race_day": {
+        "id": "portorosso_cup",
+        "prompt": "portorosso during race, crowded town square, banners and flags, excited townspeople, finish line visible, festive atmosphere, pixar 3d animation, bright energetic lighting",
+        "negative": "empty, quiet, nighttime",
+        "style_tags": ["festival", "crowded", "competitive", "energetic"]
+      }
+    },
+
+    "lighthouse_hideout": {
+      "interior": {
+        "id": "alberto_hideout",
+        "prompt": "abandoned lighthouse interior, collected human objects scattered, vespa poster on wall, 383 tally marks, sunlight streaming through windows, dusty atmosphere, pixar 3d style, nostalgic lighting",
+        "negative": "clean, modern, occupied",
+        "style_tags": ["abandoned", "nostalgic", "cluttered", "mysterious"]
+      },
+      "exterior": {
+        "id": "lighthouse_exterior",
+        "prompt": "stone lighthouse on small island, surrounded by blue ocean, seagulls flying, cliff edge, warm afternoon sun, pixar 3d animation, mediterranean setting",
+        "negative": "mainland, modern, nighttime",
+        "style_tags": ["isolated", "scenic", "peaceful"]
+      }
+    },
+
+    "underwater": {
+      "kelp_forest": {
+        "id": "underwater_home",
+        "prompt": "underwater kelp forest, goatfish swimming, soft volumetric lighting, blue-green water, gentle currents, sea monster habitat, pixar 3d animation, magical underwater atmosphere",
+        "negative": "above water, dark, murky",
+        "style_tags": ["underwater", "magical", "peaceful", "luminous"]
+      },
+      "deep_ocean": {
+        "id": "uncle_ugo_deep",
+        "prompt": "deep dark ocean depths, bioluminescent creatures, uncle ugo's territory, eerie anglerfish, minimal light, pressure atmosphere, pixar 3d style, mysterious deep sea",
+        "negative": "shallow, bright, colorful",
+        "style_tags": ["deep", "dark", "mysterious", "threatening"]
+      }
+    },
+
+    "giulia_house": {
+      "kitchen": {
+        "id": "marcovaldo_kitchen",
+        "prompt": "cozy italian kitchen, wooden table, pasta cooking, warm interior lighting, machiavelli cat present, family dinner setting, pixar 3d animation, homey atmosphere",
+        "negative": "modern, cold, empty",
+        "style_tags": ["domestic", "warm", "cozy", "traditional"]
+      },
+      "treehouse": {
+        "id": "giulia_treehouse",
+        "prompt": "wooden treehouse, astronomy books scattered, telescope, giulia's belongings, view of portorosso below, warm lantern light, pixar 3d style, private hideaway",
+        "negative": "ground level, public, dark",
+        "style_tags": ["private", "cozy", "elevated", "studious"]
+      }
+    }
+  },
+
+  "character_interactions": {
+    "luca_alberto": [
+      {
+        "id": "friendship_moment",
+        "prompt": "luca and alberto sitting together on cliff edge, watching sunset, talking and laughing, yellow tank top and teal shirt, warm golden hour lighting, pixar 3d animation, brotherly bond",
+        "tags": ["friendship", "peaceful", "bonding"]
+      },
+      {
+        "id": "vespa_building",
+        "prompt": "luca and alberto building makeshift vespa together, concentrated expressions, teamwork, scattered parts, lighthouse background, pixar 3d style, warm afternoon light",
+        "tags": ["teamwork", "creative", "determined"]
+      },
+      {
+        "id": "silenzio_bruno",
+        "prompt": "alberto teaching luca silenzio bruno mantra, encouraging gesture, luca gaining confidence, preparing to ride downhill, pixar 3d animation, motivational moment",
+        "tags": ["mentorship", "encouragement", "growth"]
+      }
+    ],
+
+    "luca_giulia": [
+      {
+        "id": "astronomy_lesson",
+        "prompt": "luca and giulia looking through telescope together, giulia explaining constellations, luca fascinated, rooftop at night, starry sky, pixar 3d style, intellectual bonding",
+        "tags": ["learning", "friendship", "wonder"]
+      },
+      {
+        "id": "book_gift",
+        "prompt": "giulia gifting astronomy book to luca, crossing out her name and writing his, touching moment, warm lighting, pixar 3d animation, generous gesture",
+        "tags": ["gift", "friendship", "generous"]
+      }
+    ],
+
+    "alberto_massimo": [
+      {
+        "id": "fishing_together",
+        "prompt": "alberto and massimo fishing on boat, massimo teaching technique, alberto learning, morning ocean light, father-son dynamic developing, pixar 3d style, warm bonding moment",
+        "tags": ["father-son", "learning", "bonding"]
+      },
+      {
+        "id": "accidental_dad",
+        "prompt": "alberto accidentally calling massimo dad, both shocked expressions, emotional realization, massimo opening arms for hug, pixar 3d animation, heartfelt moment",
+        "tags": ["emotional", "family", "acceptance"]
+      }
+    ],
+
+    "underdogs_trio": [
+      {
+        "id": "team_formation",
+        "prompt": "luca alberto and giulia forming team underdogs, fist bump or handshake, determined expressions, portorosso background, pixar 3d animation, teamwork spirit",
+        "tags": ["teamwork", "determined", "friendship"]
+      },
+      {
+        "id": "race_victory",
+        "prompt": "luca alberto giulia celebrating portorosso cup victory, holding trophy together, townspeople cheering, pixar 3d style, triumphant moment, warm lighting",
+        "tags": ["victory", "celebration", "teamwork"]
+      }
+    ]
+  },
+
+  "weather_and_lighting": {
+    "rain_transformation": {
+      "prompt": "rain falling in portorosso, water droplets, luca and alberto transforming to sea monster forms, dramatic weather effect, pixar 3d animation, tense atmosphere",
+      "tags": ["rain", "transformation", "dramatic"]
+    },
+    "golden_hour": {
+      "prompt": "golden hour lighting over portorosso coastline, warm orange and pink sky, soft shadows, mediterranean atmosphere, pixar 3d style, beautiful sunset",
+      "tags": ["sunset", "warm", "beautiful"]
+    },
+    "midday_sun": {
+      "prompt": "bright midday mediterranean sun, strong shadows, vibrant colors, clear blue sky, hot summer atmosphere, pixar 3d animation, high contrast lighting",
+      "tags": ["bright", "summer", "vibrant"]
+    },
+    "moonlit_ocean": {
+      "prompt": "moonlight reflecting on calm ocean surface, stars visible, peaceful nighttime, soft blue lighting, pixar 3d style, serene atmosphere",
+      "tags": ["nighttime", "peaceful", "moonlight"]
+    }
+  },
+
+  "special_effects": {
+    "transformation_effect": {
+      "prompt": "magical transformation from sea monster to human, scales fading to skin, fins retracting, water droplets sparkling, ethereal glow, pixar 3d animation, smooth transition effect",
+      "tags": ["transformation", "magical", "smooth"]
+    },
+    "water_splash": {
+      "prompt": "dynamic water splash as character dives into ocean, water droplets frozen mid-air, realistic water simulation, pixar 3d style, detailed fluid dynamics",
+      "tags": ["water", "dynamic", "splash"]
+    },
+    "vespa_speed": {
+      "prompt": "vespa speeding through streets, motion blur, speed lines, wind effect, dynamic camera following, pixar 3d animation, high-energy motion",
+      "tags": ["speed", "dynamic", "motion"]
+    }
+  }
+}
