@@ -1,0 +1,590 @@
+#!/usr/bin/env python3
+"""
+Generic Batch Processing Orchestrator with tmux support
+Manages long-running jobs in persistent tmux sessions with auto-resume capability.
+
+Features:
+    - Each job runs in dedicated tmux session (persistent across SSH disconnects)
+    - Auto-detection of job completion (checks output files, not just process status)
+    - Dependency-aware scheduling (waits for dependencies to complete)
+    - Progress tracking and resume capability
+    - Automatic cleanup of completed tmux sessions
+
+Usage:
+    python batch_processor_tmux.py --config configs/batch/sam2_lama.yaml
+"""
+
+import argparse
+import json
+import yaml
+import subprocess
+import time
+import sys
+from pathlib import Path
+from typing import List, Dict, Optional, Any
+from dataclasses import dataclass, asdict
+from datetime import datetime
+
+@dataclass
+class Job:
+    """Represents a single processing job for one film"""
+    name: str
+    film: str
+    script: str
+    conda_env: str
+    args_template: List[str]
+    args_named: Dict[str, Any]
+    completion_check: Dict[str, Any]
+    resources: Dict[str, Any]
+    retry: Dict[str, Any]
+    depends_on: Optional[str] = None
+    status: str = "pending"  # pending, running, completed, failed, skipped
+    attempts: int = 0
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    duration_seconds: Optional[float] = None
+    error_message: Optional[str] = None
+    tmux_session: Optional[str] = None  # tmux session name
+    pid: Optional[int] = None
+
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+
+class TmuxManager:
+    """Manages tmux sessions for long-running jobs"""
+
+    @staticmethod
+    def session_exists(session_name: str) -> bool:
+        """Check if tmux session exists"""
+        result = subprocess.run(
+            ['tmux', 'has-session', '-t', session_name],
+            capture_output=True,
+            text=True
+        )
+        return result.returncode == 0
+
+    @staticmethod
+    def list_sessions() -> List[str]:
+        """List all tmux sessions"""
+        result = subprocess.run(
+            ['tmux', 'list-sessions', '-F', '#{session_name}'],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            return result.stdout.strip().split('\n')
+        return []
+
+    @staticmethod
+    def create_session(session_name: str, command: str, log_file: Path) -> bool:
+        """Create new tmux session and run command"""
+        # Create session in detached mode
+        cmd = [
+            'tmux', 'new-session', '-d', '-s', session_name,
+            f'bash -c "{command} 2>&1 | tee {log_file}; exec bash"'
+        ]
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        return result.returncode == 0
+
+    @staticmethod
+    def kill_session(session_name: str):
+        """Kill tmux session"""
+        subprocess.run(['tmux', 'kill-session', '-t', session_name],
+                      capture_output=True)
+
+    @staticmethod
+    def get_session_pane_pid(session_name: str) -> Optional[int]:
+        """Get PID of process running in tmux session"""
+        result = subprocess.run(
+            ['tmux', 'display-message', '-p', '-t', session_name, '#{pane_pid}'],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            try:
+                return int(result.stdout.strip())
+            except ValueError:
+                return None
+        return None
+
+    @staticmethod
+    def is_process_running(pid: int) -> bool:
+        """Check if process is still running"""
+        try:
+            result = subprocess.run(
+                ['ps', '-p', str(pid), '-o', 'comm='],
+                capture_output=True,
+                text=True
+            )
+            return result.returncode == 0 and result.stdout.strip() != ''
+        except Exception:
+            return False
+
+
+class BatchProcessorTmux:
+    """Orchestrates multi-stage batch processing with tmux sessions"""
+
+    def __init__(self, config_path: str, resume: bool = True, dry_run: bool = False):
+        self.config_path = Path(config_path)
+        self.config = self._load_config()
+        self.dry_run = dry_run
+        self.jobs: List[Job] = []
+        self.tmux = TmuxManager()
+
+        # Create log directory
+        self.log_dir = Path(self.config['execution']['log_dir'])
+        self.log_dir.mkdir(parents=True, exist_ok=True)
+
+        self.progress_file = self.log_dir / self.config['execution']['progress_file']
+
+        if resume and self.progress_file.exists():
+            print(f"📂 Loading progress from {self.progress_file}")
+            self._load_progress()
+            self._sync_with_tmux()  # Sync with existing tmux sessions
+        else:
+            print("🔍 Discovering films and creating job queue...")
+            self._discover_and_queue_jobs()
+
+        self._print_summary()
+
+    def _load_config(self) -> Dict:
+        """Load and validate YAML configuration"""
+        if not self.config_path.exists():
+            raise FileNotFoundError(f"Config file not found: {self.config_path}")
+
+        with open(self.config_path) as f:
+            config = yaml.safe_load(f)
+
+        required_keys = ['discovery', 'jobs', 'execution']
+        for key in required_keys:
+            if key not in config:
+                raise ValueError(f"Missing required config key: {key}")
+
+        return config
+
+    def _discover_films(self) -> List[str]:
+        """Auto-discover films in base directory"""
+        base_dir = Path(self.config['discovery']['base_dir'])
+
+        if not base_dir.exists():
+            raise FileNotFoundError(f"Base directory not found: {base_dir}")
+
+        pattern = self.config['discovery'].get('film_pattern', '*')
+        exclude = set(self.config['discovery'].get('exclude', []))
+
+        films = []
+        for path in base_dir.glob(pattern):
+            if path.is_dir() and path.name not in exclude:
+                frames_dir = path / 'frames'
+                frames_final_dir = path / 'frames_final'
+
+                if frames_dir.exists() or frames_final_dir.exists():
+                    films.append(path.name)
+
+        return sorted(films)
+
+    def _discover_and_queue_jobs(self):
+        """Discover films and create job queue"""
+        films = self._discover_films()
+
+        if not films:
+            print("⚠️  No films found matching criteria!")
+            return
+
+        print(f"✅ Found {len(films)} films: {', '.join(films)}")
+
+        job_defs = self.config['jobs']
+
+        for film in films:
+            for job_def in job_defs:
+                job = Job(
+                    name=job_def['name'],
+                    film=film,
+                    script=job_def['script'],
+                    conda_env=job_def.get('conda_env', 'ai_env'),
+                    args_template=job_def['args'].get('template', []),
+                    args_named=job_def['args'].get('named', {}),
+                    completion_check=job_def['completion_check'],
+                    resources=job_def.get('resources', {}),
+                    retry=job_def.get('retry', {'max_attempts': 1, 'backoff_seconds': 60}),
+                    depends_on=job_def.get('depends_on')
+                )
+                self.jobs.append(job)
+
+        print(f"📋 Created {len(self.jobs)} jobs ({len(films)} films × {len(job_defs)} operations)")
+
+    def _sync_with_tmux(self):
+        """Sync job status with existing tmux sessions"""
+        existing_sessions = self.tmux.list_sessions()
+
+        for job in self.jobs:
+            if job.tmux_session and job.tmux_session in existing_sessions:
+                # Check if process still running
+                if job.pid and self.tmux.is_process_running(job.pid):
+                    job.status = "running"
+                    print(f"📡 Detected running job: {job.name}/{job.film} in tmux:{job.tmux_session}")
+                else:
+                    # Process finished, check completion
+                    if self._check_completion(job):
+                        job.status = "completed"
+                        job.end_time = datetime.now().isoformat()
+                        print(f"✅ Detected completed job: {job.name}/{job.film}")
+                        self.tmux.kill_session(job.tmux_session)
+                    else:
+                        job.status = "failed"
+                        job.error_message = "Process exited without completing"
+                        print(f"❌ Detected failed job: {job.name}/{job.film}")
+
+    def _resolve_template(self, template: str, film: str) -> str:
+        """Resolve template variables"""
+        base_dir = self.config['discovery']['base_dir']
+
+        film_dir = Path(base_dir) / film
+        if (film_dir / 'frames').exists():
+            frames_dir = str(film_dir / 'frames')
+        elif (film_dir / 'frames_final').exists():
+            frames_dir = str(film_dir / 'frames_final')
+        else:
+            frames_dir = str(film_dir / 'frames')
+
+        replacements = {
+            '{film}': film,
+            '{base_dir}': base_dir,
+            '{frames_dir}': frames_dir
+        }
+
+        result = template
+        for key, value in replacements.items():
+            result = result.replace(key, value)
+
+        return result
+
+    def _check_completion(self, job: Job) -> bool:
+        """Check if job has completed successfully"""
+        check = job.completion_check
+        check_type = check['type']
+
+        try:
+            if check_type == "directory_exists":
+                path = Path(self._resolve_template(check['path'], job.film))
+                if not path.exists():
+                    return False
+
+                min_files = check.get('min_files', 0)
+                if min_files > 0:
+                    file_count = len(list(path.iterdir()))
+                    return file_count >= min_files
+                return True
+
+            elif check_type == "file_exists":
+                path = Path(self._resolve_template(check['path'], job.film))
+                return path.exists()
+
+            elif check_type == "metadata_key":
+                path = Path(self._resolve_template(check['path'], job.film))
+                if not path.exists():
+                    return False
+
+                with open(path) as f:
+                    data = json.load(f)
+
+                key = check['key']
+                return key in data and data[key] > 0
+
+            else:
+                print(f"⚠️  Unknown completion check type: {check_type}")
+                return False
+
+        except Exception as e:
+            print(f"⚠️  Error checking completion for {job.name}/{job.film}: {e}")
+            return False
+
+    def _build_command(self, job: Job) -> str:
+        """Build command line for executing job"""
+        cmd_parts = ['conda', 'run', '-n', job.conda_env, 'python', job.script]
+
+        # Add positional arguments
+        if isinstance(job.args_template, str):
+            resolved = self._resolve_template(job.args_template, job.film)
+            cmd_parts.append(resolved)
+        elif isinstance(job.args_template, list):
+            for arg in job.args_template:
+                resolved = self._resolve_template(arg, job.film)
+                cmd_parts.append(resolved)
+
+        # Add named arguments
+        for key, value in job.args_named.items():
+            cmd_parts.append(key)
+            if value is not None:
+                resolved = self._resolve_template(str(value), job.film)
+                cmd_parts.append(resolved)
+
+        return ' '.join(cmd_parts)
+
+    def _execute_job_in_tmux(self, job: Job) -> bool:
+        """Execute job in tmux session"""
+        # Generate session name
+        session_name = f"batch_{job.name}_{job.film}"
+        job.tmux_session = session_name
+
+        # Create log file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_file = self.log_dir / f"{job.name}_{job.film}_{timestamp}.log"
+
+        # Build command
+        command = self._build_command(job)
+
+        print(f"\n{'='*70}")
+        print(f"🚀 Starting: {job.name} for {job.film}")
+        print(f"   Session: {session_name}")
+        print(f"   Command: {command}")
+        print(f"   Log: {log_file}")
+        print(f"{'='*70}\n")
+
+        if self.dry_run:
+            print("   [DRY RUN] Would create tmux session")
+            return True
+
+        # Kill existing session if exists
+        if self.tmux.session_exists(session_name):
+            self.tmux.kill_session(session_name)
+            time.sleep(1)
+
+        # Create tmux session
+        success = self.tmux.create_session(session_name, command, log_file)
+
+        if success:
+            job.status = "running"
+            job.start_time = datetime.now().isoformat()
+            job.attempts += 1
+
+            # Get PID
+            time.sleep(2)  # Wait for process to start
+            job.pid = self.tmux.get_session_pane_pid(session_name)
+
+            print(f"✅ Started in tmux session: {session_name} (PID: {job.pid})")
+            print(f"   Monitor: tmux attach -t {session_name}")
+            print(f"   View log: tail -f {log_file}")
+
+            self._save_progress()
+            return True
+        else:
+            job.status = "failed"
+            job.error_message = "Failed to create tmux session"
+            print(f"❌ Failed to start tmux session: {session_name}")
+            self._save_progress()
+            return False
+
+    def _dependency_met(self, job: Job) -> bool:
+        """Check if job dependencies are satisfied"""
+        if not job.depends_on:
+            return True
+
+        dep_jobs = [
+            j for j in self.jobs
+            if j.name == job.depends_on and j.film == job.film
+        ]
+
+        if not dep_jobs:
+            print(f"⚠️  Dependency not found: {job.depends_on} for {job.film}")
+            return False
+
+        dep_job = dep_jobs[0]
+        return dep_job.status == "completed"
+
+    def _save_progress(self):
+        """Save current job status"""
+        progress = {
+            "timestamp": datetime.now().isoformat(),
+            "config_file": str(self.config_path),
+            "jobs": [job.to_dict() for job in self.jobs]
+        }
+
+        with open(self.progress_file, 'w') as f:
+            json.dump(progress, f, indent=2)
+
+    def _load_progress(self):
+        """Load job status from progress file"""
+        with open(self.progress_file) as f:
+            progress = json.load(f)
+
+        for job_data in progress['jobs']:
+            job = Job(**{k: v for k, v in job_data.items() if k in Job.__annotations__})
+            self.jobs.append(job)
+
+        print(f"   Loaded {len(self.jobs)} jobs from progress file")
+
+    def _print_summary(self):
+        """Print current job status summary"""
+        if not self.jobs:
+            return
+
+        total = len(self.jobs)
+        completed = sum(1 for j in self.jobs if j.status == "completed")
+        running = sum(1 for j in self.jobs if j.status == "running")
+        failed = sum(1 for j in self.jobs if j.status == "failed")
+        pending = sum(1 for j in self.jobs if j.status == "pending")
+        skipped = sum(1 for j in self.jobs if j.status == "skipped")
+
+        print(f"\n{'='*70}")
+        print(f"📊 Job Queue Summary")
+        print(f"{'='*70}")
+        print(f"   Total jobs:     {total}")
+        print(f"   ✅ Completed:    {completed}")
+        print(f"   🔄 Running:      {running}")
+        print(f"   ⏸️  Pending:      {pending}")
+        print(f"   ❌ Failed:       {failed}")
+        print(f"   ⏭️  Skipped:      {skipped}")
+        print(f"{'='*70}\n")
+
+        # Show running jobs
+        if running > 0:
+            print("🔄 Currently running jobs:")
+            for job in self.jobs:
+                if job.status == "running":
+                    print(f"   - {job.name}/{job.film} (tmux: {job.tmux_session}, PID: {job.pid})")
+            print()
+
+    def run(self):
+        """Execute all jobs with tmux session management"""
+        if not self.jobs:
+            print("❌ No jobs to execute!")
+            return
+
+        print(f"🎬 Starting batch processing with tmux...")
+        if self.dry_run:
+            print("   [DRY RUN MODE - No actual execution]")
+        print()
+
+        check_interval = 30  # Check every 30 seconds
+        max_iterations = 10000
+
+        for iteration in range(max_iterations):
+            # Sync status with tmux/filesystem
+            self._update_running_jobs()
+
+            # Find next runnable job
+            runnable_jobs = [
+                j for j in self.jobs
+                if j.status in ["pending", "failed"]
+                and self._dependency_met(j)
+                and j.attempts < j.retry['max_attempts']
+            ]
+
+            if not runnable_jobs:
+                # Check if any jobs still running
+                running_jobs = [j for j in self.jobs if j.status == "running"]
+                if not running_jobs:
+                    break  # All done
+
+                print(f"⏳ Waiting for running jobs to complete... ({len(running_jobs)} running)")
+                time.sleep(check_interval)
+                continue
+
+            for job in runnable_jobs:
+                # Check if already completed
+                if self._check_completion(job):
+                    job.status = "skipped"
+                    print(f"⏭️  Skipping {job.name} for {job.film} (already completed)")
+                    self._save_progress()
+                    continue
+
+                # Execute in tmux
+                self._execute_job_in_tmux(job)
+                time.sleep(2)  # Brief pause between job launches
+
+            time.sleep(check_interval)
+
+        # Final summary
+        self._print_summary()
+
+        failed_jobs = [j for j in self.jobs if j.status == "failed"]
+        if failed_jobs:
+            print(f"\n⚠️  {len(failed_jobs)} jobs failed:")
+            for job in failed_jobs:
+                print(f"   - {job.name} for {job.film}: {job.error_message}")
+            print(f"\n💡 Check logs in {self.log_dir} for details")
+
+        completed = sum(1 for j in self.jobs if j.status in ["completed", "skipped"])
+        total = len(self.jobs)
+
+        if completed == total:
+            print(f"\n🎉 All {total} jobs completed successfully!")
+        else:
+            print(f"\n⚠️  {completed}/{total} jobs completed")
+
+    def _update_running_jobs(self):
+        """Update status of running jobs"""
+        for job in self.jobs:
+            if job.status == "running":
+                # Check if process still running
+                if job.pid and not self.tmux.is_process_running(job.pid):
+                    # Process finished
+                    if self._check_completion(job):
+                        job.status = "completed"
+                        job.end_time = datetime.now().isoformat()
+                        print(f"✅ Completed: {job.name} for {job.film}")
+
+                        # Clean up tmux session
+                        if job.tmux_session:
+                            self.tmux.kill_session(job.tmux_session)
+                    else:
+                        job.status = "failed"
+                        job.error_message = "Process exited without completing output"
+                        print(f"❌ Failed: {job.name} for {job.film}")
+
+                    self._save_progress()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generic Batch Processing Orchestrator with tmux",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Run batch processing with tmux sessions
+  python batch_processor_tmux.py --config configs/batch/sam2_lama.yaml
+
+  # Resume from previous run
+  python batch_processor_tmux.py --config configs/batch/sam2_lama.yaml --resume
+
+  # Dry run to test
+  python batch_processor_tmux.py --config configs/batch/sam2_lama.yaml --dry-run
+
+List tmux sessions:
+  tmux ls
+
+Attach to session:
+  tmux attach -t batch_sam2_segmentation_coco
+
+Detach from session:
+  Ctrl+B, then D
+        """
+    )
+
+    parser.add_argument('--config', type=str, required=True, help='Path to YAML configuration file')
+    parser.add_argument('--resume', action='store_true', default=True, help='Resume from previous progress')
+    parser.add_argument('--no-resume', action='store_false', dest='resume', help='Start fresh')
+    parser.add_argument('--dry-run', action='store_true', help='Test without executing')
+
+    args = parser.parse_args()
+
+    try:
+        processor = BatchProcessorTmux(
+            config_path=args.config,
+            resume=args.resume,
+            dry_run=args.dry_run
+        )
+        processor.run()
+
+    except Exception as e:
+        print(f"\n❌ Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
