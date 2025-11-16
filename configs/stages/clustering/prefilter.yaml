@@ -1,0 +1,113 @@
+# Instance Pre-Filtering Configuration
+# Intelligently filter out background objects before clustering
+
+prefilter:
+  # Filtering mode
+  mode: "balanced"  # Options: conservative, balanced, aggressive
+  
+  # Conservative: Keep more instances (lower false rejection)
+  # Balanced: Good trade-off (recommended)
+  # Aggressive: Keep only high-confidence characters (faster, may miss some)
+
+  # Enable CLIP semantic filtering (slower but more accurate)
+  enable_semantic: true  # Set false for faster processing
+
+  # Geometric filters
+  geometric:
+    min_size: 128  # Minimum width or height (pixels)
+    max_size: 1536  # Maximum width or height
+    min_aspect_ratio: 0.3  # Minimum width/height ratio
+    max_aspect_ratio: 3.0  # Maximum width/height ratio
+    edge_margin: 10  # Pixels from edge to be considered "edge position"
+
+  # Face detection filters
+  face:
+    min_confidence: 0.7  # Minimum face detection confidence (0.0-1.0)
+    detector: "retinaface"  # Options: retinaface, mtcnn, opencv
+    min_face_size: 64  # Minimum face size to detect
+
+  # Quality filters
+  quality:
+    min_sharpness: 50.0  # Laplacian variance threshold (higher = sharper)
+    max_truncation: 0.2  # Maximum allowed truncation ratio (0.0-1.0)
+    check_blur: true
+    check_truncation: true
+
+  # Semantic filters (CLIP-based)
+  semantic:
+    threshold: 0.6  # Character classification threshold (0.0-1.0)
+    prompts:
+      character:
+        - "a 3D animated character person"
+        - "a Pixar-style animated human character"
+        - "a cartoon character with a face"
+      background:
+        - "background object or scenery"
+        - "inanimate object or prop"
+        - "environment or landscape"
+
+  # Performance
+  device: "cuda"  # cuda or cpu
+  batch_size: 32  # For semantic filtering
+
+  # Output options
+  save_rejected: true  # Save rejected instances to separate folder
+  generate_report: true  # Generate detailed filtering report
+
+# Mode presets
+mode_presets:
+  conservative:
+    geometric:
+      min_size: 64
+      min_aspect_ratio: 0.2
+      max_aspect_ratio: 5.0
+    face:
+      min_confidence: 0.5
+    quality:
+      min_sharpness: 30.0
+      max_truncation: 0.3
+    semantic:
+      threshold: 0.5
+
+  balanced:
+    geometric:
+      min_size: 128
+      min_aspect_ratio: 0.3
+      max_aspect_ratio: 3.0
+    face:
+      min_confidence: 0.7
+    quality:
+      min_sharpness: 50.0
+      max_truncation: 0.2
+    semantic:
+      threshold: 0.6
+
+  aggressive:
+    geometric:
+      min_size: 192
+      min_aspect_ratio: 0.4
+      max_aspect_ratio: 2.5
+    face:
+      min_confidence: 0.8
+    quality:
+      min_sharpness: 80.0
+      max_truncation: 0.1
+    semantic:
+      threshold: 0.7
+
+# Expected filtering results (for reference)
+expected_results:
+  conservative:
+    acceptance_rate: "30-40%"
+    false_negative_rate: "low"
+    use_case: "First pass, want to keep most characters"
+  
+  balanced:
+    acceptance_rate: "15-25%"
+    false_negative_rate: "medium"
+    use_case: "General purpose, good trade-off"
+  
+  aggressive:
+    acceptance_rate: "8-15%"
+    false_negative_rate: "higher"
+    use_case: "High-quality characters only, speed priority"

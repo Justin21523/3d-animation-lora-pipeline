@@ -1,0 +1,118 @@
+name: Massimo
+full_name: Massimo Marcovaldo
+age: 40
+species: Human
+origin: Portorosso, Italy
+film: Luca (2021)
+role: Supporting character, Giulia's father, Alberto's adoptive father
+
+human_form:
+  form_type: human
+  description: Large, imposing one-armed fisherman with tattoos, intimidating but kind-hearted
+  appearance:
+    build: bulky, muscular, heavy-set
+    skin: tan skin
+    eyes: covered by bushy eyebrows
+    hair: short brown hair
+    clothing:
+    - light yellow short-sleeved sweater
+    - brown pants
+    distinctive_features:
+    - born without right arm (one-armed)
+    - sea monster tattoo on left arm
+    - thick bushy eyebrows covering eyes
+    - full mustache covering mouth
+    - intimidating presence
+    tags:
+    - one-armed
+    - muscular
+    - sea monster tattoo
+    - bushy eyebrows
+    - mustache
+    - yellow sweater
+    - fisherman
+
+sea_monster_form: null
+
+personality_traits:
+- Caring
+- Protective
+- Hardworking
+- Stoic
+- Intimidating (appearance)
+- Gentle (true nature)
+- Principled
+- Respected
+- Feared (by reputation)
+- Humorous (dry wit)
+- Devoted parent
+- Accepting
+- Fair
+- Compassionate
+
+personality_arc:
+  initial: intimidating fisherman, protective of Giulia
+  middle: growing fond of Luca and Alberto
+  final: accepts sea monsters, adopts Alberto as son
+
+motivations:
+- Protect and care for Giulia
+- Provide for family through fishing
+- Teach life skills to Alberto
+- Defend those he cares about
+- Accept others despite prejudice
+
+relationships:
+  Giulia Marcovaldo: Biological daughter, protective father
+  Alberto Scorfano: Adoptive son, mentors and cares for
+  Luca Paguro: Friend, protects from mob
+  Maria Marcovaldo: Ex-wife, separated
+  Machiavelli: Pet cat
+
+likes:
+- Fishing
+- Cooking pasta (trenette al pesto)
+- Teaching Alberto
+- Protecting his loved ones
+- His daughter Giulia
+- Hard work
+- Justice and fairness
+
+dislikes:
+- Threats to Giulia
+- Bullies
+- Injustice
+- Wasted catch
+- People harming innocents
+
+signature_motions:
+- Fishing with large nets on boat
+- Cooking trenette al pesto one-handed
+- Intimidating stare that stops mobs
+- Teaching Alberto fishing techniques
+- Eating pasta with bare hands (only when alone)
+- Protective stance in front of loved ones
+
+signature_phrases:
+- (Mostly silent, man of few words)
+- Dry joke about sea monster eating his arm
+
+identity_keywords:
+- massimo marcovaldo
+- one-armed fisherman
+- sea monster tattoo
+- bushy eyebrows
+- yellow sweater
+- giulias father
+- intimidating
+- protective
+- portorosso fisherman
+
+caption_examples:
+  default: "massimo marcovaldo, muscular one-armed man, bushy eyebrows, full mustache, sea monster tattoo on left arm, light yellow sweater, brown pants, intimidating presence, pixar 3d animation"
+  fishing: "massimo fishing on boat with large nets, one arm, muscular, sea monster tattoo visible, concentrated, morning ocean, pixar 3d style"
+  cooking: "massimo cooking trenette al pesto, stirring pot with one arm, warm kitchen, steam rising, cozy domestic scene, pixar 3d animation"
+  protective: "massimo standing protectively, intimidating glare, muscular silhouette, facing mob, heroic lighting, pixar 3d style"
+
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_massimo.md
+version: 1.0.0

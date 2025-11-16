@@ -1,0 +1,157 @@
+# ============================================================================
+# Dataset Configuration Template for LoRA Training
+# ============================================================================
+#
+# This file defines the training dataset structure, image processing settings,
+# and augmentation options. It can be used standalone or included via the
+# main training config's `dataset_config` parameter.
+#
+# ============================================================================
+
+# ============================================================================
+# General Settings
+# ============================================================================
+[general]
+# Shuffle caption tokens during training (recommended for better generalization)
+shuffle_caption = true
+
+# Keep first N tokens fixed (character name/trigger words)
+keep_tokens = 3
+
+# Secondary separator for complex captions (optional)
+# caption_separator = ","         # Primary separator (default: comma)
+# secondary_separator = ";"       # For hierarchical tags
+
+# Flip augmentation (DO NOT use for 3D characters with asymmetric features)
+# flip_aug = false
+
+# Color augmentation (DO NOT use for 3D - breaks PBR materials)
+# color_aug = false
+
+
+# ============================================================================
+# Dataset Definition
+# ============================================================================
+# You can define multiple datasets with different settings
+# Each [[datasets]] block is a separate dataset
+
+[[datasets]]
+# Image resolution
+resolution = 512                # Base resolution (512 for SD1.5, 1024 for SDXL)
+
+# Batch size per dataset
+batch_size = 10                 # Recommended: 8-10 for RTX 5080 16GB
+
+# Enable bucketing (variable aspect ratios)
+enable_bucket = true            # Recommended: true for natural images
+
+# Bucket resolution range
+min_bucket_reso = 384           # Minimum resolution
+max_bucket_reso = 768           # Maximum resolution
+bucket_reso_steps = 64          # Resolution step size
+bucket_no_upscale = false       # Don't upscale images smaller than min_bucket_reso
+
+# Network multiplier for this dataset (advanced)
+# network_multiplier = 1.0      # Adjust LoRA strength for this dataset
+
+  # ==========================================================================
+  # Subset 1: Main Character Images
+  # ==========================================================================
+  [[datasets.subsets]]
+  # Image directory (REQUIRED)
+  image_dir = "/mnt/data/ai_data/datasets/3d-anime/YOUR_PROJECT/curated_dataset/YOUR_CHARACTER/images"
+
+  # Number of times to repeat this subset per epoch
+  num_repeats = 1               # Increase if you have few images (<100)
+
+  # Class tokens (trigger words) - prepended to all captions
+  class_tokens = "YOUR_CHARACTER boy"  # e.g., "luca boy" or "elsa woman"
+
+  # Caption file extension
+  caption_extension = ".txt"    # Must match your caption files
+
+  # Caption processing
+  shuffle_caption = true        # Override general shuffle_caption
+  keep_tokens = 3               # Keep first 3 tokens (class_tokens + 1 tag)
+  caption_dropout_rate = 0.0    # Randomly drop caption (0.0-0.5)
+  caption_dropout_every_n_epochs = 0  # Drop captions every N epochs
+
+  # Tag dropout (for Danbooru-style tags)
+  caption_tag_dropout_rate = 0.0      # Randomly drop individual tags
+
+  # Caption prefix/suffix (applied to ALL captions)
+  # caption_prefix = "masterpiece, best quality, "
+  # caption_suffix = ", 3d render, pixar style"
+
+  # Token warmup (gradually increase caption length)
+  token_warmup_min = 1          # Start with this many tokens
+  token_warmup_step = 0         # Increase by 1 token every N steps (0=disabled)
+
+  # Face crop augmentation (for close-up variations)
+  # face_crop_aug_range = "2.0,4.0"   # Random crop with scale range
+
+  # Random crop instead of center crop
+  random_crop = false
+
+  # Alpha mask for transparency (for character cutouts)
+  alpha_mask = false            # Enable if images have alpha channel
+
+  # Regularization images flag
+  is_reg = false                # Set true for regularization subset
+
+
+  # ==========================================================================
+  # Subset 2: Regularization Images (Optional)
+  # ==========================================================================
+  # [[datasets.subsets]]
+  # image_dir = "/path/to/regularization/images"
+  # num_repeats = 1
+  # class_tokens = "boy"           # Generic class token (no character name)
+  # caption_extension = ".txt"
+  # is_reg = true                  # Mark as regularization
+
+
+# ============================================================================
+# Dataset 2: Different Resolution or Settings (Optional)
+# ============================================================================
+# [[datasets]]
+# resolution = 768
+# batch_size = 4
+# enable_bucket = true
+# min_bucket_reso = 512
+# max_bucket_reso = 1024
+# bucket_reso_steps = 128
+#
+#   [[datasets.subsets]]
+#   image_dir = "/path/to/high_res_images"
+#   num_repeats = 1
+#   class_tokens = "YOUR_CHARACTER closeup"
+#   caption_extension = ".txt"
+
+
+# ============================================================================
+# NOTES:
+# ============================================================================
+# 1. Image files and caption files must have matching names:
+#    - img001.png → img001.txt
+#    - char_pose1.jpg → char_pose1.txt
+#
+# 2. Caption format:
+#    - Simple: "luca boy, smiling, blue shirt, outdoors"
+#    - With prefix: class_tokens are automatically prepended
+#
+# 3. For 3D characters:
+#    - DO NOT use flip_aug or color_aug (breaks consistency)
+#    - Keep shuffle_caption=true for better generalization
+#    - keep_tokens=3 ensures character name stays at start
+#
+# 4. Batch size guidelines (RTX 5080 16GB):
+#    - resolution=512: batch_size=10
+#    - resolution=768: batch_size=4-6
+#    - resolution=1024 (SDXL): batch_size=2-4
+#
+# 5. num_repeats guidelines:
+#    - <100 images: num_repeats=2-3
+#    - 100-300 images: num_repeats=1-2
+#    - >300 images: num_repeats=1
+# ============================================================================

@@ -1,0 +1,86 @@
+# Clustering Configuration for Pixar's Luca
+# Created: 2025-11-09
+
+project: "luca"
+
+# Main characters from Luca
+character_names:
+  - name: "luca_human"
+    display_name: "Luca (Human Form)"
+    keywords: ["luca", "boy", "teal shirt", "brown hair", "teenager"]
+    forms:
+      - "human"
+
+  - name: "luca_seamonster"
+    display_name: "Luca (Sea Monster Form)"
+    keywords: ["luca", "blue scales", "sea monster", "fins"]
+    forms:
+      - "seamonster"
+
+  - name: "alberto_human"
+    display_name: "Alberto (Human Form)"
+    keywords: ["alberto", "boy", "green vest", "curly hair", "teenager"]
+    forms:
+      - "human"
+
+  - name: "alberto_seamonster"
+    display_name: "Alberto (Sea Monster Form)"
+    keywords: ["alberto", "green scales", "sea monster", "fins"]
+    forms:
+      - "seamonster"
+
+  - name: "giulia"
+    display_name: "Giulia"
+    keywords: ["giulia", "girl", "red hair", "freckles", "teenager"]
+    forms:
+      - "default"
+
+  - name: "massimo"
+    display_name: "Massimo (Giulia's Father)"
+    keywords: ["massimo", "man", "large", "beard", "adult"]
+    forms:
+      - "default"
+
+  - name: "ercole"
+    display_name: "Ercole (Bully)"
+    keywords: ["ercole", "boy", "bully", "teenager", "athletic"]
+    forms:
+      - "default"
+
+# Clustering parameters optimized for Luca
+clustering:
+  method: "hdbscan"
+  min_cluster_size: 12  # Good balance for Luca scenes
+  min_samples: 2
+  distance_threshold: 0.5
+  use_face_detection: true
+  use_body_verification: false
+
+# Quality filtering
+quality_filter:
+  enabled: true
+  min_face_size: 64
+  min_confidence: 0.9
+  max_blur: 80  # Luca has some DoF blur in scenes
+  min_sharpness: 30
+
+# Output settings
+output:
+  save_face_crops: true
+  save_visualization: false  # Disable to save disk space
+  create_thumbnails: true
+  thumbnail_size: 256
+
+# Pose subclustering (disabled by default)
+pose_subclustering:
+  enabled: false
+  min_cluster_size: 5
+  method: "umap_hdbscan"
+  n_pose_clusters: 4
+
+# Film-specific notes
+# ------------------
+# - Luca and Alberto each have TWO forms (human and sea monster)
+# - Main characters: Luca, Alberto, Giulia (teenagers) + Massimo (adult)
+# - Supporting: Ercole (bully), Daniela (Luca's mom), Lorenzo (Luca's dad)
+# - Sea monster forms have distinct visual features (scales, fins, colors)

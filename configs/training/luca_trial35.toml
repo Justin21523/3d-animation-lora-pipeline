@@ -1,0 +1,185 @@
+# =========================================
+# Luca Trial 3.5: Fusion Configuration
+#
+# Learning ability: Trial 4 level (high similarity)
+# Stability: Trial 3 level (no failures)
+# Dataset: 410 curated images (372 + 199 merged, manually reviewed)
+# =========================================
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "luca_trial35"
+output_dir = "/mnt/data/ai_data/models/lora/luca/trial35"
+
+# === Network Architecture: High Capacity (Trial 4 approach) ===
+network_module = "networks.lora"
+network_dim = 128                # High capacity for detailed character features
+network_alpha = 96               # Alpha/Dim = 0.75 (high but not extreme, balanced)
+network_dropout = 0.0            # No dropout for character memorization
+network_args = []
+
+[training]
+# === Dataset Configuration ===
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/luca_trial35_training"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+
+# === Learning Rate: Balanced (between Trial 3 and Trial 4) ===
+learning_rate = 0.00013          # 2x Trial 3, but 30% lower than Trial 4
+text_encoder_lr = 0.00008        # 60% of learning_rate (balanced text encoder training)
+unet_lr = 0.00013
+
+# === Optimizer: Stable Version (Trial 3 approach) ===
+optimizer_type = "AdamW"         # NOT AdamW8bit - full precision for stability
+optimizer_args = ["weight_decay=0.01"]
+
+# === Learning Rate Scheduler: Periodic Stability ===
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 3      # 3 restarts during training for periodic stabilization
+lr_warmup_steps = 200            # Sufficient warmup for stability
+
+# === Training Duration: Extended for Convergence ===
+max_train_epochs = 18            # 2.25x Trial 4 (8 epochs) - give high LR time to stabilize
+train_batch_size = 4
+gradient_accumulation_steps = 3  # Between Trial 3 (2) and Trial 4 (1) - gradual updates
+
+# === Stability Mechanisms (NEW) ===
+max_grad_norm = 0.8              # Prevent Trial 4's gradient explosion
+min_snr_gamma = 5.0              # SNR weighting for stable noise schedule
+noise_offset = 0.05              # Light noise offset for better lighting handling
+
+# === Checkpointing: Every 2 Epochs (User Requirement) ===
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# === Regularization: Minimal (Allow Character Memorization) ===
+# NO color_aug - preserve PBR materials
+# NO flip_aug - preserve asymmetric features
+# NO random_crop - preserve full character context
+color_aug = false
+flip_aug = false
+random_crop = false
+
+# === Performance Settings ===
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false                 # xformers not installed in kohya_ss environment
+sdpa = true                      # Use PyTorch native SDPA instead
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# === Reproducibility ===
+seed = 42
+clip_skip = 2
+
+# === Logging ===
+logging_dir = "/mnt/data/ai_data/models/lora/luca/trial35/logs"
+log_prefix = "luca_trial35"
+
+# === Validation: Sample Every 2 Epochs (User Requirement) ===
+sample_prompts = "/mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/prompts/luca/luca_validation_prompts.txt"
+sample_every_n_epochs = 2        # Generate test images every 2 epochs
+sample_sampler = "euler_a"
+sample_prompts_per_image = 1
+
+[metadata]
+# Character info
+character_name = "Luca Paguro (Human Form)"
+character_source = "Pixar's Luca (2021)"
+style = "3D Animation, Pixar Style"
+
+# Training notes
+notes = """
+Luca Trial 3.5: Fusion Configuration
+====================================
+
+Strategy: Combine Trial 3's stability with Trial 4's learning ability
+
+Dataset:
+- 410 curated images (manually reviewed)
+- Sources: 372 from curated_dataset_v2_smart + 199 TRUE LaMa AI inpainted
+- High-quality VLM captions
+- Mixed backgrounds: diverse scenes + AI-inpainted backgrounds
+
+Key Parameters (Fusion Approach):
+==================================
+
+Learning Rate (Balanced):
+- learning_rate: 0.00013 (2x Trial 3, but 30% lower than Trial 4)
+- text_encoder_lr: 0.00008 (60% ratio)
+- Strategy: Strong learning ability WITHOUT instability
+
+Network Architecture (High Capacity):
+- network_dim: 128 (Trial 4 value)
+- network_alpha: 96 (Alpha/Dim = 0.75, high but not extreme)
+- Strategy: Allow deep feature memorization for character identity
+
+Training Duration (Extended):
+- max_train_epochs: 18 (2.25x Trial 4's 8 epochs)
+- Strategy: Give high LR enough time to stabilize and converge
+
+Optimizer (Stable):
+- optimizer_type: AdamW (NOT AdamW8bit)
+- Strategy: Full precision for maximum stability
+
+Gradient Updates (Gradual):
+- gradient_accumulation_steps: 3 (between Trial 3's 2 and Trial 4's 1)
+- Strategy: Smooth gradient updates, reduce training shock
+
+Stability Mechanisms (NEW):
+- max_grad_norm: 0.8 (prevent gradient explosion)
+- min_snr_gamma: 5.0 (SNR weighting)
+- lr_scheduler: cosine_with_restarts with 3 cycles
+- Strategy: Multiple safety nets against training failures
+
+Expected Results:
+=================
+- Character similarity: ⭐⭐⭐⭐⭐ (Trial 4 level)
+- Training stability: ⭐⭐⭐⭐ (near Trial 3 level)
+- Black image rate: <5% (vs. Trial 4's 20-30%)
+- Usable rate: >85% (vs. Trial 4's ~50%)
+
+Comparison to Previous Attempts:
+=================================
+Trial 3 (Conservative):
+- ✅ Very stable (no failures)
+- ❌ Low character similarity
+- ❌ Over-regularized features
+
+Trial 4 (Aggressive):
+- ✅ Excellent character similarity
+- ❌ High failure rate (black images, distortions)
+- ❌ Only ~50% usable checkpoints
+
+Trial 3.5 (This Run):
+- ✅ Expected: High character similarity (like Trial 4)
+- ✅ Expected: Much better stability (closer to Trial 3)
+- ✅ Strategy: Best of both worlds
+
+Monitoring Plan:
+================
+- First 2 epochs: Check for black images (should be <5%)
+- Epochs 2-8: Monitor loss convergence (should stabilize around 0.12-0.15)
+- Epochs 8-18: Fine-tuning and stabilization
+- Every 2 epochs: Checkpoint + full validation prompts test
+
+Success Criteria:
+=================
+1. No catastrophic failures (black images <5%)
+2. Character similarity matches Trial 4 level
+3. Stable body proportions across checkpoints
+4. >85% of checkpoints are usable
+5. Loss converges to 0.10-0.13 by epoch 18
+
+Implementation Details:
+=======================
+- Training script: Kohya_ss sd-scripts train_network.py
+- Environment: kohya_ss conda environment
+- Base model: SD 1.5 (v1-5-pruned-emaonly.safetensors)
+- Validation: Comprehensive prompt testing every 2 epochs
+"""

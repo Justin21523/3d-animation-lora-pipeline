@@ -1,0 +1,22 @@
+# Dataset Configuration for Luca Human LoRA - SDXL Version
+# SDXL native resolution: 1024x1024
+# Only dataset-related settings (for --dataset_config)
+# Training parameters MUST be passed via CLI
+
+[[datasets]]
+resolution = 1024
+batch_size = 4  # Reduced from 8 due to higher VRAM usage
+enable_bucket = true
+min_bucket_reso = 768   # SDXL can handle larger range
+max_bucket_reso = 1536
+bucket_reso_steps = 64
+bucket_no_upscale = false
+
+  [[datasets.subsets]]
+  image_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/curated_dataset_v2_smart/luca_human/images"
+  num_repeats = 1
+  shuffle_caption = true
+  keep_tokens = 3
+  caption_extension = ".txt"
+  color_aug = false
+  flip_aug = false

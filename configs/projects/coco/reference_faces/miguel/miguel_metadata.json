@@ -1,0 +1,10 @@
+{
+  "character": "miguel",
+  "project": "coco",
+  "num_references": 1,
+  "embedding_shape": [
+    1,
+    512
+  ],
+  "model": "buffalo_l"
+}

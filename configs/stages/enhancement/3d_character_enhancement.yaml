@@ -1,0 +1,139 @@
+# 3D Character Enhancement Configuration
+# Optimized for Pixar-style 3D animated characters
+# Based on 2024-2025 SOTA models
+
+enhancement:
+  # Primary upscaling model
+  upscale:
+    enabled: true
+    model: "realesrgan"  # Options: realesrgan, magnific_ai, topaz
+    version: "RealESRGAN_x4plus_anime_6B"  # Best for animated content
+    scale: 2  # 2x or 4x
+
+    # Face enhancement (critical for 3D characters)
+    face_enhance: true
+    face_model: "codeformer"  # Options: codeformer, gfpgan, gpen
+    face_upsample: true
+
+    # 3D-specific settings
+    preserve_edges: true  # Maintain clean anti-aliased edges
+    preserve_materials: true  # Don't over-sharpen PBR materials
+
+  # Contrast and color enhancement
+  contrast:
+    enabled: true
+    method: "adaptive_histogram"  # Options: adaptive_histogram, clahe, unsharp_mask
+
+    # Adaptive parameters for 3D
+    clip_limit: 2.0  # Lower than 2D anime (preserve smooth shading)
+    tile_grid_size: [8, 8]
+
+    # Contrast boost
+    contrast_factor: 1.15  # Subtle increase for 3D clarity
+    brightness_adjust: 1.05
+    saturation_boost: 1.1  # Enhance color vibrancy
+
+  # Sharpness enhancement
+  sharpness:
+    enabled: true
+    method: "unsharp_mask"  # Gentle sharpening for 3D
+
+    # Parameters tuned for 3D animation
+    radius: 1.0  # Small radius (avoid over-sharpening)
+    amount: 0.5  # Moderate sharpening
+    threshold: 3  # Avoid sharpening noise
+
+  # Denoising (Pixar uses CNN-based denoising)
+  denoise:
+    enabled: true
+    model: "cnn_denoise"  # Similar to Pixar's approach
+    strength: 0.3  # Light denoising for 3D renders
+    preserve_detail: true
+
+  # Color grading (optional, for consistency)
+  color_grading:
+    enabled: false  # Only if needed
+    white_balance: "auto"
+    tone_curve: "s_curve"  # Enhance mid-tones
+
+  # Quality control
+  quality:
+    min_resolution: [512, 512]
+    max_resolution: [2048, 2048]  # Avoid excessive upscaling
+
+    # Skip enhancement if already high quality
+    skip_if_sharp: true
+    sharpness_threshold: 0.85
+
+    # Validation
+    verify_improvement: true
+    compare_metric: "ssim"  # Structural similarity
+    min_improvement: 0.05  # Must improve by 5%
+
+# Model-specific configurations
+
+realesrgan:
+  model_path: "/path/to/models/RealESRGAN_x4plus_anime_6B.pth"
+  device: "cuda"
+  tile_size: 512  # For large images
+  tile_pad: 10
+  pre_pad: 0
+  half_precision: true  # FP16 for speed
+
+codeformer:
+  model_path: "/path/to/models/codeformer.pth"
+  device: "cuda"
+  upscale: 2
+  detection_model: "retinaface"  # Face detection
+  fidelity_weight: 0.7  # 0=quality, 1=fidelity (0.7 balanced)
+
+gfpgan:
+  model_path: "/path/to/models/GFPGANv1.4.pth"
+  device: "cuda"
+  upscale: 2
+  arch: "clean"
+  channel_multiplier: 2
+  bg_upsampler: "realesrgan"  # Use RealESRGAN for background
+
+# Pipeline integration
+pipeline:
+  # When to apply enhancement
+  apply_after: "segmentation"  # After character extraction
+  apply_before: "clustering"  # Before feature extraction
+
+  # Batch processing
+  batch_size: 4
+  num_workers: 2
+
+  # Output
+  save_original: false  # Save originals for comparison
+  save_comparison: false  # Save side-by-side comparison
+  output_format: "png"  # png for quality, jpg for space
+  compression_quality: 95
+
+# Character-specific overrides (optional)
+character_overrides:
+  enable: false
+
+  # Example: different settings per character
+  # luca_human:
+  #   contrast_factor: 1.2
+  #   face_enhance: true
+  #
+  # alberto_human:
+  #   contrast_factor: 1.15
+  #   sharpness_amount: 0.6
+
+# Performance
+performance:
+  cache_models: true  # Keep models in memory
+  mixed_precision: true  # Use FP16
+  optimize_memory: true  # For limited VRAM
+  benchmark_mode: false  # Test speed vs quality
+
+# Logging
+logging:
+  enabled: true
+  log_level: "INFO"
+  save_metrics: true  # Save quality metrics
+  metrics_file: "enhancement_metrics.json"

@@ -1,0 +1,152 @@
+# Project Configuration Template
+# Copy this file to {film_name}.yaml and customize for your film
+# This is the master configuration that can be referenced by all pipeline stages
+
+project:
+  name: "film_name"  # e.g., "toy_story", "finding_nemo", "monsters_inc"
+  studio: "Pixar"  # Pixar, DreamWorks, Disney 3D, etc.
+  year: 2021  # Release year
+  runtime: 95  # Runtime in minutes
+  style: "3d_animation"
+  resolution: "1080p"  # Source video resolution
+
+# Base paths for all pipeline data
+paths:
+  base_dir: "/mnt/data/ai_data/datasets/3d-anime/film_name"
+  frames: "${base_dir}/frames"
+  instances: "${base_dir}/instances"
+  instances_inpainted: "${base_dir}/instances_inpainted"
+  clustered: "${base_dir}/clustered"
+  clustered_refined: "${base_dir}/clustered_refined"
+  pose_subclusters: "${base_dir}/pose_subclusters"
+  training_data: "/mnt/data/ai_data/training_data/3d_characters/film_name"
+
+# Main characters (high-level list)
+characters:
+  main:
+    - "character1"
+    - "character2"
+    - "character3"
+  supporting:
+    - "character4"
+    - "character5"
+  # Optional: character forms/variants
+  forms:
+    character1:
+      - "default"
+    character2:
+      - "form1"
+      - "form2"
+
+# Frame extraction settings
+frame_extraction:
+  mode: "scene"  # scene, interval, or hybrid
+  scene_threshold: 30.0  # Scene change threshold (3D default: 30.0)
+  frames_per_scene: 10  # Frames to extract per scene
+  min_scene_length: 15  # Minimum frames for a valid scene
+  quality: "high"  # high, medium, or low
+
+# Instance segmentation (SAM2)
+segmentation:
+  model: "sam2_hiera_large"  # sam2_hiera_large, base, small, tiny
+  min_mask_size: 16384  # Minimum instance area (128x128 = 16384)
+  max_instances: 15  # Maximum instances per frame
+  points_per_side: 20  # SAM2 grid points (balanced: 20)
+  device: "cuda"
+
+# Inpainting settings
+inpainting:
+  enabled: true  # Set to false if not needed
+  default_method: "lama"  # cv, lama, or sd
+  occlusion_threshold: 0.15  # 3D default: 0.15
+  auto_detect_character: true  # Use character-specific prompts
+  config_file: "configs/inpainting/film_name_prompts.json"
+
+# Identity clustering settings
+clustering:
+  method: "hdbscan"
+  min_cluster_size: 12  # 3D default: 10-15
+  min_samples: 2  # 3D default: 2
+  use_face_detection: true
+  config_file: "configs/clustering/film_name_config.yaml"
+
+# Pose subclustering (optional)
+pose_subclustering:
+  enabled: false
+  min_cluster_size: 5
+  method: "umap_hdbscan"
+
+# Caption generation
+captioning:
+  model: "qwen2_vl"  # qwen2_vl, internvl2, blip2
+  prefix: "a 3d animated character, pixar style, smooth shading, studio lighting"
+  style_tags:
+    - "pixar animation"
+    - "3d rendering"
+    - "smooth shading"
+    - "pbr materials"
+  length_range: [40, 77]  # Token length for SD compatibility
+
+# LoRA training settings
+lora_training:
+  base_model: "runwayml/stable-diffusion-v1-5"
+  target_size: 400  # Target dataset size per character
+  network_dim: 32
+  network_alpha: 16
+  learning_rate: 1e-4
+  epochs: 10
+  batch_size: 4
+  # 3D-specific: avoid augmentations that break materials
+  disable_color_jitter: true
+  disable_horizontal_flip: true
+
+# Quality thresholds (3D-specific)
+quality:
+  alpha_threshold: 0.15  # Soft anti-aliased edges
+  blur_threshold: 80  # Allow DoF blur
+  min_face_size: 64  # Minimum face detection size
+  min_sharpness: 30
+
+# Processing parameters
+processing:
+  device: "cuda"
+  gpu_id: 0
+  batch_size: 8  # Adjust based on VRAM
+  num_workers: 4
+  cache_clear_interval: 10  # Clear GPU cache every N frames
+
+# Output settings
+output:
+  save_metadata: true
+  save_visualization: false  # Can be large
+  save_face_crops: true
+  create_thumbnails: true
+  compression_quality: 95  # JPEG quality for thumbnails
+
+# Notes and metadata
+notes:
+  description: "Brief description of the film and main characters"
+  special_considerations: []
+  # Example:
+  # - "Character X has multiple forms"
+  # - "Heavy use of depth-of-field in underwater scenes"
+  # - "Characters frequently overlap in group scenes"
+
+# Pipeline execution order
+pipeline_stages:
+  - name: "frame_extraction"
+    enabled: true
+  - name: "instance_segmentation"
+    enabled: true
+  - name: "inpainting"
+    enabled: true
+  - name: "identity_clustering"
+    enabled: true
+  - name: "interactive_review"
+    enabled: true
+  - name: "pose_subclustering"
+    enabled: false
+  - name: "caption_generation"
+    enabled: true
+  - name: "lora_training"
+    enabled: true

@@ -1,0 +1,147 @@
+# SDXL LoRA Training Configuration - 16GB VRAM Optimized
+# Based on Trial 3.5 parameters with SDXL-specific optimizations
+# ==============================================================================
+
+[model]
+# Pretrained model - SDXL Base 1.0 (standard SDXL training)
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+# Alternative: disneyPixarCartoon_v10.safetensors (Pixar style, but SD1.5 not SDXL)
+
+# Output settings
+output_dir = "/mnt/data/ai_data/models/lora/luca/sdxl_trial1"
+output_name = "luca_sdxl"
+save_model_as = "safetensors"
+
+# LoRA network configuration
+network_module = "networks.lora"
+network_dim = 128                    # Keep same as Trial 3.5
+network_alpha = 96                   # Keep same as Trial 3.5
+network_args = []
+
+# ==============================================================================
+# 16GB VRAM OPTIMIZATION CORE SETTINGS
+# ==============================================================================
+
+[training]
+# 8-bit AdamW optimizer (CRITICAL for 16GB)
+optimizer_type = "AdamW8bit"         # ⭐ Saves ~40% VRAM
+optimizer_args = []
+
+# Learning rates (adjusted for SDXL)
+learning_rate = 0.0001               # Slightly lower than SD1.5
+text_encoder_lr = 0.00006            # Lower for stability
+unet_lr = 0.0001                     # Explicit UNet LR
+
+# Batch settings (optimized for 16GB)
+train_batch_size = 1                 # ⭐ Small batch for VRAM
+gradient_accumulation_steps = 8      # ⭐ Maintain effective batch of 8
+
+# Mixed precision (CRITICAL for 16GB)
+mixed_precision = "bf16"             # ⭐ Use bf16 for better stability
+full_bf16 = true                     # ⭐ Full bf16 mode
+
+# Gradient checkpointing (CRITICAL for 16GB)
+gradient_checkpointing = true        # ⭐ Saves ~30% VRAM at cost of 15% speed
+
+# Memory optimization
+max_grad_norm = 1.0                  # Gradient clipping
+cache_latents = true                 # ⭐ Cache VAE latents to save VRAM
+cache_latents_to_disk = false        # Keep in RAM for speed
+vae_batch_size = 1                   # Process VAE one at a time
+
+# Training duration
+max_train_epochs = 20                # Slightly more than SD1.5
+save_every_n_epochs = 2
+save_precision = "bf16"
+
+# ==============================================================================
+# SDXL-SPECIFIC SETTINGS
+# ==============================================================================
+
+# Resolution and bucketing
+resolution = "1024,1024"             # SDXL native resolution
+enable_bucket = true                 # ⭐ Multi-aspect ratio support
+min_bucket_reso = 640                # Minimum resolution
+max_bucket_reso = 1536               # Maximum resolution
+bucket_reso_steps = 64               # Bucket step size
+bucket_no_upscale = true             # Don't upscale images
+
+# SDXL dual text encoders
+train_text_encoder = true            # Train both text encoders
+# Note: SDXL has two text encoders (CLIP-L and OpenCLIP-G)
+
+# VAE settings
+# vae = "/mnt/data/ai_data/models/vae/sdxl_vae.safetensors"  # Optional: use fixed VAE
+# Using built-in VAE from DisneyPixarCartoon model
+
+# ==============================================================================
+# ADVANCED OPTIMIZATIONS (Optional but recommended)
+# ==============================================================================
+
+# Noise offset for better contrast
+noise_offset = 0.05                  # Helps with dark/light scenes
+noise_offset_type = "Original"
+
+# Min-SNR weighting (from Trial 3.5)
+min_snr_gamma = 5.0                  # Improves training stability
+
+# AdamW settings
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 3          # Cosine restarts
+lr_warmup_steps = 100                # Warmup for stability
+
+# Regularization
+prior_loss_weight = 1.0
+max_token_length = 225               # SDXL supports longer prompts
+
+# ==============================================================================
+# VALIDATION SAMPLING
+# ==============================================================================
+
+sample_every_n_epochs = 2
+sample_prompts = "/mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/prompts/luca/luca_validation_prompts.txt"
+sample_sampler = "euler_a"
+
+# ==============================================================================
+# DATASET CONFIGURATION
+# ==============================================================================
+
+[dataset]
+# Dataset directory (Kohya format: {repeat}_{name}/)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/luca_sdxl_training"
+
+# Image processing
+color_aug = false                    # No color jitter for 3D
+flip_aug = false                     # No flip for asymmetric characters
+random_crop = false                  # Keep original framing
+shuffle_caption = true               # Shuffle tags
+keep_tokens = 1                      # Keep first token (character name)
+
+# Caption settings
+caption_extension = ".txt"
+caption_dropout_rate = 0.0           # Keep all captions
+caption_dropout_every_n_epochs = 0
+caption_tag_dropout_rate = 0.0
+
+# ==============================================================================
+# LOGGING
+# ==============================================================================
+
+[logging]
+logging_dir = "/mnt/data/ai_data/models/lora/luca/sdxl_trial1/logs"
+log_with = "tensorboard"
+log_prefix = "luca_sdxl"
+
+# ==============================================================================
+# HARDWARE SETTINGS
+# ==============================================================================
+
+# Multi-GPU settings (leave as-is for single GPU)
+multi_gpu = false
+
+# Dataloader
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 2        # Reduce for VRAM
+
+# Precision
+lowram = false                       # Set true if system RAM < 32GB

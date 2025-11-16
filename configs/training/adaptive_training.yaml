@@ -1,0 +1,193 @@
+# Adaptive LoRA Training Configuration
+# 自適應 LoRA 訓練配置 - 時間驅動、智能化調整
+
+# ============================================================================
+# TIME BUDGET (時間預算)
+# ============================================================================
+time_budget:
+  total_hours: 14.0          # 總訓練時間（小時）
+  min_time_per_iteration: 0.4  # 最少每次迭代預留時間（小時）~ 24 分鐘
+  time_buffer: 0.5           # 時間緩衝（小時），用於評估和保存
+
+# ============================================================================
+# ITERATION STRATEGY (迭代策略)
+# ============================================================================
+iteration_strategy:
+  mode: "time_driven"        # 模式：time_driven（時間驅動）或 fixed_count（固定次數）
+  max_iterations: 999        # 最大迭代次數（時間驅動模式下作為上限）
+
+  # 早停條件
+  early_stopping:
+    enabled: true
+    patience: 3              # 連續 N 次沒改善則停止
+    min_improvement: 0.02    # 最小改善幅度（composite score）
+
+# ============================================================================
+# ADAPTIVE PARAMETERS (自適應參數調整)
+# ============================================================================
+adaptive_params:
+  enabled: true              # 是否啟用自適應調整
+
+  # 學習率調整策略
+  learning_rate:
+    initial: 0.00015         # 初始學習率（根據 Luca 診斷提高）
+    min: 0.00005            # 最低學習率
+    max: 0.0003             # 最高學習率
+    adjustment_factor: 1.2   # 調整倍數
+
+  # Epochs 調整策略
+  epochs:
+    initial: 20              # 初始 epochs（根據診斷增加）
+    min: 12                 # 最少 epochs
+    max: 30                 # 最多 epochs
+
+    # 根據剩餘時間自適應
+    adaptive_scaling:
+      enabled: true
+      # 剩餘時間充足時增加 epochs
+      time_rich_threshold: 6.0    # 剩餘 > 6 小時視為充足
+      time_rich_epochs: 25        # 時間充足時使用的 epochs
+      # 剩餘時間緊張時減少 epochs
+      time_tight_threshold: 2.0   # 剩餘 < 2 小時視為緊張
+      time_tight_epochs: 15       # 時間緊張時使用的 epochs
+
+  # Network capacity 調整
+  network:
+    initial_dim: 96          # 初始 network_dim（根據診斷增加）
+    min_dim: 64
+    max_dim: 128
+    alpha_ratio: 0.5         # alpha = dim * ratio
+
+  # Batch size 調整
+  batch:
+    initial_size: 8          # 初始 batch size（因 dim 增加而降低）
+    min_size: 4
+    max_size: 12
+    gradient_accumulation: 3  # 梯度累積步數
+
+# ============================================================================
+# OPTIMIZATION STRATEGY (優化策略)
+# ============================================================================
+optimization_strategy:
+  # 根據評估指標調整參數
+  metric_thresholds:
+    # Prompt alignment (InternVL/CLIP score)
+    prompt_alignment:
+      poor: 0.25             # < 0.25 視為差
+      good: 0.30             # > 0.30 視為好
+      action_if_poor: "increase_epochs_or_lr"
+
+    # Character consistency
+    consistency:
+      poor: 0.70
+      good: 0.85
+      action_if_poor: "increase_network_capacity"
+
+    # Diversity
+    diversity:
+      poor: 0.12
+      good: 0.20
+      action_if_poor: "reduce_epochs_or_lr"
+
+    # Composite score (overall)
+    composite:
+      poor: 0.50
+      good: 0.70
+      stagnation_threshold: 0.95  # 連續得分 < 前次 95% 視為退步
+
+  # 參數調整規則
+  adjustment_rules:
+    # 當 prompt alignment 差時
+    low_prompt_alignment:
+      - increase_epochs: 3
+      - or_increase_lr: 1.2
+
+    # 當 consistency 差時
+    low_consistency:
+      - increase_network_dim: 16
+      - increase_epochs: 2
+
+    # 當 diversity 差（過擬合）時
+    low_diversity:
+      - decrease_epochs: 3
+      - decrease_lr: 0.8
+
+    # 當效果退步時
+    performance_drop:
+      - revert_to_best_params: true
+
+# ============================================================================
+# CAPTION OPTIMIZATION (Caption 優化)
+# ============================================================================
+caption_optimization:
+  enabled: true
+  optimize_before_iteration_2: true  # 第 2 次迭代前自動優化
+
+  # Luca 專用設置
+  luca_settings:
+    age_prefix: "12-year-old boy, teenage character, slim youthful build, "
+    emphasize_age: true
+    keep_tokens: 6           # 增加 keep_tokens 確保年齡描述不被打亂
+
+# ============================================================================
+# MONITORING & LOGGING (監控與日誌)
+# ============================================================================
+monitoring:
+  checkpoint_save_interval: 4     # 每 N epochs 保存一次（20 epochs → 5 個 checkpoints）
+
+  # 進度報告
+  progress_report:
+    enabled: true
+    interval_minutes: 15     # 每 15 分鐘報告一次進度
+
+  # 自動生成測試圖片
+  test_images:
+    enabled: true
+    per_checkpoint: 4        # 每個 checkpoint 生成 4 張測試圖
+    prompts_file: "prompts/luca_test_prompts.json"
+
+# ============================================================================
+# RESOURCE MANAGEMENT (資源管理)
+# ============================================================================
+resources:
+  gpu_id: 0
+  max_vram_usage: 15.8       # GB（RTX 5080 16GB 預留一些空間）
+
+  # 如果 VRAM 不足，自動降低 batch size
+  auto_reduce_batch:
+    enabled: true
+    vram_threshold: 15.5     # GB
+    reduction_step: 2        # 每次減少 2
+
+# ============================================================================
+# EMERGENCY CONTROLS (緊急控制)
+# ============================================================================
+emergency:
+  # 如果訓練時間超標
+  max_single_iteration_hours: 1.5   # 單次迭代最多 1.5 小時
+  force_stop_if_overtime: true
+
+  # 如果連續失敗
+  max_consecutive_failures: 2
+  fallback_to_safe_params: true     # 失敗時回退到安全參數
+
+  safe_params:
+    learning_rate: 0.0001
+    max_train_epochs: 15
+    network_dim: 64
+    batch_size: 10
+
+# ============================================================================
+# OUTPUT STRUCTURE (輸出結構)
+# ============================================================================
+output:
+  save_all_checkpoints: true
+  save_best_only: false      # false = 保留所有，true = 只保留最佳
+
+  # 迭代歷史記錄
+  save_iteration_history: true
+  history_file: "iteration_history.json"
+
+  # 可視化
+  generate_progress_plots: true
+  plot_metrics: ["composite_score", "prompt_alignment", "consistency"]

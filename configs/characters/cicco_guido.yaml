@@ -1,0 +1,102 @@
+name: Ciccio and Guido
+full_name: Ciccio and Guido
+age: 16
+species: Human
+origin: Portorosso, Italy
+film: Luca (2021)
+role: Secondary antagonists turned supporting characters, Ercole's henchmen
+
+human_form:
+  form_type: human
+  description: Two boys who serve as Ercole's lackeys - Ciccio is chubby with blond curly hair, Guido is slim with brown combover
+  appearance:
+    build: Ciccio - chubby; Guido - slim
+    skin: Ciccio - fair; Guido - tan
+    eyes: both brown eyes
+    hair: Ciccio - curly blond; Guido - brown combover
+    clothing:
+    - "Ciccio: basil green and brownish-yellow striped shirt with 8 on back, maroon shorts, light brown sandals"
+    - "Guido: red-and-orange striped T-shirt, brown shorts with black belt, light blue sneakers"
+    distinctive_features:
+    - Ciccio - chubby build, blond curly hair
+    - Guido - slim build, brown combover
+    - Always together as pair
+    - Obedient followers (until rebellion)
+    tags:
+    - lackeys
+    - henchmen
+    - ciccio chubby blond
+    - guido slim brown hair
+    - striped shirts
+    - followers
+
+sea_monster_form: null
+
+personality_traits:
+- Cooperative
+- Obedient (initially)
+- Loyal to Ercole (initially)
+- Naive
+- Ciccio - more devoted, eager
+- Guido - slightly more aware, hesitant
+- Eventually courageous (rebellion)
+- Fed up with abuse
+- Sense of humor (Guido)
+- Reluctant to harm each other
+
+personality_arc:
+  initial: blindly obedient to Ercole, willing to bully others
+  middle: growing uncomfortable with Ercole's cruelty
+  final: rebel against Ercole, throw him in fountain
+
+motivations:
+- Please Ercole (initially)
+- Avoid Ercole's wrath
+- Eventually stand up for themselves
+- Break free from abuse
+
+relationships:
+  Ercole Visconti: Former boss, eventually rebel against
+  Each other: Close partnership, reluctant to harm each other
+  Luca and Alberto: Former targets, neutral after rebellion
+
+likes:
+- Working together as pair
+- Pleasing Ercole (initially)
+- Standing up for themselves (finally)
+- Freedom from abuse
+
+dislikes:
+- Ercole's abuse and insults
+- Being called idiots
+- Being forced to harm each other
+- Being used
+
+signature_motions:
+- Carrying Ercole's sandwich
+- Protecting Ercole's Vespa
+- Following Ercole with harpoons
+- Slapping each other (forced by Ercole)
+- Rebellion - throwing Ercole into fountain
+
+signature_phrases:
+- (Mostly follow Ercole's orders)
+- Final rebellion act (throwing Ercole)
+
+identity_keywords:
+- ciccio and guido
+- ercoles henchmen
+- lackeys
+- ciccio chubby blond
+- guido slim combover
+- followers
+- rebels
+- portorosso boys
+
+caption_examples:
+  default: "ciccio and guido, ercole's lackeys, ciccio chubby with curly blond hair in striped green-yellow shirt, guido slim with brown combover in red-orange striped shirt, obedient expressions, pixar 3d animation"
+  carrying_sandwich: "ciccio and guido carrying large sandwich together for ercole, cooperative, following boss, portorosso street, pixar 3d style"
+  rebellion: "ciccio and guido throwing ercole into fountain, fed up expressions, rebellion moment, dramatic action, pixar 3d animation, triumphant"
+
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_cicco_guido.md
+version: 1.0.0

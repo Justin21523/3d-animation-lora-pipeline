@@ -1,0 +1,200 @@
+# ============================================================================
+# LoRA Training Configuration Template for 3D Character
+# Compatible with Kohya SS sd-scripts
+# ============================================================================
+#
+# Usage:
+#   1. Copy this template: cp configs/templates/lora_training_template.toml configs/my_character.toml
+#   2. Update character-specific paths and parameters
+#   3. Run: conda run -n kohya_ss python /path/to/sd-scripts/train_network.py \
+#           --config_file configs/my_character.toml
+#
+# ============================================================================
+
+# ============================================================================
+# [REQUIRED] Model and Output Configuration
+# ============================================================================
+[model_arguments]
+# Base Stable Diffusion model path
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/tool-caches/huggingface/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14"
+
+# Output directory for trained LoRA weights
+output_dir = "/mnt/data/ai_data/models/lora/YOUR_CHARACTER/training_run_01"
+
+# Output filename (without extension)
+output_name = "YOUR_CHARACTER_lora_v1"
+
+# Model save format
+save_model_as = "safetensors"  # Options: safetensors, ckpt, pt
+
+# Save precision
+save_precision = "fp16"  # Options: fp32, fp16, bf16
+
+
+# ============================================================================
+# [REQUIRED] Training Configuration
+# ============================================================================
+[training_arguments]
+# Learning rates
+learning_rate = 0.0001          # Base learning rate
+unet_lr = 0.0001                # U-Net learning rate
+text_encoder_lr = 0.00005       # Text encoder learning rate (usually half of unet_lr)
+
+# LR Scheduler
+lr_scheduler = "cosine_with_restarts"  # Options: linear, cosine, cosine_with_restarts, polynomial, constant, constant_with_warmup
+lr_warmup_steps = 200                   # Number of warmup steps
+lr_scheduler_num_cycles = 3             # For cosine_with_restarts
+
+# Optimizer - CHOOSE ONE:
+# Standard AdamW (works on all GPUs, lower memory)
+optimizer_type = "AdamW"
+
+# 8-bit AdamW (saves memory, requires compatible bitsandbytes)
+# optimizer_type = "AdamW8bit"
+
+# Alternative optimizers (optional)
+# optimizer_type = "Prodigy"      # Auto-adjusting LR
+# optimizer_type = "Lion"         # Memory efficient
+# optimizer_type = "DAdaptation"  # Auto-tuning
+
+optimizer_args = []  # Additional optimizer arguments
+
+# Training epochs
+max_train_epochs = 15           # Total number of epochs
+save_every_n_epochs = 3         # Save checkpoint every N epochs
+
+# Mixed precision training
+mixed_precision = "fp16"        # Options: no, fp16, bf16
+
+# Gradient settings
+gradient_checkpointing = true   # Enable to save VRAM
+gradient_accumulation_steps = 2 # Effective batch size = batch_size * this
+
+# Random seed for reproducibility
+seed = 42
+
+
+# ============================================================================
+# [REQUIRED] Network (LoRA) Configuration
+# ============================================================================
+[network_arguments]
+# LoRA module
+network_module = "networks.lora"
+
+# LoRA rank (dimension) - higher = more capacity but slower and more prone to overfit
+network_dim = 64                # Options: 4, 8, 16, 32, 64, 128, 256
+                                # Recommended: 32-64 for characters, 128+ for styles
+
+# LoRA alpha - usually rank/2 or equal to rank
+network_alpha = 32              # Recommended: network_dim / 2
+
+# Target modules (optional - defaults to all compatible layers)
+# network_train_unet_only = false
+# network_train_text_encoder_only = false
+
+
+# ============================================================================
+# [REQUIRED] Dataset Configuration
+# ============================================================================
+[dataset_arguments]
+# If using inline dataset config (RECOMMENDED for simple setups):
+# Comment out dataset_config and use this section instead
+
+# Path to separate dataset config file (for complex multi-dataset setups)
+dataset_config = "/path/to/dataset_config.toml"
+
+# Alternatively, define dataset inline (see dataset_config_template.toml)
+
+
+# ============================================================================
+# Data Loading Configuration
+# ============================================================================
+[dataloader_arguments]
+# Number of CPU workers for data loading
+max_data_loader_n_workers = 8
+
+# Keep data loader workers alive between epochs
+persistent_data_loader_workers = true
+
+# Image processing
+# resolution = 512              # Set in dataset config instead
+# enable_bucket = true          # Set in dataset config instead
+# min_bucket_reso = 384         # Set in dataset config instead
+# max_bucket_reso = 768         # Set in dataset config instead
+# bucket_reso_steps = 64        # Set in dataset config instead
+# bucket_no_upscale = false     # Set in dataset config instead
+
+
+# ============================================================================
+# Caching Configuration (Recommended for faster training)
+# ============================================================================
+[caching_arguments]
+# Cache latents (VAE outputs) to speed up training
+cache_latents = true
+cache_latents_to_disk = true    # Save VRAM by caching to disk
+
+# Cache text encoder outputs
+# cache_text_encoder_outputs = true      # For SDXL
+# cache_text_encoder_outputs_to_disk = true
+
+
+# ============================================================================
+# Logging and Monitoring
+# ============================================================================
+[logging_arguments]
+# TensorBoard logging directory
+logging_dir = "/mnt/data/ai_data/models/lora/YOUR_CHARACTER/training_run_01/logs"
+
+# Log prefix for TensorBoard
+log_prefix = "YOUR_CHARACTER_v1"
+
+# Log every N steps (optional)
+# log_with = "tensorboard"      # Options: tensorboard, wandb
+# logging_steps = 10
+
+
+# ============================================================================
+# Additional Training Options
+# ============================================================================
+[advanced_arguments]
+# CLIP skip (how many layers to skip in CLIP text encoder)
+clip_skip = 2                   # Common for anime/3D models: 2
+
+# Noise offset for better dark/light generation
+noise_offset = 0                # Try 0.05-0.1 if images are too bright/dark
+
+# Min SNR gamma for better training stability
+# min_snr_gamma = 5.0           # Recommended: 5.0
+
+# Prior loss weight (for regularization images)
+prior_loss_weight = 1.0
+
+# Memory optimizations
+# lowram = false                # Load model weights sequentially (slower but less VRAM)
+# max_train_steps = 1000        # Alternative to max_train_epochs
+
+# Sample image generation during training (optional)
+# sample_every_n_epochs = 1
+# sample_prompts = "/path/to/prompts.txt"
+# sample_sampler = "euler_a"
+
+
+# ============================================================================
+# GPU Configuration
+# ============================================================================
+[gpu_arguments]
+# Mixed precision backend
+# full_fp16 = false             # Use full fp16 (not recommended for training)
+# full_bf16 = false             # Use full bf16 (for A100/H100 GPUs)
+
+
+# ============================================================================
+# IMPORTANT NOTES FOR RTX 5080:
+# ============================================================================
+# 1. DO NOT use --xformers flag (hardware incompatible)
+# 2. Use AdamW or AdamW8bit optimizer
+# 3. Recommended batch_size: 8-10 (in dataset config)
+# 4. gradient_accumulation_steps: 2 (effective batch size = 16-20)
+# 5. Enable gradient_checkpointing and cache_latents_to_disk for VRAM management
+# 6. For 16GB VRAM: network_dim=64, batch_size=10 is optimal
+# ============================================================================

@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "film": "Luca (2021)",
+    "studio": "Pixar",
+    "version": "1.0.0",
+    "description": "Character-specific inpainting prompts for Luca film instances"
+  },
+
+  "global_style": {
+    "base_prompt": "pixar 3d animation style, smooth shading, soft anti-aliased edges, pbr materials, cinematic lighting",
+    "negative_prompt": "2d, flat, anime, cartoon sketch, low quality, blurry, distorted"
+  },
+
+  "character_prompts": {
+    "luca_human": {
+      "full_body": {
+        "prompt": "a 3d animated teenage boy, slender build, fair skin with rosy cheeks, wavy dark brown hair, brown eyes, light teal striped button-down shirt with rolled sleeves, blue shorts, pixar luca character style, smooth shading, natural lighting",
+        "negative": "sea monster, scales, fins, alberto, adult, muscular",
+        "body_parts": {
+          "face": "fair skin, rosy cheeks, brown eyes, wavy dark brown hair, teenage boy, curious expression, pixar 3d style",
+          "torso": "light teal striped ivory button-down shirt, short sleeves rolled to elbows, slender build, pixar smooth fabric shader",
+          "arms": "fair skin, slender teenage arms, smooth shading, natural skin tone",
+          "legs": "blue shorts, slender legs, fair skin, pixar character style",
+          "hands": "teenage boy hands, fair skin, delicate fingers",
+          "hair": "wavy dark brown hair, soft texture, natural flow, pixar hair shader"
+        }
+      },
+      "close_up": {
+        "prompt": "luca paguro close-up portrait, 13 year old boy, fair skin, rosy cheeks, wide brown eyes, wavy dark brown hair, curious friendly expression, pixar luca 2021, smooth 3d rendering, soft facial lighting",
+        "negative": "sea monster form, scales, adult, aggressive"
+      }
+    },
+
+    "luca_sea_monster": {
+      "full_body": {
+        "prompt": "a 3d animated sea monster boy, blue-green scales, smooth rounded fins, blue fin-like hair, brown eyes with yellow sclera and oval pupils, long tail with smooth blue caudal fins, pixar luca style, underwater lighting, bioluminescent shimmer",
+        "negative": "human form, alberto, sharp fins, aggressive, dark colors",
+        "body_parts": {
+          "face": "blue-green scales, brown eyes with yellow sclera, oval pupils, curious gentle expression, pixar sea monster style",
+          "torso": "blue-green iridescent scales, smooth shader, underwater skin texture",
+          "arms": "scaled arms, webbed fingers, blue-green coloring, rounded fins",
+          "tail": "long smooth tail, blue caudal fins, rounded shape, graceful curve",
+          "fins": "blue fin-like hair, soft rounded fins, gentle appearance, pixar smooth shading"
+        }
+      }
+    },
+
+    "alberto_human": {
+      "full_body": {
+        "prompt": "a 3d animated teenage boy, slender muscular build, tan skin with light freckles, tall curly golden-brown hair with cowlick, bright green eyes, yellow tank top, brown shorts tied with rope, pixar luca alberto character, smooth shading, warm lighting",
+        "negative": "sea monster, periwinkle scales, luca, adult, formal clothes",
+        "body_parts": {
+          "face": "tan skin, light freckles, bright green eyes, confident smirk, golden-brown curly hair, teenage boy, pixar 3d style",
+          "torso": "yellow tank top, tan skin, slender muscular build, pixar fabric shader",
+          "arms": "tan skin with freckles, muscular teenage arms, faint scar on upper left arm",
+          "legs": "brown shorts, tan skin, athletic build",
+          "hair": "tall curly golden-brown hair, prominent cowlick, tousled texture, pixar hair shader"
+        }
+      },
+      "close_up": {
+        "prompt": "alberto scorfano close-up portrait, 14 year old boy, tan skin, light freckles, bright green eyes, confident expression, curly golden-brown hair, pixar luca 2021, smooth 3d rendering, warm natural lighting",
+        "negative": "sea monster, periwinkle, sad, defeated"
+      }
+    },
+
+    "alberto_sea_monster": {
+      "full_body": {
+        "prompt": "a 3d animated sea monster boy, periwinkle scales, sharp angular purple fins, purple fin-like hair, green eyes with yellow-green sclera, long tail with sharp purple caudal fins, pixar luca style, confident pose, underwater lighting",
+        "negative": "human form, luca, rounded fins, gentle",
+        "body_parts": {
+          "face": "periwinkle scales, green eyes with yellow-green sclera, confident expression, pixar sea monster style",
+          "torso": "periwinkle iridescent scales, muscular build, smooth shader",
+          "fins": "sharp angular purple fins, tuna-like shape, dramatic appearance",
+          "tail": "long tail, sharp purple caudal fins, angular design, athletic shape"
+        }
+      }
+    },
+
+    "giulia": {
+      "full_body": {
+        "prompt": "a 3d animated teenage girl, athletic build, pale skin with freckles, red curly hair, brown eyes, sky-blue beanie, turquoise swim top or casual clothes, pixar luca giulia character, energetic pose, bright lighting",
+        "negative": "sea monster, dark colors, formal, adult",
+        "body_parts": {
+          "face": "pale skin, freckles, brown eyes, red curly hair, determined friendly expression, pixar 3d style",
+          "torso": "athletic build, casual summer clothes, pixar fabric shader",
+          "hair": "red curly hair, bouncy texture, sky-blue beanie, pixar hair shader"
+        }
+      }
+    },
+
+    "massimo": {
+      "full_body": {
+        "prompt": "a 3d animated adult male fisherman, muscular build, one arm, bushy eyebrows, short mustache, light yellow sweater, sea monster tattoo visible, kind intimidating presence, pixar luca massimo character, warm lighting",
+        "negative": "two arms, young, weak, aggressive",
+        "body_parts": {
+          "face": "bushy eyebrows, short mustache, kind stern expression, weathered skin, pixar 3d style",
+          "torso": "light yellow sweater, muscular build, sea monster tattoo, one arm, pixar fabric shader"
+        }
+      }
+    },
+
+    "ercole": {
+      "full_body": {
+        "prompt": "a 3d animated teenage boy bully, pompadour hair, hazel eyes, dark blue polo shirt, pink sweater draped over shoulders, arrogant expression, pixar luca ercole character, dramatic lighting",
+        "negative": "kind, humble, sea monster",
+        "body_parts": {
+          "face": "pompadour hair, hazel eyes, arrogant smirk, pixar 3d style",
+          "torso": "dark blue polo shirt, pink sweater draped over shoulders, preppy style"
+        }
+      }
+    }
+  },
+
+  "scene_context_prompts": {
+    "portorosso_town": {
+      "prompt": "italian coastal town background, colorful buildings, cobblestone streets, warm mediterranean lighting, pixar luca portorosso style",
+      "time_variants": {
+        "day": "bright sunny day, warm afternoon light, vibrant colors",
+        "night": "moonlit night, warm lamplight from windows, stars visible",
+        "golden_hour": "golden hour sunset, orange pink sky, warm glow"
+      }
+    },
+    "underwater": {
+      "prompt": "underwater scene, kelp forest, blue-green water, volumetric lighting, soft bubbles, pixar underwater style",
+      "variants": {
+        "shallow": "bright sunlight filtering through water, clear visibility",
+        "deep": "darker depths, bioluminescent accents, mysterious atmosphere"
+      }
+    },
+    "lighthouse": {
+      "prompt": "stone lighthouse interior, collected objects, dusty atmosphere, sunlight through windows, pixar luca alberto hideout style"
+    },
+    "boat": {
+      "prompt": "wooden fishing boat, ocean background, morning light, realistic boat details, pixar style"
+    }
+  },
+
+  "occlusion_types": {
+    "partial_overlap": {
+      "description": "Character partially overlapped by another character or object",
+      "strategy": "Use character-specific body part prompts to fill missing regions",
+      "blend_mode": "seamless"
+    },
+    "background_occlusion": {
+      "description": "Character partially behind background objects",
+      "strategy": "Infer occluded parts from visible body structure and character identity",
+      "blend_mode": "natural"
+    },
+    "edge_transparency": {
+      "description": "Semi-transparent edges from anti-aliasing or DoF blur",
+      "strategy": "Use soft edge prompts, minimal inpainting",
+      "blend_mode": "feather"
+    }
+  },
+
+  "quality_settings": {
+    "high_quality": {
+      "method": "sd",
+      "num_inference_steps": 50,
+      "guidance_scale": 7.5,
+      "description": "Best quality, slowest"
+    },
+    "balanced": {
+      "method": "lama",
+      "description": "Good quality, fast"
+    },
+    "fast": {
+      "method": "cv",
+      "inpaint_radius": 5,
+      "description": "Basic quality, very fast"
+    }
+  },
+
+  "usage_examples": {
+    "example_1": {
+      "scenario": "Luca's arm partially behind Alberto",
+      "character": "luca_human",
+      "body_part": "arms",
+      "occlusion_ratio": 0.25,
+      "recommended_method": "lama",
+      "prompt_override": "fair skin, slender teenage arm, smooth shading, natural skin tone, pixar luca character"
+    },
+    "example_2": {
+      "scenario": "Alberto's tail partially cut off by frame edge",
+      "character": "alberto_sea_monster",
+      "body_part": "tail",
+      "occlusion_ratio": 0.15,
+      "recommended_method": "lama",
+      "prompt_override": "long tail, sharp purple caudal fins, periwinkle scales, pixar sea monster style"
+    },
+    "example_3": {
+      "scenario": "Giulia's face partially occluded by another character",
+      "character": "giulia",
+      "body_part": "face",
+      "occlusion_ratio": 0.40,
+      "recommended_method": "sd",
+      "prompt_override": "giulia from luca, pale skin with freckles, brown eyes, red curly hair, sky-blue beanie, pixar 3d character, natural lighting"
+    }
+  },
+
+  "automatic_detection": {
+    "character_classification": {
+      "enabled": true,
+      "method": "clip_similarity",
+      "threshold": 0.7,
+      "description": "Automatically detect which character is in the instance using CLIP"
+    },
+    "body_part_detection": {
+      "enabled": true,
+      "method": "pose_estimation",
+      "description": "Detect which body part is occluded using pose keypoints"
+    }
+  }
+}

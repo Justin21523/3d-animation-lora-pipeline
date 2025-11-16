@@ -1,0 +1,64 @@
+# Clustering Configuration Template
+# Copy this file to {film_name}_config.yaml and customize for your film
+
+project: "film_name"  # e.g., "toy_story", "finding_nemo"
+
+# Character definitions for your film
+character_names:
+  - name: "character1"
+    display_name: "Character 1 (Description)"
+    keywords: ["keyword1", "keyword2", "keyword3"]
+    forms:  # Optional: multiple forms (e.g., human/sea monster)
+      - "default"
+
+  - name: "character2"
+    display_name: "Character 2 (Description)"
+    keywords: ["keyword1", "keyword2"]
+    forms:
+      - "default"
+
+  # Add more characters as needed
+  # Example:
+  # - name: "woody"
+  #   display_name: "Woody (Cowboy)"
+  #   keywords: ["cowboy", "hat", "yellow", "sheriff"]
+  #   forms:
+  #     - "default"
+
+# Clustering parameters
+clustering:
+  method: "hdbscan"  # hdbscan, kmeans, or agglomerative
+  min_cluster_size: 10  # Minimum instances per identity (3D default: 10-15)
+  min_samples: 2  # Minimum samples for HDBSCAN core point (3D default: 2)
+  distance_threshold: 0.5  # Face similarity threshold
+  use_face_detection: true  # Use face recognition (recommended for 3D)
+  use_body_verification: false  # Optional: verify with full-body CLIP
+
+# Quality filtering
+quality_filter:
+  enabled: true
+  min_face_size: 64  # Minimum face size in pixels
+  min_confidence: 0.9  # Minimum face detection confidence
+  max_blur: 80  # Maximum blur score (3D default: 80)
+  min_sharpness: 30  # Minimum sharpness score
+
+# Output settings
+output:
+  save_face_crops: true  # Save detected face regions
+  save_visualization: false  # Save cluster visualizations (can be large)
+  create_thumbnails: true  # Create thumbnail grids per cluster
+  thumbnail_size: 256  # Thumbnail size in pixels
+
+# Optional: Pose subclustering settings
+pose_subclustering:
+  enabled: false  # Set to true if you want automatic pose subclustering
+  min_cluster_size: 5  # Minimum instances per pose cluster
+  method: "umap_hdbscan"  # umap_hdbscan or kmeans
+  n_pose_clusters: 4  # For kmeans: number of pose buckets (front/side/back/etc)
+
+# Notes
+# -----
+# 1. For 3D characters, use min_cluster_size: 10-15 (lower than 2D anime)
+# 2. Face detection works best with frontal/three-quarter views
+# 3. Keywords are used for automatic character naming suggestions
+# 4. Forms allow handling characters with multiple appearances (e.g., Luca human/sea monster)

@@ -1,0 +1,48 @@
+# BrushNet Background Inpainting Configuration
+# For 3D Animation Background LoRA Training
+
+model:
+  # HuggingFace model ID
+  model_id: "runwayml/stable-diffusion-inpainting"
+  # Alternative: "stabilityai/stable-diffusion-2-inpainting"
+  device: "cuda"
+
+generation:
+  num_inference_steps: 50
+  guidance_scale: 7.5
+  seed: 42
+
+prompts:
+  # Default positive prompt for 3D animation backgrounds
+  positive: "3d animated background, pixar style, detailed environment, high quality rendering, smooth shading, cinematic lighting, no people, no characters"
+
+  # Negative prompt to avoid character hallucination
+  negative: "characters, people, humans, figures, person, man, woman, child, face, body, blurry, low quality, distorted, deformed, artifacts, watermark, text, signature, duplicate, noise"
+
+  # Scene-specific prompts (examples)
+  scenes:
+    italian_coastal_town: "3d animated italian coastal town, colorful buildings, cobblestone streets, mediterranean architecture, bright sunlight, pixar style, detailed background"
+    ocean_beach: "3d animated ocean beach, blue water, sandy shore, clear sky, peaceful atmosphere, pixar rendering, natural lighting"
+    indoor_house: "3d animated interior, cozy italian house, wooden furniture, warm lighting, detailed room, pixar style animation"
+    underwater: "3d animated underwater scene, coral reef, aquatic plants, blue gradient, diffuse lighting, pixar ocean rendering"
+
+quality:
+  # Quality thresholds for LaMa fallback acceptance
+  psnr_threshold: 25.0  # dB
+  ssim_threshold: 0.85
+
+  # Enable LaMa fallback if BrushNet fails
+  enable_lama_fallback: true
+
+  # Try LaMa first for simple backgrounds (faster)
+  use_lama_first_for_simple: true
+  simple_mask_threshold: 15.0  # % - if mask < 15%, use LaMa first
+
+processing:
+  # Batch processing
+  batch_size: 4  # For 16GB VRAM
+  pattern: "*.png"
+
+  # Output format
+  save_metadata: true
+  save_intermediate: false

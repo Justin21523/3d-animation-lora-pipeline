@@ -1,0 +1,117 @@
+name: Ercole
+full_name: Ercole Visconti
+age: 18
+species: Human
+origin: Portorosso, Italy
+film: Luca (2021)
+role: Main antagonist, town bully
+
+human_form:
+  form_type: human
+  description: Slender teenage bully with pompadour hair, mustache, materialistic and narcissistic
+  appearance:
+    build: slender
+    skin: lightly tanned
+    eyes: hazel eyes
+    hair: dark brown slicked-back pompadour
+    clothing:
+    - dark blue polo shirt with light blue stripes
+    - hot-pink wool sweater (draped over shoulders)
+    - periwinkle shorts
+    - brown slip-ons
+    distinctive_features:
+    - pencil-thin mustache
+    - pompadour hairstyle
+    - pink wool sweater (signature item)
+    - arrogant expression
+    tags:
+    - pompadour hair
+    - hazel eyes
+    - pink sweater
+    - polo shirt
+    - mustache
+    - arrogant
+
+sea_monster_form: null
+
+personality_traits:
+- Narcissistic
+- Delusional
+- Materialistic
+- Cruel
+- Bullying
+- Obsessed with reputation
+- Cowardly
+- Immature
+- Greedy
+- Sociopathic tendencies
+- Theatrical
+- Insecure
+
+personality_arc:
+  initial: five-time Portorosso Cup champion, beloved in own mind
+  middle: obsessed with maintaining winning streak and status
+  final: humiliated, defeated, crying over shrunken sweater
+
+motivations:
+- Maintain reputation as champion
+- Flaunt material possessions (Vespa, sweater)
+- Intimidate others to feel superior
+- Win prize money
+- Eliminate sea monsters for reward
+
+relationships:
+  Ciccio: Former lackey, eventually rebels
+  Guido: Former lackey, eventually rebels
+  Giulia Marcovaldo: Longtime victim of bullying
+  Luca and Alberto: Targets, attempts to kill them
+
+likes:
+- His red Vespa
+- Pink wool sweater
+- Being center of attention
+- Winning Portorosso Cup
+- Sandwiches
+- Intimidating children
+- Being called champion
+
+dislikes:
+- Losing
+- Being insulted (catfish comment)
+- Sea monsters
+- Competition
+- Being disobeyed
+- His sweater getting wet
+
+signature_motions:
+- Riding Vespa through town with loud music
+- Threatening to dunk victims in fountain
+- Cheating during Portorosso Cup
+- Posing and preening
+- Hunting sea monsters with harpoon
+- Crying over wet shrunken sweater
+
+signature_phrases:
+- I am the five-time champion!
+- Start a club for losers
+- Idiots! Be useful for once in your pathetic lives!
+
+identity_keywords:
+- ercole visconti
+- pompadour hair
+- pink sweater
+- bully
+- vespa rider
+- portorosso cup champion
+- antagonist
+- arrogant
+- narcissist
+
+caption_examples:
+  default: "ercole visconti, pompadour dark brown hair, pencil mustache, hazel eyes, pink wool sweater over shoulders, dark blue polo shirt, arrogant expression, pixar 3d animation"
+  vespa_riding: "ercole riding shiny red vespa, pompadour hair perfect, pink sweater, arrogant smirk, blaring music, portorosso streets, pixar 3d style"
+  bullying: "ercole threatening with menacing expression, hazel eyes cold, ciccio and guido flanking, intimidating pose, pixar 3d animation"
+  defeat: "ercole in fountain, pink sweater wet and shrinking, shocked crying expression, humiliated, pixar 3d style, comedic"
+
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_ercole.md
+version: 1.0.0

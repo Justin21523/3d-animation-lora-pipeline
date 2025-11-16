@@ -1,0 +1,151 @@
+# PowerPaint Character-Aware Inpainting Configuration
+# ECCV 2024 - Multi-task inpainting model
+# Supports: object removal, text-guided inpainting, shape-guided insertion
+
+inpainting:
+  model: "powerpaint"
+  version: "v2"
+  checkpoint: "/path/to/models/powerpaint_v2.safetensors"
+  device: "cuda"
+
+  # Character-aware prompting
+  character_aware: true
+  use_character_descriptions: true
+  character_descriptions_path: "docs/films/luca/characters/"
+
+  # Inpainting quality parameters
+  inference:
+    num_steps: 50  # Higher = better quality, slower
+    guidance_scale: 7.5  # How closely to follow prompt
+    strength: 0.8  # How much to change (0=none, 1=complete)
+
+    # Scheduler
+    scheduler: "DPMSolverMultistep"  # Fast, high quality
+    eta: 0.0
+
+  # Character-aware prompt construction
+  prompts:
+    # Template for background inpainting (character removed)
+    background_template: |
+      Natural seamless background for {scene_context},
+      {animation_style} style, {location}, {time_of_day},
+      consistent lighting, photorealistic textures,
+      no characters, empty space, smooth inpainting
+
+    # Negative prompt (what NOT to include)
+    negative_template: |
+      Do not include: {character_description},
+      no people, no characters, no figures,
+      artifacts, blur, distortion, watermark
+
+    # Scene context keywords (extracted from metadata)
+    scene_keywords:
+      - "italian coastal town"
+      - "summer afternoon"
+      - "cobblestone street"
+      - "ocean view"
+      - "vintage italian architecture"
+
+  # Temporal consistency (for video frames)
+  temporal:
+    enabled: true
+    window_size: 5  # Consider 5 frames before/after
+
+    # Keyframe detection
+    keyframe_detection:
+      method: "scene_change"  # Options: scene_change, optical_flow
+      threshold: 0.3
+      min_keyframe_interval: 10
+
+    # Optical flow propagation
+    optical_flow:
+      enabled: true
+      model: "RAFT"  # Optical flow model
+      blend_weight: 0.7  # 0.7 = 70% optical flow, 30% PowerPaint
+
+  # Quality validation
+  quality:
+    # Minimum quality thresholds
+    min_psnr: 25.0  # Peak Signal-to-Noise Ratio
+    min_ssim: 0.85  # Structural Similarity Index
+
+    # Retry logic
+    retry_on_failure: true
+    max_retries: 3
+
+    # If quality check fails, fallback to LaMa
+    fallback_model: "lama"
+
+  # Pre-processing
+  preprocessing:
+    # Expand mask slightly (avoid character edges)
+    mask_dilation: 5  # pixels
+    mask_blur: 7  # Gaussian blur for smooth edges
+
+    # Resize for processing
+    max_resolution: 1024
+    resize_method: "lanczos"
+
+  # Post-processing
+  postprocessing:
+    # Blend inpainted region with original
+    blend_edges: true
+    blend_radius: 10  # pixels
+
+    # Color correction to match original
+    color_match: true
+    color_match_method: "histogram"
+
+# Character-specific settings
+characters:
+  luca_human:
+    description: |
+      12-year-old italian pre-teen boy, short and slim build,
+      large round brown eyes, thick arched eyebrows,
+      button red-tinted nose, rosy cheeks, soft oval face,
+      short dark-brown wavy curls with front quiff,
+      teal striped shirt, blue shorts, barefoot,
+      pixar smooth SSS shading
+
+  alberto_human:
+    description: |
+      14-year-old Italian teen boy, wiry athletic build,
+      sun-tanned skin with light freckles, large bright green eyes,
+      thick arched brows, red-tinted button nose,
+      short tight curls with tall front quiff,
+      yellow ribbed tank top, brown rolled shorts with rope-and-shell belt,
+      barefoot, Pixar smooth SSS
+
+# Performance settings
+performance:
+  # Batching
+  batch_size: 4
+  num_workers: 2
+
+  # Memory optimization
+  use_fp16: true  # Half precision
+  use_xformers: true  # Memory-efficient attention
+
+  # Caching
+  cache_latents: true
+  cache_text_encodings: true
+
+# Comparison with LaMa
+comparison:
+  # Enable A/B testing
+  compare_with_lama: false
+  save_both_results: false
+
+  # Metrics to compare
+  metrics:
+    - "psnr"
+    - "ssim"
+    - "lpips"  # Perceptual similarity
+
+# Logging
+logging:
+  enabled: true
+  log_level: "INFO"
+  save_prompts: true  # Save generated prompts for debugging
+  save_metrics: true
+  metrics_file: "inpainting_metrics.json"

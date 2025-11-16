@@ -1,0 +1,453 @@
+# LoRA Iterative Optimization Presets
+# Universal configuration for any 3D animation character training project
+
+# ====================================================================================
+# OPTIMIZATION STRATEGIES
+# ====================================================================================
+
+strategies:
+  # Conservative: Safe, reliable, good for first-time training
+  conservative:
+    description: "Safe baseline with proven parameters"
+    max_iterations: 3
+    learning_rate_range: [8e-5, 1.5e-4]
+    network_dim_range: [32, 48]
+    epoch_range: [12, 18]
+    early_stop_threshold: 0.01  # Stop if improvement < 1%
+
+  # Aggressive: Fast exploration, higher risk
+  aggressive:
+    description: "Fast parameter search, higher learning rates"
+    max_iterations: 5
+    learning_rate_range: [1e-4, 2e-4]
+    network_dim_range: [32, 64]
+    epoch_range: [10, 20]
+    early_stop_threshold: 0.02
+
+  # Fine-tune: Small adjustments around known good parameters
+  fine_tune:
+    description: "Refine existing good model"
+    max_iterations: 4
+    learning_rate_range: [5e-5, 1.2e-4]
+    network_dim_range: [32, 48]
+    epoch_range: [15, 20]
+    early_stop_threshold: 0.005  # Very sensitive
+
+  # Exploration: Wide parameter sweep
+  exploration:
+    description: "Explore parameter space systematically"
+    max_iterations: 6
+    learning_rate_range: [5e-5, 2e-4]
+    network_dim_range: [16, 96]
+    epoch_range: [8, 25]
+    early_stop_threshold: 0.015
+
+
+# ====================================================================================
+# EVALUATION METRICS WEIGHTS
+# ====================================================================================
+
+evaluation_weights:
+  # Balanced: Equal importance to all metrics
+  balanced:
+    clip_score: 0.30
+    character_consistency: 0.30
+    image_quality: 0.20
+    diversity: 0.20
+
+  # Character-focused: Prioritize character fidelity
+  character_focused:
+    clip_score: 0.25
+    character_consistency: 0.45
+    image_quality: 0.20
+    diversity: 0.10
+
+  # Prompt-focused: Prioritize prompt following
+  prompt_focused:
+    clip_score: 0.50
+    character_consistency: 0.20
+    image_quality: 0.20
+    diversity: 0.10
+
+  # Quality-focused: Prioritize image aesthetics
+  quality_focused:
+    clip_score: 0.20
+    character_consistency: 0.25
+    image_quality: 0.40
+    diversity: 0.15
+
+
+# ====================================================================================
+# ADAPTATION RULES
+# ====================================================================================
+
+adaptation_rules:
+  # How to adjust parameters based on metrics
+
+  low_clip_score:
+    threshold: 0.28
+    actions:
+      - increase_epochs: 3
+      - increase_learning_rate: 1.15
+
+  low_consistency:
+    threshold: 0.75
+    actions:
+      - increase_network_dim: 16
+      - increase_epochs: 2
+
+  low_diversity:
+    threshold: 0.15
+    actions:
+      - decrease_epochs: 3
+      - decrease_learning_rate: 0.85
+      - add_dropout: 0.1
+
+  overfitting_detected:
+    criteria:
+      - diversity_drop: 0.05
+      - consistency_too_high: 0.90
+    actions:
+      - decrease_epochs: 5
+      - add_noise_offset: 0.05
+
+  plateau_detected:
+    criteria:
+      - improvement_below: 0.01
+      - iterations: 2
+    actions:
+      - change_scheduler: "cosine"
+      - perturb_learning_rate: 0.9
+
+
+# ====================================================================================
+# DATASET SIZE RECOMMENDATIONS
+# ====================================================================================
+
+dataset_recommendations:
+  # Auto-adjust parameters based on dataset size
+
+  small:  # < 100 images
+    min_size: 0
+    max_size: 100
+    recommended_epochs: 20
+    recommended_lr: 1.5e-4
+    recommended_batch_size: 4
+    recommended_network_dim: 32
+
+  medium:  # 100-300 images
+    min_size: 100
+    max_size: 300
+    recommended_epochs: 15
+    recommended_lr: 1.0e-4
+    recommended_batch_size: 4
+    recommended_network_dim: 32
+
+  large:  # 300-600 images
+    min_size: 300
+    max_size: 600
+    recommended_epochs: 12
+    recommended_lr: 8.0e-5
+    recommended_batch_size: 3
+    recommended_network_dim: 48
+
+  very_large:  # > 600 images
+    min_size: 600
+    max_size: 999999
+    recommended_epochs: 10
+    recommended_lr: 5.0e-5
+    recommended_batch_size: 3
+    recommended_network_dim: 64
+
+
+# ====================================================================================
+# CHARACTER TYPE PRESETS
+# ====================================================================================
+
+character_types:
+  # Different character types may need different training approaches
+
+  human_realistic:
+    description: "Realistic human characters (e.g., Pixar humans)"
+    network_dim: 32
+    learning_rate: 1.0e-4
+    epochs: 15
+    clip_skip: 2
+    recommendations:
+      - "Focus on facial features and skin tones"
+      - "Use diverse lighting conditions in dataset"
+      - "Include various expressions and angles"
+
+  human_stylized:
+    description: "Stylized human characters (e.g., anime style)"
+    network_dim: 48
+    learning_rate: 1.2e-4
+    epochs: 18
+    clip_skip: 2
+    recommendations:
+      - "Emphasize distinctive features"
+      - "Include outfit variations"
+
+  creature_fantasy:
+    description: "Fantasy creatures (e.g., sea monsters, dragons)"
+    network_dim: 64
+    learning_rate: 1.5e-4
+    epochs: 20
+    clip_skip: 2
+    recommendations:
+      - "Higher capacity for complex textures"
+      - "More epochs for unique features"
+
+  object_prop:
+    description: "Objects and props"
+    network_dim: 24
+    learning_rate: 1.0e-4
+    epochs: 12
+    clip_skip: 2
+    recommendations:
+      - "Lower complexity, fewer epochs needed"
+      - "Focus on shape and texture"
+
+
+# ====================================================================================
+# STYLE PRESETS
+# ====================================================================================
+
+style_presets:
+  pixar_3d:
+    description: "Pixar-style 3D animation"
+    caption_prefix: "a 3d animated character, pixar style, smooth shading, studio lighting"
+    augmentation:
+      color_aug: false  # Preserve PBR materials
+      flip_aug: false   # Preserve asymmetry
+    resolution_range: [384, 768]
+
+  disney_3d:
+    description: "Disney 3D animation style"
+    caption_prefix: "a 3d animated character, disney animation style, volumetric lighting"
+    augmentation:
+      color_aug: false
+      flip_aug: false
+    resolution_range: [384, 768]
+
+  dreamworks_3d:
+    description: "DreamWorks 3D animation style"
+    caption_prefix: "a 3d animated character, dreamworks style, expressive features"
+    augmentation:
+      color_aug: false
+      flip_aug: false
+    resolution_range: [384, 768]
+
+  anime_2d:
+    description: "2D anime style"
+    caption_prefix: "anime character, cel shaded"
+    augmentation:
+      color_aug: true
+      flip_aug: true
+    resolution_range: [512, 768]
+
+
+# ====================================================================================
+# TRAINING SCHEDULES
+# ====================================================================================
+
+training_schedules:
+  # Different time budgets
+
+  overnight:  # ~14 hours
+    max_time_hours: 14
+    max_iterations: 5
+    estimated_characters: 2
+    strategy: "aggressive"
+
+  weekend:  # ~48 hours
+    max_time_hours: 48
+    max_iterations: 8
+    estimated_characters: 4
+    strategy: "exploration"
+
+  quick:  # ~4 hours
+    max_time_hours: 4
+    max_iterations: 2
+    estimated_characters: 1
+    strategy: "conservative"
+
+  extended:  # ~72 hours
+    max_time_hours: 72
+    max_iterations: 10
+    estimated_characters: 6
+    strategy: "exploration"
+
+
+# ====================================================================================
+# PROJECT TEMPLATES
+# ====================================================================================
+
+project_templates:
+  # Ready-to-use configurations for common scenarios
+
+  luca_pixar:
+    description: "Pixar's Luca (2021) characters"
+    style: "pixar_3d"
+    character_type: "human_realistic"
+    strategy: "conservative"
+    schedule: "overnight"
+    characters:
+      - name: "luca_human"
+        type: "human_realistic"
+        priority: 1
+      - name: "alberto_human"
+        type: "human_realistic"
+        priority: 1
+      - name: "guilia"
+        type: "human_realistic"
+        priority: 2
+
+  toy_story:
+    description: "Toy Story characters"
+    style: "pixar_3d"
+    character_type: "object_prop"
+    strategy: "conservative"
+    schedule: "weekend"
+
+  custom_3d_movie:
+    description: "Generic 3D animated movie template"
+    style: "pixar_3d"
+    character_type: "human_realistic"
+    strategy: "exploration"
+    schedule: "weekend"
+    notes:
+      - "Copy this template and modify for your project"
+      - "Adjust character_type based on your characters"
+      - "Choose strategy based on your goals"
+
+
+# ====================================================================================
+# HARDWARE PROFILES
+# ====================================================================================
+
+hardware_profiles:
+  # Optimize batch size and settings for different GPUs
+
+  rtx_4090:  # 24GB VRAM
+    batch_size: 6
+    resolution: 768
+    cache_latents: true
+    gradient_checkpointing: false
+
+  rtx_4080:  # 16GB VRAM
+    batch_size: 4
+    resolution: 512
+    cache_latents: true
+    gradient_checkpointing: true
+
+  rtx_3090:  # 24GB VRAM
+    batch_size: 5
+    resolution: 768
+    cache_latents: true
+    gradient_checkpointing: false
+
+  rtx_3080:  # 10-12GB VRAM
+    batch_size: 3
+    resolution: 512
+    cache_latents: true
+    gradient_checkpointing: true
+
+  a4000:  # 16GB VRAM
+    batch_size: 4
+    resolution: 512
+    cache_latents: true
+    gradient_checkpointing: true
+
+
+# ====================================================================================
+# USAGE EXAMPLES
+# ====================================================================================
+
+usage_examples:
+  basic:
+    description: "Basic usage with defaults"
+    command: |
+      python scripts/training/iterative_lora_optimizer.py \
+        --characters luca_human alberto_human \
+        --dataset-dir /path/to/curated_dataset \
+        --base-model /path/to/sd-v1-5 \
+        --output-dir /path/to/output \
+        --sd-scripts /path/to/sd-scripts
+
+  with_preset:
+    description: "Using a configuration preset"
+    command: |
+      python scripts/training/iterative_lora_optimizer.py \
+        --preset configs/optimization_presets.yaml \
+        --project-template luca_pixar \
+        --strategy aggressive \
+        --schedule overnight
+
+  custom_weights:
+    description: "Custom evaluation metric weights"
+    command: |
+      python scripts/training/iterative_lora_optimizer.py \
+        --characters character_name \
+        --eval-weights character_focused \
+        --strategy fine_tune
+
+
+# ====================================================================================
+# BEST PRACTICES
+# ====================================================================================
+
+best_practices:
+  - name: "Start Conservative"
+    description: "Use conservative strategy for first training"
+
+  - name: "Monitor Early"
+    description: "Check first iteration results before committing to full schedule"
+
+  - name: "Diverse Dataset"
+    description: "Include varied poses, angles, and lighting in training data"
+
+  - name: "Quality Over Quantity"
+    description: "200-400 high-quality images better than 1000 mediocre ones"
+
+  - name: "Regular Backups"
+    description: "Save intermediate checkpoints and configs"
+
+  - name: "Document Changes"
+    description: "Keep notes on what works for future reference"
+
+  - name: "Validate Results"
+    description: "Test generated images in actual use cases, not just metrics"
+
+
+# ====================================================================================
+# TROUBLESHOOTING
+# ====================================================================================
+
+troubleshooting:
+  low_scores_all_metrics:
+    symptoms: ["All evaluation scores below 0.25"]
+    causes:
+      - "Dataset quality issues"
+      - "Learning rate too high"
+      - "Training time too short"
+    solutions:
+      - "Review and re-curate dataset"
+      - "Reduce learning rate by 50%"
+      - "Increase epochs by 5-10"
+
+  high_consistency_low_diversity:
+    symptoms: ["Consistency > 0.9", "Diversity < 0.1"]
+    causes: ["Overfitting"]
+    solutions:
+      - "Reduce epochs by 30%"
+      - "Add noise offset"
+      - "Increase dataset size"
+
+  training_divergence:
+    symptoms: ["Loss increases after epoch 5", "Generated images are noise"]
+    causes: ["Learning rate too high"]
+    solutions:
+      - "Reduce learning rate by 50%"
+      - "Use cosine scheduler"
+      - "Check for corrupted images in dataset"
