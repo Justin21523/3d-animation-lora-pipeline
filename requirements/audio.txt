@@ -1,0 +1,33 @@
+# Audio Processing Pipeline Dependencies
+# Install with: pip install -r requirements_audio.txt
+
+# Core audio processing
+librosa>=0.10.0
+soundfile>=0.12.0
+audioread>=3.0.0
+
+# Voice separation (Demucs)
+demucs>=4.0.0
+
+# Audio analysis
+numpy>=1.24.0
+scipy>=1.11.0
+matplotlib>=3.7.0
+
+# Formant extraction (highly recommended)
+praat-parselmouth>=0.4.3
+
+# Optional: Voice embeddings for speaker identification
+# Uncomment if you need advanced speaker identification
+resemblyzer>=0.1.1
+pyannote-audio>=3.0.0
+
+# Optional: Advanced voice cloning (RVC)
+# Uncomment when ready for voice cloning training
+fairseq>=0.12.2
+# faiss-gpu>=1.7.2  # or faiss-cpu for CPU-only systems
+# torchcrepe>=0.0.20
+
+# Utility packages
+tqdm>=4.65.0
+Pillow>=10.0.0

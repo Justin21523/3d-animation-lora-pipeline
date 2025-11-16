@@ -1,0 +1,37 @@
+# SOTA Evaluation Models Dependencies
+# Install with: pip install -r requirements/evaluation_sota.txt
+
+# Core dependencies (already in main requirements)
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.30.0
+diffusers>=0.20.0
+Pillow>=9.0.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# SOTA Model Dependencies
+
+# InsightFace - Face recognition and identity consistency
+insightface>=0.7.3
+onnxruntime-gpu>=1.15.0  # For InsightFace inference
+
+# LPIPS - Perceptual similarity
+lpips>=0.1.4
+
+# PyIQA - Image quality assessment (includes MUSIQ)
+pyiqa>=0.1.7
+
+# Additional dependencies for SOTA models
+scikit-image>=0.21.0
+opencv-python>=4.8.0
+
+# Optional: Optuna for hyperparameter optimization
+optuna>=3.3.0
+optuna-dashboard>=0.13.0
+
+# HuggingFace Hub for model downloads
+huggingface-hub>=0.16.0
+
+# Note: InternVL2 and LAION Aesthetics use transformers (already included)
+# They will auto-download from HuggingFace on first use

@@ -1,0 +1,16 @@
+# Layered Segmentation Dependencies
+# For character/background separation in anime frames
+
+# Core segmentation
+anime-segmentation>=1.1.0         # U²-Net and ISNet for anime character segmentation
+opencv-python>=4.8.0              # Image processing and traditional inpainting
+
+# Optional: High-quality inpainting
+# simple-lama-inpainting>=0.1.0   # LaMa inpainting (better quality, slower)
+
+# Already installed in base environment:
+# torch>=2.0.0
+# torchvision>=0.15.0
+# pillow>=10.0.0
+# numpy>=1.24.0
+# tqdm>=4.65.0

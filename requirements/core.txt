@@ -1,0 +1,65 @@
+# Core ML frameworks - RTX 5080 (CUDA 12.8) specific
+# Install separately with: pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+# torch==2.7.0
+# torchvision==0.22.0
+# torchaudio==2.7.0
+
+# Compatible with PyTorch 2.7.0
+diffusers>=0.31.0
+transformers>=4.46.0
+accelerate>=1.2.0
+safetensors>=0.4.0
+
+# Image processing
+opencv-python>=4.10.0
+Pillow>=10.4.0
+imageio>=2.36.0
+imageio-ffmpeg>=0.5.1
+
+# Video processing
+scenedetect[opencv]>=0.6.4
+ffmpeg-python>=0.2.0
+
+# WD14 Tagger
+huggingface-hub>=0.26.0
+onnxruntime-gpu>=1.20.0  # GPU version for faster inference
+
+# CLIP
+ftfy>=6.3.0
+regex>=2024.9.11
+
+# Image quality and hashing
+imagehash>=4.3.1
+lpips>=0.1.4
+
+# Data handling
+numpy>=1.26.0,<2.0.0  # Many packages still need numpy 1.x
+pandas>=2.2.0
+scikit-learn>=1.5.0
+
+# Configuration
+PyYAML>=6.0.2
+omegaconf>=2.3.0
+
+# Utilities
+tqdm>=4.67.0
+rich>=13.9.0
+loguru>=0.7.2
+
+# Web scraping (optional)
+requests>=2.32.0
+beautifulsoup4>=4.12.3
+
+# Training (kohya_ss compatible with PyTorch 2.7.0)
+bitsandbytes>=0.45.0
+xformers>=0.0.29  # Make sure this is compatible with torch 2.7.0
+lion-pytorch>=0.2.2
+prodigyopt>=1.0
+
+# Evaluation
+matplotlib>=3.9.0
+seaborn>=0.13.2
+
+# Additional utilities
+einops>=0.8.0  # For model operations
+timm>=1.0.0  # For vision models
