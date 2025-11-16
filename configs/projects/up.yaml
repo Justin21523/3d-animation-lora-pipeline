@@ -1,0 +1,156 @@
+# Up (2009) - Project Configuration
+# Pixar film about an elderly widower's adventure to South America
+
+project:
+  name: "up"
+  studio: "Pixar"
+  year: 2009
+  runtime: 96
+  style: "3d_animation"
+  resolution: "1080p"
+
+# Base paths for all pipeline data
+paths:
+  base_dir: "/mnt/data/ai_data/datasets/3d-anime/up"
+  frames: "${base_dir}/frames"
+  instances: "${base_dir}/instances"
+  instances_inpainted: "${base_dir}/instances_inpainted"
+  clustered: "${base_dir}/clustered"
+  clustered_refined: "${base_dir}/clustered_refined"
+  pose_subclusters: "${base_dir}/pose_subclusters"
+  training_data: "/mnt/data/ai_data/training_data/3d_characters/up"
+
+# Main characters
+characters:
+  main:
+    - "carl"
+    - "russell"
+    - "dug"
+  supporting:
+    - "ellie"
+    - "charles_muntz"
+    - "kevin"
+    - "alpha"
+  forms:
+    carl:
+      - "elderly"
+      - "young"
+    ellie:
+      - "elderly"
+      - "young"
+
+# Frame extraction settings
+frame_extraction:
+  mode: "hybrid"
+  scene_threshold: 30.0
+  frames_per_scene: 10
+  min_scene_length: 15
+  interval_seconds: 2.0
+  quality: "high"
+
+# Instance segmentation (SAM2)
+segmentation:
+  model: "sam2_hiera_large"
+  min_mask_size: 16384
+  max_instances: 15
+  points_per_side: 20
+  device: "cuda"
+
+# Inpainting settings
+inpainting:
+  enabled: true
+  default_method: "lama"
+  occlusion_threshold: 0.15
+  auto_detect_character: true
+
+# Identity clustering settings
+clustering:
+  method: "hdbscan"
+  min_cluster_size: 12
+  min_samples: 2
+  use_face_detection: true
+
+# Pose subclustering (optional)
+pose_subclustering:
+  enabled: false
+  min_cluster_size: 5
+  method: "umap_hdbscan"
+
+# Caption generation
+captioning:
+  model: "qwen2_vl"
+  prefix: "a 3d animated character, pixar style, smooth shading, cinematic lighting"
+  style_tags:
+    - "pixar animation"
+    - "up (2009)"
+    - "3d rendering"
+    - "smooth shading"
+    - "adventure"
+    - "warm colors"
+  length_range: [40, 77]
+
+# LoRA training settings
+lora_training:
+  base_model: "runwayml/stable-diffusion-v1-5"
+  target_size: 400
+  network_dim: 32
+  network_alpha: 16
+  learning_rate: 1e-4
+  epochs: 10
+  batch_size: 4
+  disable_color_jitter: true
+  disable_horizontal_flip: true
+
+# Quality thresholds (3D-specific)
+quality:
+  alpha_threshold: 0.15
+  blur_threshold: 80
+  min_face_size: 64
+  min_sharpness: 30
+
+# Processing parameters
+processing:
+  device: "cuda"
+  gpu_id: 0
+  batch_size: 8
+  num_workers: 4
+  cache_clear_interval: 10
+
+# Output settings
+output:
+  save_metadata: true
+  save_visualization: false
+  save_face_crops: true
+  create_thumbnails: true
+  compression_quality: 95
+
+# Notes
+notes:
+  description: "Up - Carl and Russell's adventure to Paradise Falls"
+  special_considerations:
+    - "Two time periods: young Carl/Ellie and elderly Carl"
+    - "Iconic balloon house scenes with floating physics"
+    - "Paradise Falls location with tepui plateaus and waterfalls"
+    - "Spirit of Adventure airship interior and exterior"
+    - "Multiple dog characters with collars (Dug, Alpha)"
+    - "Emotional montage sequence ('Married Life')"
+    - "Contrast between urban decay and pristine jungle"
+
+# Pipeline execution order
+pipeline_stages:
+  - name: "frame_extraction"
+    enabled: true
+  - name: "instance_segmentation"
+    enabled: true
+  - name: "inpainting"
+    enabled: true
+  - name: "identity_clustering"
+    enabled: true
+  - name: "interactive_review"
+    enabled: true
+  - name: "pose_subclustering"
+    enabled: false
+  - name: "caption_generation"
+    enabled: true
+  - name: "lora_training"
+    enabled: true

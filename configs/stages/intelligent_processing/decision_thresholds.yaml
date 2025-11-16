@@ -1,0 +1,41 @@
+# Decision Thresholds for Intelligent Frame Processing
+# Adjust these values to tune strategy selection behavior
+
+thresholds:
+  # Background complexity threshold (0-1)
+  # Lower values = simpler backgrounds preferred for keep_full
+  simple_background: 0.3
+
+  # Lighting quality threshold (0-1)
+  # Higher values = better lighting required for keep_full
+  good_lighting: 0.7
+
+  # Occlusion level threshold (0-1)
+  # Lower values = less occlusion acceptable for keep_full
+  low_occlusion: 0.2
+
+  # Instance count threshold
+  # >= this number triggers segment strategy
+  multi_character: 2
+
+  # Quality score threshold (0-1)
+  # Below this triggers enhance_segment strategy
+  poor_quality: 0.5
+
+  # Sharpness threshold (0-1)
+  # Below this triggers enhancement
+  low_sharpness: 0.4
+
+# Strategy target proportions (soft targets, not strict)
+strategy_targets:
+  keep_full: 0.30        # 30% keep complete frames
+  segment: 0.40          # 40% segment and inpaint
+  create_occlusion: 0.15 # 15% create synthetic occlusions
+  enhance_segment: 0.15  # 15% enhance then segment
+
+# Dataset augmentation needs (updated dynamically)
+dataset_needs:
+  occlusion: 0.8      # Need occlusion examples (0-1, higher = more need)
+  multi_character: 0.9 # Need multi-character scenes
+  far_shot: 0.7       # Need distant/wide shots
+  complex_bg: 0.6     # Need complex backgrounds

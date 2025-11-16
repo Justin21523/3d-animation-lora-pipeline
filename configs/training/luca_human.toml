@@ -1,0 +1,178 @@
+# ============================================================================
+# LoRA Training Configuration: Luca Paguro (Human Form)
+# Pixar's Luca (2021) - 3D Animated Character
+#
+# ⚠️ ITERATION V6 PARAMETERS (Enhanced Dataset + Detailed Captions)
+# - 372 diverse images with inpaint-only (preserves Pixar style)
+# - Enhanced captions with expression + action details
+# - Higher capacity for detailed encoding
+# - RTX 5080 16GB + SD 1.5
+# ============================================================================
+
+# ============================================================================
+# Model and Output Configuration
+# ============================================================================
+[model_arguments]
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_dir = "/mnt/data/ai_data/models/lora/luca/luca_human_v1"
+output_name = "luca_human_v1"
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# ============================================================================
+# Training Configuration - ITERATION V6 (Leveraging Enhanced Dataset)
+# ============================================================================
+[training_arguments]
+# Learning rates - RAISED to leverage better data quality
+learning_rate = 0.0001          # 1.0e-4 (raised from 8.0e-5 for better data)
+                                # Leverage 372 diverse images + detailed captions
+unet_lr = 0.0001                # Same as learning_rate
+text_encoder_lr = 0.00008       # 8.0e-5 (maintained 80% ratio for identity)
+                                # Strong text encoder for detailed expression/action captions
+
+# LR Scheduler - Cosine for smooth learning
+lr_scheduler = "cosine"
+lr_warmup_steps = 300
+
+# Optimizer - AdamW (stable, no bitsandbytes complexity)
+optimizer_type = "AdamW"
+optimizer_args = []
+
+# Training epochs - RAISED for more data
+max_train_epochs = 12           # Raised from 10 (more data can support longer training)
+save_every_n_epochs = 2         # Save checkpoints every 2 epochs (2, 4, 6, 8, 10, 12)
+
+# Mixed precision
+mixed_precision = "fp16"
+
+# Gradient settings - RTX 5080 optimized
+gradient_checkpointing = true
+gradient_accumulation_steps = 2  # Effective batch size = 8 * 2 = 16
+
+# Random seed
+seed = 42
+
+# ============================================================================
+# Network (LoRA) Configuration - ITERATION V6 (Enhanced Capacity)
+# ============================================================================
+[network_arguments]
+network_module = "networks.lora"
+network_dim = 128               # RAISED from 96 (more capacity for detailed captions)
+                                # Support detailed expression + action descriptions
+network_alpha = 64              # network_dim / 2 (standard ratio)
+
+# ============================================================================
+# Dataset Configuration
+# ============================================================================
+[dataset_arguments]
+
+[[dataset_arguments.datasets]]
+batch_size = 8                  # 降低 from 10 (研究建議的最佳值)
+                                # Effective batch = 8 * 2 = 16
+resolution = [512, 512]         # CRITICAL: Dataset-level resolution as [width, height] tuple
+enable_bucket = true
+min_bucket_reso = 384
+max_bucket_reso = 768
+bucket_reso_steps = 64
+bucket_no_upscale = false
+
+  [[dataset_arguments.datasets.subsets]]
+  image_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/curated_dataset_v2_smart/luca_human/images"
+  num_repeats = 1
+  shuffle_caption = true
+  keep_tokens = 3               # Keep "a 3d animated character"
+  caption_extension = ".txt"
+  color_aug = false             # CRITICAL: DO NOT use for 3D (breaks PBR)
+  flip_aug = false              # CRITICAL: DO NOT use for 3D (breaks asymmetry)
+
+# ============================================================================
+# Data Loading Configuration
+# ============================================================================
+[dataloader_arguments]
+max_data_loader_n_workers = 8
+persistent_data_loader_workers = true
+
+# ============================================================================
+# Caching Configuration
+# ============================================================================
+[caching_arguments]
+cache_latents = true
+cache_latents_to_disk = true
+
+# ============================================================================
+# Logging and Monitoring
+# ============================================================================
+[logging_arguments]
+logging_dir = "/mnt/data/ai_data/models/lora/luca/luca_human_v1/logs"
+log_prefix = "luca_human_v1"
+
+# ============================================================================
+# Additional Training Options
+# ============================================================================
+[advanced_arguments]
+clip_skip = 2                   # Standard for 3D models
+noise_offset = 0                # 可選：0.05-0.1 if images too bright/dark
+prior_loss_weight = 1.0
+
+# ============================================================================
+# ITERATION V6 RATIONALE (Leveraging Enhanced Dataset)
+# ============================================================================
+#
+# 數據改進：
+# - Smart curation: 631 → 372 張智能篩選（CLIP + InsightFace + pHash）
+# - Inpaint-only: 保留 Pixar 低對比度風格（跳過 enhancement）
+# - Enhanced captions: 詳細表情 (emotion, eye, eyebrow, mouth)
+# - Enhanced captions: 詳細動作 (pose, gesture, head position, camera angle)
+# - Caption length: 80-150+ tokens (complete descriptions)
+#
+# 參數調整理由：
+#
+# 1. Learning Rate: 8e-5 → 1.0e-4 (+25%)
+#    - 利用更好的數據質量
+#    - 數據量增加 (191 → 372, +95%)
+#    - Caption 質量提升（詳細表情和動作描述）
+#    - 風險控制：自動監控會在質量下降時降低
+#
+# 2. Text Encoder LR: 6e-5 → 8.0e-5 (+33%)
+#    - 保持 80% 比例（經驗證最佳）
+#    - 強化文本條件控制
+#    - 詳細 caption 需要更強文本編碼
+#
+# 3. Network Dim: 96 → 128 (+33%)
+#    - Caption 長度增加：60-75 tokens → 80-150+ tokens
+#    - 包含詳細表情描述 (emotion, eye, eyebrow, mouth)
+#    - 包含詳細動作描述 (pose, gesture, head, gaze)
+#    - 權衡：模型 ~500MB → ~700MB (可接受), 訓練時間 +5%
+#
+# 4. Max Epochs: 10 → 12 (+20%)
+#    - 更多數據可支持更長訓練
+#    - 更大網絡容量需要更多訓練
+#    - 風險控制：連續 2 次質量下降會早停
+#
+# ============================================================================
+# RTX 5080 SPECIFIC SETTINGS
+# ============================================================================
+# - NO xformers (hardware incompatible)
+# - AdamW optimizer (stable, proven)
+# - batch_size=8 + gradient_accumulation=2 = effective batch 16
+# - network_dim=128 (increased capacity for detailed captions)
+# - 372 images * 12 epochs = 4464 training steps
+# - Expected training time: ~3-4 hours
+#
+# ============================================================================
+# EXPECTED IMPROVEMENTS vs Iteration 3/5
+# ============================================================================
+# ✓ Face Similarity: 0.653 → >0.75 (+15%)
+# ✓ Contrast: 53.8 → 40-45 (-20%, corrected to Pixar style)
+# ✓ Lighting Uniformity: 0.851 → >0.90 (+6%)
+# ✓ Prompt Alignment: 0.278 → >0.30 (+8%)
+# ✓ 更可控的表情和動作生成
+#
+# ============================================================================
+
+# Character-specific notes:
+# - Luca Paguro: 12-year-old sea monster boy in human form
+# - Appearance: brown curly hair, green eyes, light skin, striped shirt
+# - Dataset: 372 curated images from Pixar's Luca (2021)
+# - 3D renders: consistent lighting, PBR materials
+# - Training philosophy: Stability > Capacity

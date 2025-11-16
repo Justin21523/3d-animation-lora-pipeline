@@ -1,0 +1,115 @@
+name: Luca
+full_name: Luca Paguro
+age: 13
+species: Sea monster (transforming into human when dry)
+origin: Underwater farming community near Isola del Mare
+film: '*Luca* (2021, Pixar)'
+role: Titular protagonist; a curious, timid but imaginative young sea monster discovering
+  the human world and learning friendship, bravery, and self-identity.
+human_form:
+  form_type: human
+  description: '
+
+    * Slender build
+
+    * Fair skin
+
+    * Rosy cheeks
+
+    * Brown eyes
+
+    * Wavy dark-brown hair
+
+    * Light teal/ivory button-down shirt (short sleeves rolled)
+
+    * Blue shorts
+
+    * Slightly awkward posture during early scenes
+
+    '
+  appearance:
+    build: ''
+    skin: fair skin
+    eyes: brown eyes
+    hair: wavy dark-brown hair
+    clothing:
+    - light teal/ivory button-down shirt (short sleeves rolled)
+    - blue shorts
+    distinctive_features:
+    - slender build
+    - rosy cheeks
+    - slightly awkward posture during early scenes
+    tags: []
+sea_monster_form:
+  form_type: sea_monster
+  description: '
+
+    * Blue-green scales
+
+    * Blue fin-like “hair”
+
+    * Yellow sclera with oval pupils
+
+    * Long tail with smooth caudal fins
+
+    * Sharp teeth
+
+    * Colors shift depending on lighting/wetness
+
+    * Earlier scenes: green seaw'
+  appearance:
+    build: ''
+    skin: blue-green scales
+    eyes: ''
+    hair: ''
+    clothing: []
+    distinctive_features:
+    - blue fin-like “hair”
+    - yellow sclera with oval pupils
+    - long tail with smooth caudal fins
+    - sharp teeth
+    - colors shift depending on lighting/wetness
+    - 'earlier scenes: green seaweed pants (before human clothes)'
+    tags: []
+personality_traits:
+- Curious
+- Timid and shy at first
+- Highly imaginative
+- Kind-hearted
+- Empathetic
+- Eager to learn
+- Nervous about disobeying rules
+- Loyal to friends
+- Conflict-averse but grows into bravery
+- Determined when motivated
+motivations: []
+likes:
+- Gelato
+- Pasta
+- Scooter rides / Vespa dreams
+- Astronomy and stars
+- Learning new things
+- Spending time with Alberto & Giulia
+- The surface world
+- Human objects (“land monster stuff”)
+- Sunsets and stargazing
+dislikes:
+- Fishermen
+- Ercole Visconti
+- Being told what to do
+- His mother’s overprotectiveness
+- The deep sea (fearful of permanent exile)
+- Alberto being rude or jealous
+- Pineapple on pizza
+signature_phrases:
+- Silenzio, Bruno!
+- good kid.
+- hair
+- land monster
+- from the Land Monster Town.
+- Smucca
+identity_keywords:
+- Luca Paguro
+caption_examples: {}
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_luca.md
+version: 1.0.0

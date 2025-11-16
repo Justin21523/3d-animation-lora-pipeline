@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "film": "FILM_NAME",
+    "studio": "Pixar|DreamWorks|Disney",
+    "style": "3d_animation",
+    "version": "1.0.0",
+    "created": "YYYY-MM-DD",
+    "description": "Character-specific inpainting prompts for FILM_NAME"
+  },
+
+  "global_style": {
+    "base_prompt": "pixar 3d animation style, smooth shading, soft anti-aliased edges, pbr materials, cinematic lighting",
+    "negative_prompt": "2d, flat, anime, cartoon sketch, low quality, blurry, distorted",
+    "studio_specific_tags": {
+      "pixar": "pixar style, smooth shader, warm lighting",
+      "dreamworks": "dreamworks style, expressive faces, vibrant colors",
+      "disney_3d": "disney 3d style, magical atmosphere, polished rendering"
+    }
+  },
+
+  "character_prompts": {
+    "CHARACTER_ID_1": {
+      "name": "Character Name",
+      "role": "protagonist|antagonist|supporting",
+      "forms": ["default", "alternate_form"],
+      "default_form": {
+        "full_body": {
+          "prompt": "Full character description: appearance, clothing, distinctive features, style tags",
+          "negative": "What to avoid: wrong forms, incorrect colors, other characters",
+          "body_parts": {
+            "face": "Facial features, expression characteristics",
+            "torso": "Clothing, body type",
+            "arms": "Arm description, skin/fur/scales",
+            "legs": "Leg description, pants/shorts",
+            "hands": "Hand description",
+            "hair": "Hair/head features, texture, color",
+            "accessories": "Distinctive items, props"
+          }
+        },
+        "close_up": {
+          "prompt": "Close-up portrait description, focus on face and upper body",
+          "negative": "What to avoid in close-ups"
+        }
+      }
+    }
+  },
+
+  "scene_context_prompts": {
+    "LOCATION_NAME": {
+      "prompt": "Location description, environment, lighting, atmosphere",
+      "time_variants": {
+        "day": "Daytime lighting description",
+        "night": "Nighttime lighting description",
+        "golden_hour": "Golden hour lighting"
+      }
+    }
+  },
+
+  "occlusion_types": {
+    "partial_overlap": {
+      "description": "Character partially overlapped by another character or object",
+      "strategy": "Use character-specific body part prompts to fill missing regions",
+      "blend_mode": "seamless"
+    },
+    "background_occlusion": {
+      "description": "Character partially behind background objects",
+      "strategy": "Infer occluded parts from visible body structure and character identity",
+      "blend_mode": "natural"
+    },
+    "edge_transparency": {
+      "description": "Semi-transparent edges from anti-aliasing or DoF blur",
+      "strategy": "Use soft edge prompts, minimal inpainting",
+      "blend_mode": "feather"
+    }
+  },
+
+  "quality_settings": {
+    "high_quality": {
+      "method": "sd",
+      "num_inference_steps": 50,
+      "guidance_scale": 7.5,
+      "description": "Best quality, slowest"
+    },
+    "balanced": {
+      "method": "lama",
+      "description": "Good quality, fast"
+    },
+    "fast": {
+      "method": "cv",
+      "inpaint_radius": 5,
+      "description": "Basic quality, very fast"
+    }
+  },
+
+  "usage_examples": {
+    "example_1": {
+      "scenario": "Character's arm partially behind another character",
+      "character": "CHARACTER_ID",
+      "body_part": "arms",
+      "occlusion_ratio": 0.25,
+      "recommended_method": "lama",
+      "prompt_override": null
+    }
+  },
+
+  "automatic_detection": {
+    "character_classification": {
+      "enabled": true,
+      "method": "clip_similarity|filename_pattern",
+      "threshold": 0.7,
+      "description": "Automatically detect which character is in the instance"
+    },
+    "body_part_detection": {
+      "enabled": false,
+      "method": "pose_estimation",
+      "description": "Detect which body part is occluded using pose keypoints"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+# Strategy-specific Configuration
+# Parameters for each processing strategy
+
+strategies:
+  keep_full:
+    enabled: true
+    description: "Keep complete frame with background intact - PRESERVES ORIGINAL PIXAR COLORS"
+
+    # Caption generation
+    generate_caption: true
+    caption_model: "qwen2_vl"
+    caption_prefix: "a 3d animated character, pixar style"
+
+    # Enhancement - STRICTLY DISABLED to preserve original colors
+    apply_enhancement: false  # ✅ MUST stay false for color preservation
+    enhancement_level: "none"  # Changed from "light" to "none"
+    preserve_original_colors: true  # Force color preservation
+
+  segment:
+    enabled: true
+    description: "Segment character and inpaint background - CHARACTER COLORS PRESERVED"
+
+    # Segmentation
+    segmentation_model: "sam2_hiera_large"
+    min_instance_size: 64
+    points_per_side: 20
+
+    # Inpainting (ONLY for background, character untouched)
+    inpainting_model: "lama"  # lama/powerpaint/opencv
+    inpainting_fallback: "lama"
+    mask_dilation: 5
+
+    # Color preservation - CRITICAL for 3D style
+    preserve_character_colors: true  # ✅ Character pixels copied directly, no modification
+    inpaint_background_only: true    # ✅ Only modify background, leave character intact
+
+    # Output options
+    save_character: true
+    save_background: true
+    save_composite: true
+    save_masks: false
+
+    # Caption generation
+    generate_captions: true
+    character_caption_suffix: ", isolated character, clean background"
+    background_caption_suffix: ", environment only, no characters"
+
+  create_occlusion:
+    enabled: true
+    description: "Create synthetic occlusions - MILD effects to preserve color integrity"
+
+    # Occlusion generation (conservative settings)
+    occlusion_types:
+      - "edge_blur"      # Blur edges to simulate foreground occlusion
+
+    # Parameters - MILD to avoid color distortion
+    blur_radius: 12     # Reduced from 15 (gentler blur)
+    blur_positions: ["left", "right"]  # Only sides, avoid center
+    overlay_opacity: 0.25  # Reduced from 0.3 (more transparent)
+
+    # How many variations per source
+    variations_per_image: 2  # Reduced from 3 (less aggressive)
+
+    # Color preservation
+    preserve_core_colors: true  # ✅ Avoid touching center region colors
+    occlusion_edge_only: true   # ✅ Only affect edges, not full frame
+
+    # Caption adjustment
+    add_occlusion_tags: true
+    occlusion_descriptions:
+      - "partially obscured"
+      - "with foreground elements"
+
+  enhance_segment:
+    # ❌ DISABLED - Preserves Pixar original colors and PBR materials
+    # Enhancement models (RealESRGAN, CodeFormer) artificially modify
+    # color saturation, brightness, and contrast, breaking 3D style
+    enabled: false
+    description: "Enhance quality then segment (DISABLED for color preservation)"
+
+    # Enhancement pipeline - EMPTY to prevent color modification
+    enhancement_steps: []
+    # Previously contained color-altering steps:
+    #   - "upscale"        # RealESRGAN (changes color saturation)
+    #   - "denoise"        # CNN denoising (alters color)
+    #   - "face_enhance"   # CodeFormer (drastically changes face colors)
+    #   - "sharpen"        # Unsharp mask (changes contrast)
+
+    # Enhancement models (kept for reference but not used)
+    upscale_model: "RealESRGAN_x4plus_anime_6B"
+    face_enhance_model: "CodeFormer"
+    face_enhance_fidelity: 0.7
+
+    # Segmentation after enhancement
+    apply_segmentation: true
+    segmentation_config: "segment"  # Use segment strategy config
+
+    # IMPORTANT: If re-enabling, use preserve_original_colors: true
+    preserve_original_colors: true
+
+# Model paths (relative to warehouse root)
+model_paths:
+  sam2_hiera_large: "models/segmentation/sam2_hiera_large.pt"
+  sam2_hiera_base: "models/segmentation/sam2_hiera_base_plus.pt"
+  lama: "models/inpainting/lama"
+  powerpaint: "models/inpainting/powerpaint"
+  realesrgan: "models/enhancement/RealESRGAN_x4plus_anime_6B.pth"
+  codeformer: "models/enhancement/codeformer.pth"
+  qwen2_vl: "models/vlm/Qwen2-VL-7B-Instruct"
+
+# Processing options
+processing:
+  # Batch size for GPU operations
+  batch_size: 8
+
+  # Number of worker threads
+  num_workers: 4
+
+  # GPU device
+  device: "cuda"
+
+  # Skip if output already exists
+  skip_existing: true
+
+  # Save processing metadata
+  save_metadata: true
+
+  # Create visualization
+  create_visualization: true

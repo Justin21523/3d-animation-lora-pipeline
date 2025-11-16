@@ -1,0 +1,107 @@
+# AI Warehouse模型路徑配置
+# 所有腳本統一從這裡讀取路徑
+
+warehouse_root: "/mnt/c/AI_LLM_projects/ai_warehouse/models"
+
+# ============================================================================
+# 基礎生成模型
+# ============================================================================
+base_models:
+  # Vanilla SD 1.5 (推薦用於訓練 - 更通用、可擴展)
+  sd_v1_5: "${warehouse_root}/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+
+  # Pixar Style base model (可選 - 用於inference或比較實驗)
+  pixar_style: "${warehouse_root}/stable-diffusion/checkpoints/pixarStyleModel_v10.safetensors"
+  disney_pixar: "${warehouse_root}/stable-diffusion/checkpoints/disneyPixarCartoon_v10.safetensors"
+
+  # Other base models
+  sd_v2_1: "${warehouse_root}/base/stable-diffusion-v2-1"
+  sdxl: "${warehouse_root}/base/sd-xl-base-1.0"
+
+# ============================================================================
+# VLM模型 (Caption生成和評估)
+# ============================================================================
+vlm_models:
+  qwen2_vl_7b: "${warehouse_root}/vlm/Qwen2-VL-7B-Instruct"
+  qwen2_vl_2b: "${warehouse_root}/vlm/Qwen2-VL-2B-Instruct"
+  internvl2_8b: "${warehouse_root}/vlm/InternVL2-8B"
+  blip2: "${warehouse_root}/vlm/BLIP2"
+
+# ============================================================================
+# SOTA評估模型
+# ============================================================================
+evaluation_models:
+  # Prompt alignment (replaces CLIP)
+  internvl2: "${warehouse_root}/vlm/InternVL2-8B"
+
+  # Fallback CLIP models (if InternVL2 not available)
+  clip_vit_l: "ViT-L/14"  # Will use torch cache
+  eva_clip: "${warehouse_root}/evaluation/clip/EVA-CLIP-L-14"
+
+  # Aesthetics scoring
+  aesthetics: "cafeai/cafe_aesthetic"  # HuggingFace model ID
+
+  # Character consistency
+  insightface: "${warehouse_root}/evaluation/face/insightface"
+  arcface: "${warehouse_root}/evaluation/face/arcface"
+
+  # Image quality
+  musiq: "musiq"  # PyIQA metric name
+  musiq_koniq: "musiq-koniq"  # Alternative
+
+  # Perceptual diversity
+  lpips: "lpips"  # Will initialize from package
+
+# ============================================================================
+# 分割模型
+# ============================================================================
+segmentation_models:
+  sam2_large: "${warehouse_root}/segmentation/sam2/sam2_hiera_large.pt"
+  sam2_base: "${warehouse_root}/segmentation/sam2/sam2_hiera_base.pt"
+  isnet: "isnet-general-use"  # Via rembg
+  u2net: "${warehouse_root}/segmentation/u2net"
+
+# ============================================================================
+# Inpainting模型
+# ============================================================================
+inpainting_models:
+  lama: "${warehouse_root}/inpainting/lama"
+
+# ============================================================================
+# 輸出目錄
+# ============================================================================
+output_directories:
+  lora_base: "${warehouse_root}/lora"
+  lora_luca: "${warehouse_root}/lora/luca"
+  lora_toy_story: "${warehouse_root}/lora/toy_story"
+  evaluation_output: "/mnt/data/ai_data/lora_evaluation"
+  training_data: "/mnt/data/ai_data/training_data"
+
+# ============================================================================
+# 項目特定配置 - Luca
+# ============================================================================
+projects:
+  luca:
+    # 推薦：使用vanilla SD 1.5訓練 - 學習完整角色特徵+風格
+    base_model: "${warehouse_root}/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+
+    # 備選方案（如要實驗可改用）：
+    # base_model: "${warehouse_root}/stable-diffusion/checkpoints/pixarStyleModel_v10.safetensors"
+
+    caption_model: "${warehouse_root}/vlm/Qwen2-VL-7B-Instruct"
+    evaluation_models:
+      internvl2: "${warehouse_root}/vlm/InternVL2-8B"
+      aesthetics: "cafeai/cafe_aesthetic"
+      insightface: "buffalo_l"
+      musiq: "musiq"
+      lpips: "lpips"
+    dataset_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/curated_dataset"
+    output_dir: "${warehouse_root}/lora/luca"
+    style: "pixar_3d"
+    character_type: "human_realistic"
+
+    # Caption prefix for vanilla SD 1.5 training
+    caption_prefix: "a 3d animated character, pixar style, smooth shading, studio lighting"
+
+    # Alternative prefix if using pixar_style base:
+    # caption_prefix: "a 3d animated character"

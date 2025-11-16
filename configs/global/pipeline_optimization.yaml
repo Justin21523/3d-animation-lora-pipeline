@@ -1,0 +1,157 @@
+# Pipeline Resource Optimization Configuration
+# Optimized for 32-core CPU + RTX 5080 GPU
+
+# ============================================
+# Resource Allocation Strategy
+# ============================================
+
+# CPU-intensive tasks: Use all 32 threads
+# GPU-intensive tasks: Single GPU, no multi-process conflicts
+# Memory: Clear cache between stages to prevent leaks
+
+# ============================================
+# STAGE 1: SAM2 Instance Segmentation
+# ============================================
+
+instance_segmentation:
+  type: GPU-intensive
+
+  # GPU settings (avoid multi-process conflicts)
+  device: cuda
+  batch_size: 8              # Process 8 images at once on GPU
+  num_gpu_processes: 1       # SINGLE GPU process only
+
+  # CPU settings (for I/O and preprocessing)
+  num_workers: 8             # DataLoader workers for I/O
+  prefetch_factor: 2         # Prefetch 2 batches per worker
+
+  # Memory management
+  empty_cache_every_n_batches: 50   # Clear GPU cache every 50 batches
+  max_memory_allocated: 14000       # Max GPU memory in MB (14GB for RTX 5080)
+
+  # SAM2 model settings
+  model: sam2_hiera_large
+  points_per_side: 32        # Grid density
+  pred_iou_thresh: 0.86
+  min_instance_size: 16384   # 128x128 pixels
+
+# ============================================
+# STAGE 2: Face Identity Clustering
+# ============================================
+
+identity_clustering:
+  type: Mixed (GPU for face detection, CPU for clustering)
+
+  # Face detection & embedding (GPU)
+  device: cuda
+  batch_size: 32             # Larger batch for face detection
+  num_gpu_processes: 1       # SINGLE GPU process
+
+  # CPU settings for HDBSCAN clustering
+  num_workers: 32            # Use ALL 32 threads for clustering
+  parallel_clustering: true
+
+  # Memory management
+  empty_cache_after_embedding: true
+  cache_embeddings: true     # Cache to disk to save re-computation
+
+  # Clustering settings
+  min_cluster_size: 10
+  min_samples: 2
+  cluster_selection_epsilon: 0.5
+
+# ============================================
+# STAGE 3: Pose/View Subclustering
+# ============================================
+
+pose_subclustering:
+  type: Mixed (GPU for pose estimation, CPU for clustering)
+
+  # RTM-Pose estimation (GPU)
+  device: cuda
+  batch_size: 16
+  num_gpu_processes: 1       # SINGLE GPU process
+
+  # CPU settings for UMAP + HDBSCAN
+  num_workers: 32            # Use ALL 32 threads
+  umap_n_jobs: 32            # UMAP parallel computation
+
+  # Memory management
+  empty_cache_after_pose: true
+
+  # Pose settings
+  pose_model: rtmpose-m
+  min_cluster_size: 5
+  method: umap_hdbscan
+
+# ============================================
+# STAGE 4: Caption Generation (VLM)
+# ============================================
+
+caption_generation:
+  type: GPU-intensive
+
+  # VLM settings (GPU)
+  device: cuda
+  batch_size: 4              # VLM is memory-intensive
+  num_gpu_processes: 1       # SINGLE GPU process
+
+  # CPU settings for I/O
+  num_workers: 8
+
+  # Memory management
+  empty_cache_every_n_batches: 10
+  use_8bit_quantization: true   # Use int8 for Qwen2-VL
+
+  # VLM model
+  vlm_model: qwen2_vl
+  max_tokens: 77
+
+# ============================================
+# Global Memory Management
+# ============================================
+
+memory_management:
+  # Automatic cache clearing
+  clear_cache_between_stages: true
+
+  # Monitor memory usage
+  log_memory_usage: true
+  memory_warning_threshold: 0.90   # Warn if >90% GPU memory used
+
+  # PyTorch settings
+  torch_settings:
+    cudnn_benchmark: true
+    deterministic: false
+    empty_cache_on_error: true
+
+# ============================================
+# Logging & Monitoring
+# ============================================
+
+logging:
+  level: INFO
+  log_gpu_memory: true
+  log_cpu_usage: true
+  log_every_n_batches: 100
+
+  # Performance metrics
+  track_stage_time: true
+  track_throughput: true      # Images/second
+
+# ============================================
+# Error Handling
+# ============================================
+
+error_handling:
+  # Retry failed batches
+  max_retries: 3
+  retry_with_smaller_batch: true
+
+  # Memory errors
+  reduce_batch_on_oom: true
+  min_batch_size: 1
+
+  # Checkpointing
+  checkpoint_every_n_batches: 500
+  resume_from_checkpoint: true

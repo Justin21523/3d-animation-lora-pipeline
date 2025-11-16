@@ -1,0 +1,48 @@
+# Batch Processing Configuration: SAM2 Segmentation Only
+# Use this for quick SAM2 processing without inpainting
+#
+# Usage:
+#   python scripts/batch/batch_processor.py --config configs/batch/sam2_only.yaml --resume
+
+discovery:
+  base_dir: "/mnt/data/ai_data/datasets/3d-anime"
+  film_pattern: "*"
+  exclude:
+    - "luca"
+
+jobs:
+  # Job 1: SAM2 Instance Segmentation
+  - name: "sam2_segmentation"
+    script: "scripts/generic/segmentation/instance_segmentation.py"
+    conda_env: "ai_env"
+
+    args:
+      template: "{frames_dir}"
+      named:
+        --output-dir: "{base_dir}/{film}/{film}_instances_sam2_v2"
+        --model: "sam2_hiera_large"
+        --device: "cuda"
+        --min-size: "4096"
+        --save-masks: null
+        --save-backgrounds: null
+        --context-mode: "transparent"
+
+    completion_check:
+      type: "directory_exists"
+      path: "{base_dir}/{film}/{film}_instances_sam2_v2/instances"
+      min_files: 10
+
+    resources:
+      gpu: true
+      estimated_time_per_frame: 13.4
+
+    retry:
+      max_attempts: 3
+      backoff_seconds: 120
+
+execution:
+  mode: "sequential"
+  log_dir: "logs/batch_processing"
+  resume: true
+  save_progress: true
+  progress_file: "progress_sam2_only.json"

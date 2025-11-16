@@ -1,0 +1,176 @@
+# Global Configuration for 3D Animation LoRA Pipeline
+project:
+  name: "3D Animation LoRA Factory"
+  version: "1.0.0"
+  style: "pixar-3d"
+  author: "Justin Lu"
+
+# Path Configuration
+paths:
+  # Shared warehouse paths
+  warehouse_root: "/mnt/data/ai_data"
+
+  # Project data paths (via symlinks to warehouse)
+  data_root: "data/"  # -> warehouse/datasets/3d-anime/
+  models_root: "models/"  # -> warehouse/models/lora/3d_characters/
+  output_root: "outputs/"  # -> warehouse/lora_evaluation/
+
+  # Actual paths in warehouse
+  warehouse_datasets: "/mnt/data/ai_data/datasets/3d-anime"
+  warehouse_training_data: "/mnt/data/ai_data/training_data/3d_characters"
+  warehouse_models: "/mnt/data/ai_data/models/lora/3d_characters"
+  warehouse_outputs: "/mnt/data/ai_data/lora_evaluation"
+  warehouse_cache: "/mnt/data/ai_data/cache/3d-anime"
+
+  # Base models (shared Stable Diffusion models)
+  base_models_root: "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion"
+
+  # Cache and logs
+  cache_root: "/mnt/data/ai_data/cache/3d-anime/"
+  logs_root: "logs/"
+
+# Hardware Configuration
+hardware:
+  gpu:
+    device: "cuda:0"
+    vram_gb: 16
+    enable_xformers: False  # Memory optimization
+
+  cpu:
+    num_workers: 8  # DataLoader workers
+    parallel_processing: true
+
+# Model Configuration
+models:
+  clip:
+    model_name: "ViT-L/14"
+    device: "cuda"
+
+  blip2:
+    model_name: "Salesforce/blip2-opt-2.7b"
+    device: "cuda"
+    batch_size: 4
+
+  segmentation:
+    model: "u2net"  # or "sam", "isnet"
+    device: "cuda"
+    batch_size: 8
+
+  face_detector:
+    model_name: "retinaface"
+    confidence: 0.7
+
+# Preprocessing Configuration
+preprocessing:
+  frame_extraction:
+    mode: "scene"  # or "interval"
+    scene_threshold: 0.3
+    min_scene_length: 15
+    fps: null  # null = original fps
+    quality: "high"
+
+  segmentation:
+    model: "u2net"  # optimized for 3D
+    alpha_threshold: 0.15  # lower for 3D (vs 0.25 for 2D)
+    blur_threshold: 80  # lower for 3D (vs 100 for 2D)
+    min_size: 128  # minimum character size
+    use_depth: false  # depth-aware segmentation
+    enable_refinement: true
+
+  clustering:
+    algorithm: "hdbscan"
+    min_cluster_size: 10  # lower for 3D (vs 15-25 for 2D)
+    min_samples: 2  # lower for 3D (vs 3-5 for 2D)
+    similarity_threshold: 0.7
+    use_face_detection: true
+    quality_filter: true
+
+  deduplication:
+    enabled: true
+    hash_size: 16
+    similarity_threshold: 0.95
+
+# Training Configuration
+training:
+  base_model: "runwayml/stable-diffusion-v1-5"
+  resolution: 512
+  batch_size: 4
+  learning_rate: 1e-4
+  text_encoder_lr: 5e-5
+  max_train_epochs: 15
+  save_every_n_epochs: 3
+
+  network:
+    module: "networks.lora"
+    dim: 32
+    alpha: 16
+
+  optimizer:
+    type: "AdamW8bit"
+    weight_decay: 0.01
+
+  scheduler:
+    type: "cosine_with_restarts"
+    warmup_steps: 300
+
+  precision:
+    mixed_precision: "fp16"
+    gradient_checkpointing: true
+
+# Caption Configuration
+captions:
+  model: "blip2"
+  batch_size: 4
+  max_length: 77
+
+  # 3D-specific caption templates
+  style_prefix: "a 3d animated character"
+  quality_tags: ["high quality animation", "smooth shading", "studio lighting"]
+
+  templates:
+    character: "a 3d animated character, {description}, pixar style, high quality render"
+    scene: "3d animation scene, {description}, professional lighting, cinematic"
+    style: "pixar style 3d animation, {description}, smooth shading, detailed textures"
+
+# Caching Strategy
+caching:
+  enable_clip_cache: true
+  enable_hash_cache: true
+  enable_latent_cache: true
+  cache_ttl_days: 30  # cache validity period
+  max_cache_size_gb: 100
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  save_to_file: true
+  console_output: true
+
+# Safety Settings
+safety:
+  backup_before_delete: true
+  require_confirmation: true
+  max_file_size_mb: 500  # maximum single file size
+
+# 3D Animation Specific Settings
+animation_3d:
+  # Character detection thresholds
+  character_detection:
+    min_alpha_coverage: 0.15  # softer edges in 3D
+    allow_partial_transparency: true
+    depth_aware: false
+
+  # Quality filters
+  quality:
+    min_resolution: 256
+    max_blur_score: 80  # lower for intentional 3D blur
+    min_sharpness: 30
+
+  # Supported styles
+  supported_styles:
+    - "pixar"
+    - "dreamworks"
+    - "blue_sky"
+    - "illumination"
+    - "disney_3d"

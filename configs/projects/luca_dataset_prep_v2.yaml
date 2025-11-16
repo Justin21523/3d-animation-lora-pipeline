@@ -1,0 +1,319 @@
+# Luca Dataset Preparation Pipeline Configuration
+# Version: 2.0 (Based on SAM2 Multi-Instance Results + Trial 3.5/3.6 Insights)
+# Date: 2025-11-13
+
+pipeline_name: "luca_dataset_preparation_v2"
+version: "2.0.0"
+
+# ========== INPUT CONFIGURATION ==========
+input:
+  # SAM2 instance segmentation results
+  sam2_results: "/mnt/data/ai_data/datasets/3d-anime/luca/luca_instances_sam2"
+
+  # Reference face data for Luca identification (from Trial 3.5 training set)
+  reference_faces: "/mnt/data/ai_data/datasets/3d-anime/luca/training_ready/1_luca"
+
+  # Instance types to use (prioritize context, supplement with blurred)
+  instance_types:
+    - type: "instances_context"
+      weight: 0.7  # 70% from context (preserve background)
+    - type: "instances_blurred"
+      weight: 0.3  # 30% from blurred (background blur variation)
+
+  # Total expected instances (for progress tracking)
+  expected_instances: 68259
+
+# ========== STAGE 1: FACE-BASED PRE-FILTERING ==========
+# Use ArcFace to match against reference faces, dramatically reduce processing
+face_prefilter:
+  enabled: true
+  method: "arcface"  # InsightFace ArcFace face recognition
+
+  # ArcFace settings
+  model_name: "buffalo_l"  # High-accuracy model
+  similarity_threshold: 0.65  # VERY STRICT - zero tolerance for false positives
+  min_face_size: 50  # Minimum face size in pixels - ensure clear faces only
+
+  # Reference face extraction
+  num_reference_faces: 50  # Use top 50 diverse reference faces
+  reference_selection: "diverse"  # "diverse" | "all" | "random"
+
+  # Quality filters (applied before face matching)
+  pre_quality_filter:
+    min_dimensions: [100, 100]  # Faster initial filter
+    min_alpha_coverage: 0.5  # Very loose initial threshold
+    max_aspect_ratio: 4.0  # Reject extreme crops
+
+  # Output
+  output_dir: "luca_face_matched"
+  expected_reduction: 0.85  # Expect to filter out ~85% of non-Luca instances
+
+# ========== STAGE 2: IDENTITY CLUSTERING (Optional Refinement) ==========
+# Further cluster matched faces to separate Luca from false positives
+identity_clustering:
+  enabled: false  # Disable for speed (face matching should be sufficient)
+  method: "arcface_hdbscan"
+  min_cluster_size: 10
+  min_samples: 2
+  output_dir: "luca_identity_clusters"
+
+# ========== STAGE 3: 3D QUALITY FILTERING ==========
+# Apply 3D-specific quality metrics
+quality_filtering:
+  enabled: true
+
+  # Sharpness (Laplacian variance)
+  min_sharpness: 50  # 3D default for anti-aliased content
+
+  # Completeness (percentage of visible character)
+  min_completeness: 0.85
+
+  # Alpha coverage (character vs background ratio)
+  min_alpha_coverage: 0.7
+  min_dimensions: [128, 128]
+
+  # Face detection bonus (images with faces get priority)
+  face_bonus_weight: 0.15
+
+  # CLIP diversity pre-clustering (reduce redundancy)
+  diversity_preclustering:
+    enabled: true
+    num_clusters: 15  # Group similar poses/scenes
+    samples_per_cluster: 200  # Max samples from each cluster
+    model: "openai/clip-vit-large-patch14"
+
+  # Output
+  output_dir: "luca_quality_filtered"
+  expected_count: [3000, 5000]  # Expected range after filtering
+
+# ========== STAGE 4: COMPREHENSIVE AUGMENTATION ==========
+# Large-scale 3D-safe augmentation for manual review dataset
+augmentation:
+  enabled: true
+  multiplier: 4.0  # 3-5x per original (avg 4x)
+
+  # Pixar-style safe transforms (NEVER break PBR materials)
+  transforms:
+    # Crop variations (preserve aspect ratio)
+    - name: "random_crop"
+      probability: 0.8
+      scale_range: [0.8, 1.0]
+
+    # Rotation (minimal, 3D characters don't naturally rotate much)
+    - name: "rotation"
+      probability: 0.5
+      angle_range: [-5, 5]  # degrees
+
+    # Brightness (simulate different lighting conditions)
+    - name: "brightness"
+      probability: 0.6
+      factor_range: [0.9, 1.1]
+
+    # Contrast (MINIMAL - preserve Pixar smooth shading)
+    - name: "contrast"
+      probability: 0.4
+      factor_range: [0.95, 1.05]  # Very conservative
+
+    # Gaussian noise (texture variation)
+    - name: "gaussian_noise"
+      probability: 0.3
+      std_dev: 0.01
+
+    # Horizontal flip (DISABLED - Luca has asymmetric features)
+    - name: "horizontal_flip"
+      probability: 0.0  # NEVER flip 3D characters
+
+  # Metadata preservation
+  preserve_metadata: true
+  tag_augmented: true  # Mark augmented images in metadata
+
+  # Output
+  output_dir: "luca_augmented_comprehensive"
+  expected_count: [10000, 15000]  # Large dataset for manual review
+
+# ========== STAGE 5: DIVERSITY ANALYSIS & AUTO SELECTION ==========
+# Multi-modal diversity metrics for 400-image auto-selection
+diversity_selection:
+  enabled: true
+  target_count: 400
+
+  # Multi-modal diversity metrics
+  metrics:
+    # 1. Pose diversity (RTM-Pose keypoints)
+    - name: "pose_embeddings"
+      weight: 0.25
+      model: "rtmpose-m"  # RTMPose-M (17 keypoints)
+      normalize: true  # Scale/position invariant
+
+    # 2. View angle diversity (face landmarks)
+    - name: "view_angles"
+      weight: 0.20
+      categories: ["front", "three_quarter", "profile", "back"]
+      min_representation: [0.40, 0.20, 0.15, 0.10]  # Minimum % per category
+
+    # 3. Semantic diversity (CLIP embeddings)
+    - name: "clip_embeddings"
+      weight: 0.25
+      model: "openai/clip-vit-large-patch14"
+
+    # 4. Background complexity
+    - name: "background_complexity"
+      weight: 0.15
+      metrics: ["edge_density", "color_variance"]
+
+    # 5. Scale/Distance variety
+    - name: "scale_variety"
+      weight: 0.15
+      categories: ["close_up", "medium", "full_body"]
+      target_distribution: [0.30, 0.50, 0.20]
+
+  # Selection algorithm
+  algorithm:
+    method: "stratified_sampling"  # UMAP + HDBSCAN + stratified
+    n_diversity_clusters: 8
+    samples_per_cluster: 50
+    quality_weight: 0.3
+    diversity_weight: 0.7
+
+  # CRITICAL: Re-verify face identity before final selection
+  face_reverification:
+    enabled: true
+    method: "arcface"
+    model_name: "buffalo_l"
+    similarity_threshold: 0.65  # VERY STRICT - same as Stage 1
+    reference_faces: "/mnt/data/ai_data/datasets/3d-anime/luca/training_ready/1_luca"
+    reject_no_face: true  # Reject if no face detected
+    reject_low_similarity: true  # Reject if similarity < threshold
+
+  # Output
+  output_dir: "luca_curated_400"
+  save_diversity_report: true
+  generate_visualization: true
+
+# ========== STAGE 6: CAPTION GENERATION ==========
+# VLM-based caption generation for both datasets
+captioning:
+  enabled: true
+  model: "qwen2_vl"  # Qwen2-VL for 3D animation understanding
+
+  # Character configuration
+  character_config: "configs/characters/luca.yaml"
+
+  # Caption template (Pixar 3D style)
+  template: |
+    {character_name}, {character_form}, {appearance_details},
+    {pose_description}, {facial_expression}, {clothing_details},
+    {lighting_quality}, {background_context},
+    pixar style 3d animation, smooth shading, pbr materials, italian coastal setting
+
+  # Caption generation settings
+  max_tokens: 77  # CLIP token limit
+  target_length: [40, 77]
+  batch_size: 8
+
+  # Quality control
+  validation:
+    reject_hallucinations: true
+    require_character_mention: true
+    max_generic_terms: 5
+
+  # Target datasets
+  targets:
+    - name: "curated_400"
+      input_dir: "luca_curated_400"
+      priority: "high"
+
+    - name: "comprehensive"
+      input_dir: "luca_augmented_comprehensive"
+      priority: "medium"  # Caption after user manual review if needed
+
+  # Output
+  caption_format: "txt"  # One .txt file per image
+  include_metadata: true
+
+# ========== STAGE 7: TRAINING DATA PREPARATION ==========
+# Kohya_ss format assembly
+training_prep:
+  enabled: true
+  format: "kohya_ss"
+
+  # Source (auto-selected 400)
+  source_dir: "luca_curated_400"
+
+  # Output structure
+  output_dir: "/mnt/data/ai_data/training_data/luca_pixar_400"
+  repeat_count: 10  # 10_luca_human folder
+  class_name: "luca_human"
+
+  # Metadata
+  generate_metadata: true
+  metadata_fields:
+    - source_pipeline
+    - diversity_metrics
+    - quality_scores
+    - augmentation_history
+    - sam2_provenance
+
+  # Base model reference (for documentation)
+  base_model: "runwayml/stable-diffusion-v1-5"
+
+# ========== STAGE 8: INTERACTIVE REVIEW TOOL ==========
+# Web UI for manual dataset curation
+interactive_review:
+  enabled: true
+  launch_after_completion: false  # Manual launch
+
+  # Source dataset (comprehensive for manual review)
+  source_dir: "luca_augmented_comprehensive"
+  output_dir: "luca_manual_selection"
+
+  # UI configuration
+  interface:
+    type: "flask_web"  # Flask-based web UI
+    port: 5000
+    thumbnail_size: [256, 256]
+    grid_columns: 6
+
+  # Features
+  features:
+    - "drag_and_drop_reorg"
+    - "caption_editing"
+    - "metadata_tagging"
+    - "quality_rating"
+    - "export_selection"
+
+  # Keyboard shortcuts
+  shortcuts:
+    accept: "space"
+    reject: "x"
+    flag: "f"
+    next_page: "right"
+    prev_page: "left"
+
+# ========== HARDWARE & PERFORMANCE ==========
+hardware:
+  device: "cuda"
+  gpu_id: 0
+  batch_size: 16  # Adjust based on VRAM
+  num_workers: 8
+  gpu_memory_limit: 0.8  # 80% max VRAM usage
+  enable_mixed_precision: true
+
+# ========== LOGGING & MONITORING ==========
+logging:
+  level: "INFO"
+  output_dir: "logs/luca_dataset_prep"
+  log_file: "pipeline_{timestamp}.log"
+  progress_format: "tqdm"
+  save_stage_reports: true
+
+# ========== RESUME & ERROR HANDLING ==========
+resume:
+  enabled: true
+  checkpoint_file: "pipeline_checkpoint.json"
+  auto_resume: true
+
+error_handling:
+  strategy: "skip_and_log"  # Continue on individual failures
+  max_consecutive_errors: 50
+  save_error_samples: true

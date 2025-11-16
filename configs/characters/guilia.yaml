@@ -1,0 +1,120 @@
+name: Giulia
+full_name: Giulia Marcovaldo
+age: 13
+species: Human
+origin: Genova, Italy
+film: Luca (2021)
+role: Tritagonist, friend of Luca and Alberto
+
+human_form:
+  form_type: human
+  description: Slender, athletic Italian pre-teen girl with red curly hair, brown eyes, freckles, lightly tanned skin
+  appearance:
+    build: slender, athletic
+    skin: lightly tanned, freckles, rosy cheeks
+    eyes: brown eyes
+    hair: red, short curly hair
+    clothing:
+    - sky-blue beanie
+    - orange-and-white striped T-shirt
+    - turquoise trousers with blue knee patch
+    - brown sandals
+    distinctive_features:
+    - red curly hair
+    - freckles
+    - sky-blue beanie (signature accessory)
+    - energetic expressions
+    tags:
+    - red curly hair
+    - brown eyes
+    - freckles
+    - sky-blue beanie
+    - striped shirt
+    - athletic build
+
+sea_monster_form: null
+
+personality_traits:
+- Energetic
+- Tomboyish
+- Curious
+- Studious
+- Loyal
+- Courageous
+- Intelligent
+- Brave
+- Eccentric
+- Independent
+- Competitive
+- Protective
+
+personality_arc:
+  initial: lonely outsider, desperate to win Portorosso Cup
+  middle: forming deep friendships with Luca and Alberto
+  final: accepting friend, protective ally, encouraging Luca's growth
+
+motivations:
+- Win the Portorosso Cup to prove herself
+- Defeat bully Ercole
+- Gain acceptance in Portorosso
+- Share knowledge and learning with friends
+- Protect Luca and Alberto from harm
+
+relationships:
+  Luca Paguro: Best friend, teaches astronomy, protective
+  Alberto Scorfano: Teammate and friend, initially wary of jealousy
+  Massimo Marcovaldo: Father, caring fisherman
+  Ercole Visconti: Longtime bully and rival
+  Maria Marcovaldo: Mother, lives in Genova
+
+likes:
+- Astronomy and stargazing
+- Books and learning
+- Bicycle riding
+- Swimming
+- Her father Massimo
+- Making deliveries in Portorosso
+- Teaching others
+- The Underdogs team
+
+dislikes:
+- Bullies (especially Ercole)
+- Being called "Spewlia"
+- Losing races
+- Being the outsider
+- Sea monster prejudice
+
+signature_motions:
+- Riding bicycle through Portorosso making deliveries
+- Teaching Luca about astronomy with telescope
+- Swimming competitively
+- Crashing bicycle to protect friends
+- Energetic gestures and loud laugh
+- Pretending to play invisible trumpet
+
+signature_phrases:
+- The Underdogs!
+- Silenzio Bruno! (learned from Luca/Alberto)
+- Santa Mozzarella!
+- Santa Gorgonzola!
+
+identity_keywords:
+- giulia marcovaldo
+- red curly hair
+- sky-blue beanie
+- energetic
+- studious
+- astronomy lover
+- portorosso girl
+- the underdogs
+- bicycle delivery
+- loyal friend
+
+caption_examples:
+  default_outfit: "giulia marcovaldo, red curly hair, brown eyes, freckles, sky-blue beanie, orange-white striped shirt, turquoise pants, energetic expression, pixar 3d animation, warm lighting"
+  cycling: "giulia riding bicycle through portorosso, red curly hair flowing, sky-blue beanie, making deliveries, waving, cobblestone streets, pixar style, mediterranean town"
+  swimming: "giulia swimming competitively, turquoise swimsuit, water goggles, determined expression, race setting, pixar 3d animation, dynamic water"
+  astronomy: "giulia showing telescope to luca, pointing at stars, excited, rooftop at night, starry sky, friendship moment, pixar 3d style"
+
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_guilia.md
+version: 1.0.0

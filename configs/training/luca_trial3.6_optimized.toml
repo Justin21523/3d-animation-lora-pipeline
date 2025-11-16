@@ -1,0 +1,108 @@
+# Trial 3.6 FINAL - Temporal Expansion + Aggressive Augmentation
+# Data pipeline: 372 curated → 2604 temporal expanded → ~10,400 augmented
+# Improvements:
+# 1. Higher capacity (network_dim 64)
+# 2. Better regularization (dropout, min_snr_gamma)
+# 3. Lower learning rate (6e-5) - adjusted for larger dataset
+# 4. Cosine scheduler with restarts
+# 5. Longer training (18 epochs) to utilize more data
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "luca_trial3.6_final"
+output_dir = "/mnt/data/ai_data/models/lora/luca/trial_3.6_final"
+
+# Model architecture
+network_module = "networks.lora"
+network_dim = 64          # Increased from 32 for more capacity
+network_alpha = 32        # Half of network_dim
+network_dropout = 0.1     # NEW: Prevent overfitting
+network_args = []
+
+[training]
+# Dataset (temporal expanded + augmented: ~10,400 images)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/training_final_v1"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+
+# Training dynamics
+learning_rate = 6e-5                    # Reduced for larger dataset
+lr_scheduler = "cosine_with_restarts"   # Better than constant
+lr_scheduler_num_cycles = 3             # 3 restarts during training
+lr_warmup_steps = 200                   # Longer warmup for larger dataset
+
+unet_lr = 6e-5
+text_encoder_lr = 3e-5                  # Lower for stability
+
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01"]
+
+# Epochs and batching
+max_train_epochs = 18                   # More data needs more epochs
+train_batch_size = 4
+gradient_accumulation_steps = 2         # Effective batch size = 8
+
+# Checkpointing
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Regularization
+min_snr_gamma = 5.0                     # NEW: Stabilize across noise levels
+noise_offset = 0.05                     # NEW: Better lighting handling
+
+# Data augmentation (conservative for 3D)
+color_aug = false                       # No color jitter for PBR
+flip_aug = false                        # No flip for asymmetric features
+random_crop = true                      # NEW: Simulate different crops
+
+# Advanced
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/luca/trial_3.6_final/logs"
+log_prefix = "trial_3.6_final"
+
+# Validation
+sample_prompts = "/mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/prompts/luca/luca_validation_prompts.txt"
+sample_every_n_epochs = 2
+
+[metadata]
+# Character info
+character_name = "Luca Paguro (Human Form)"
+character_source = "Pixar's Luca (2021)"
+style = "3D Animation, Pixar Style"
+
+# Training notes
+notes = """
+Trial 3.6 FINAL - Complete data pipeline with temporal expansion + aggressive augmentation.
+
+Data Pipeline:
+- Step 1: 372 curated frames (manual selection + clustering)
+- Step 2: 2604 temporal expanded (±3 neighbors per frame, 7x growth)
+- Step 3: ~10,400 augmented (4x variations: zoom, lighting, occlusion, environment)
+
+Improvements over 3.5:
+- Dataset: 372 → ~10,400 images (28x expansion)
+- Network capacity: 32 → 64 (2x parameters)
+- Learning rate: 1e-4 → 6e-5 (adjusted for larger dataset)
+- Scheduler: constant → cosine_with_restarts
+- Regularization: Added dropout (0.1), min_snr_gamma (5.0), noise_offset (0.05)
+- Training: 14 → 18 epochs (more data needs more epochs)
+- Warmup: 0 → 200 steps (longer warmup for stability)
+
+Expected improvements:
+- Medium/Full-body: +40% accuracy
+- Far shots: +60% accuracy
+- Complex backgrounds: +60% accuracy
+- Occlusion handling: +55% accuracy
+- Multi-character scenes: +50% accuracy
+- Overall average: +47% (from 30% to 77%)
+"""

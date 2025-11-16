@@ -1,0 +1,161 @@
+# Project Configuration for Pixar's Onward
+# Created: 2025-11-15
+
+project:
+  name: "onward"
+  studio: "Pixar"
+  year: 2020
+  runtime: 102
+  style: "3d_animation"
+  resolution: "1080p"
+  genre: "suburban_fantasy"
+
+# Base paths
+paths:
+  base_dir: "/mnt/data/ai_data/datasets/3d-anime/onward"
+  frames: "${base_dir}/frames"
+  instances: "${base_dir}/instances_sampled"
+  instances_inpainted: "${base_dir}/instances_inpainted"
+  clustered: "${base_dir}/clustered"
+  clustered_refined: "${base_dir}/clustered_refined"
+  pose_subclusters: "${base_dir}/pose_subclusters"
+  training_data: "/mnt/data/ai_data/training_data/3d_characters/onward"
+
+# Main characters
+characters:
+  main:
+    - "ian_lightfoot"
+    - "barley_lightfoot"
+  supporting:
+    - "laurel_lightfoot"
+    - "corey_manticore"
+    - "wilden_lightfoot"
+  species:
+    - "elf"
+    - "manticore"
+    - "centaur"
+    - "cyclops"
+
+# Frame extraction settings (hybrid mode for comprehensive coverage)
+frame_extraction:
+  mode: "hybrid"
+  scene_threshold: 30.0  # 3D animation optimized
+  frames_per_scene: 10
+  min_scene_length: 15
+  interval_seconds: 2.0  # Hybrid fallback
+  quality: "high"
+  jpeg_quality: 95
+
+# Instance segmentation (SAM2) - Using Luca-tested settings
+segmentation:
+  model: "sam2_hiera_large"
+  min_mask_size: 16384
+  max_instances: 15
+  points_per_side: 20  # Balanced mode
+  device: "cuda"
+
+# Inpainting settings
+inpainting:
+  enabled: true
+  default_method: "lama"
+  occlusion_threshold: 0.15
+  auto_detect_character: true
+
+# Identity clustering
+clustering:
+  method: "hdbscan"
+  min_cluster_size: 12
+  min_samples: 2
+  use_face_detection: true
+  similarity_threshold: 0.70
+
+# Pose subclustering
+pose_subclustering:
+  enabled: false  # Enable after initial clustering
+  min_cluster_size: 5
+  method: "umap_hdbscan"
+
+# Caption generation
+captioning:
+  model: "qwen2_vl"
+  prefix: "a 3d animated elf character from pixar's onward, smooth shading, suburban fantasy setting"
+  style_tags:
+    - "pixar onward style"
+    - "3d animation"
+    - "suburban fantasy"
+    - "magic and technology blend"
+    - "purple and blue color palette"
+  length_range: [40, 77]
+
+# LoRA training
+lora_training:
+  base_model: "runwayml/stable-diffusion-v1-5"
+  target_size: 400
+  network_dim: 32
+  network_alpha: 16
+  learning_rate: 1e-4
+  epochs: 10
+  batch_size: 4
+  disable_color_jitter: true  # Preserve purple-blue fantasy palette
+  disable_horizontal_flip: true  # Preserve character asymmetries
+
+# Quality thresholds (3D animation defaults)
+quality:
+  alpha_threshold: 0.15
+  blur_threshold: 80
+  min_face_size: 64
+  min_sharpness: 30
+
+# Processing parameters
+processing:
+  device: "cuda"
+  gpu_id: 0
+  batch_size: 8
+  num_workers: 4
+  cache_clear_interval: 10
+
+# Output settings
+output:
+  save_metadata: true
+  save_visualization: false
+  save_face_crops: true
+  create_thumbnails: true
+  compression_quality: 95
+
+# Notes
+notes:
+  description: "Onward is a Pixar suburban fantasy film about two elf brothers on a magical quest to bring back their father for one day"
+  special_considerations:
+    - "Suburban fantasy setting blends modern tech with magical elements"
+    - "Strong purple, blue, and teal color palette for magic scenes"
+    - "Warm oranges and reds for emotional beats and sunsets"
+    - "Two main elf characters (Ian and Barley) appear together frequently"
+    - "Road-movie framing with wide highway and landscape shots"
+    - "Distinct fantasy creatures (elves, manticore, centaurs, cyclops)"
+    - "Magical effects with glowing runes and volumetric light"
+
+# Pipeline stages
+pipeline_stages:
+  - name: "frame_extraction"
+    enabled: true
+  - name: "instance_segmentation"
+    enabled: true
+  - name: "inpainting"
+    enabled: true
+  - name: "identity_clustering"
+    enabled: true
+  - name: "interactive_review"
+    enabled: true
+  - name: "pose_subclustering"
+    enabled: false
+  - name: "caption_generation"
+    enabled: true
+  - name: "lora_training"
+    enabled: true
+
+# Processing history (for reference)
+processing_history:
+  - date: "2025-11-15"
+    stage: "frame_extraction"
+    status: "pending"
+    notes: "Configured for batch processing with hybrid mode"

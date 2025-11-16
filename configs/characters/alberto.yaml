@@ -1,0 +1,112 @@
+name: Alberto
+full_name: Alberto Scorfano
+age: 14
+species: Sea monster (human when dry)
+origin: Isola del Mare
+film: '*Luca* (2021), plus *Ciao Alberto* (short)'
+role: Deuteragonist; Luca’s guide, mentor, rival, and brother-like companion.
+human_form:
+  form_type: human
+  description: '
+
+    * Slender, lightly muscular teenage build
+
+    * Tan skin with light freckles
+
+    * Bright green eyes
+
+    * Tall, curly golden-brown hair with a high cowlick
+
+    * Yellow tank top
+
+    * Brown shorts tied with a rope
+
+    * A '
+  appearance:
+    build: ''
+    skin: tan skin with light freckles
+    eyes: bright green eyes
+    hair: tall, curly golden-brown hair with a high cowlick
+    clothing:
+    - yellow tank top
+    - brown shorts tied with a rope
+    distinctive_features:
+    - slender, lightly muscular teenage build
+    - a faint scar on upper left arm
+    tags: []
+sea_monster_form:
+  form_type: sea_monster
+  description: '
+
+    * Periwinkle scales
+
+    * Purple fins/hair
+
+    * Green eyes with yellow-green sclera, oval pupils
+
+    * Sharper, more angular fins than Luca (tuna-inspired)
+
+    * Long tail with purple caudal fins
+
+    * Left-arm scar be'
+  appearance:
+    build: ''
+    skin: periwinkle scales
+    eyes: green eyes with yellow-green sclera, oval pupils
+    hair: ''
+    clothing: []
+    distinctive_features:
+    - purple fins/hair
+    - sharper, more angular fins than luca (tuna-inspired)
+    - long tail with purple caudal fins
+    - left-arm scar becomes a visible cut
+    - typically transforms quickly when splashed
+    tags: []
+personality_traits:
+- Adventurous
+- Confident (often overconfident)
+- Impulsive
+- Mischievous / playful
+- Free-spirited
+- Charming in a rough, chaotic way
+- Proud of his knowledge (even when inaccurate)
+- Loyal but insecure
+- Easily jealous
+- Desires belonging and validation
+motivations: []
+likes:
+- Gelato
+- Pasta
+- Riding a Vespa
+- Knives / tools
+- Adventures
+- Showing off human knowledge
+- Spending time with Luca
+- Fishing with Massimo
+- Collecting human items
+- Freedom & independence
+dislikes:
+- Ercole Visconti
+- Rules
+- Being told what to do
+- Feeling lonely
+- Luca bonding with Giulia
+- Bruno (his negative inner voice)
+- Messing things up / failure
+- Disappointing Massimo
+- Shapeshifting
+- Fast swimming (tuna-inspired anatomy)
+- Fearless physical risk-taking
+- Good mechanical improvisation (DIY Vespas)
+- Ambidextrous (writes with both hands)
+signature_phrases:
+- Silenzio, Bruno!
+- hair
+- Silenzio, Bruno!
+- Signor Vespa
+- underdogs
+- fish
+identity_keywords: []
+caption_examples: {}
+source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_alberto.md
+version: 1.0.0

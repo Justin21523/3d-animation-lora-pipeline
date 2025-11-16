@@ -1,0 +1,85 @@
+# Optimized SAM2 Configuration for Luca Backgrounds
+# Purpose: High-quality character segmentation for clean background extraction
+#
+# Changes from default:
+# - Increased points_per_side for better character detection
+# - Lowered IoU/stability thresholds to capture more instances
+# - Larger mask dilation for complete character coverage
+# - Direct LaMa inpainting instead of OpenCV
+
+sam2:
+  model_type: "sam2_hiera_large"
+  device: "cuda"
+
+  # Minimum character size (4096 pixels = 64x64, captures distant characters)
+  min_mask_size: 4096
+
+  # Maximum characters per frame (Luca has many multi-character scenes)
+  max_instances: 20
+
+  # SAM2 Mask Generator Parameters
+  mask_generator:
+    # CRITICAL: Increased from 20 to 32 for better character detection
+    # More points = more precise segmentation of character boundaries
+    points_per_side: 32
+
+    # CRITICAL: Lowered from 0.76 to 0.70 to capture more character instances
+    # Lower threshold = more lenient, catches characters that were previously missed
+    pred_iou_thresh: 0.70
+
+    # CRITICAL: Lowered from 0.86 to 0.80 for the same reason
+    # Helps capture partially occluded or distant characters
+    stability_score_thresh: 0.80
+
+    # Keep crop disabled for stability (as in original)
+    crop_n_layers: 0
+    crop_n_points_downscale_factor: 2
+
+    # Batch size for GPU processing
+    points_per_batch: 192
+
+# Background Inpainting Configuration
+background_inpainting:
+  method: "lama"  # Use LaMa instead of OpenCV
+
+  # CRITICAL: Increased from 10px to 20px based on testing
+  # 20px dilation ensures complete coverage of character edges
+  # Including anti-aliasing halos and soft shadows
+  mask_dilation_px: 20
+
+  # Dilation kernel shape (square works best for character silhouettes)
+  dilation_kernel_size: 20
+  dilation_iterations: 1
+
+# Output Settings
+output:
+  save_backgrounds: true
+  save_masks: true
+  save_instances: true
+  save_metadata: true
+  save_visualization: false  # Disable to save disk space
+
+  # Background quality
+  background_jpeg_quality: 95
+
+  # Resume capability
+  skip_existing: true
+
+# Performance Settings
+performance:
+  batch_size: 1  # Process one frame at a time for stability
+  cache_clear_interval: 10  # Clear GPU cache every 10 frames
+  max_retries: 3  # Retry failed frames up to 3 times
+  timeout_seconds: 180  # Timeout for slow frames
+
+# Source Data
+input:
+  frames_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/frames"
+
+output_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/luca_instances_sam2_v2"
+
+# Logging
+logging:
+  save_failed_frames_log: true
+  warn_slow_frames_threshold_seconds: 30
+  progress_bar: true

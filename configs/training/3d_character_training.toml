@@ -1,0 +1,82 @@
+# 3D Character LoRA Training Config (SD1.5)
+# Optimized for Pixar-style 3D animated characters
+# Compatible with kohya_ss sd-scripts
+
+# Model parameters
+pretrained_model_name_or_path = "runwayml/stable-diffusion-v1-5"
+v2 = false
+v_parameterization = false
+
+# Training output
+output_dir = "/mnt/data/ai_data/models/lora/3d_characters/character_name"
+output_name = "character_name_v1"
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Training parameters
+max_train_epochs = 15
+save_every_n_epochs = 3
+
+learning_rate = 1e-4
+unet_lr = 1e-4
+text_encoder_lr = 5e-5
+lr_scheduler = "cosine_with_restarts"
+lr_warmup_steps = 300
+
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01"]
+
+# Network settings (LoRA)
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+
+# Training precision
+mixed_precision = "fp16"
+full_fp16 = false
+
+# Logging
+logging_dir = "/mnt/data/ai_data/lora_evaluation/logs"
+log_prefix = "3d_character"
+
+# Performance optimization
+gradient_checkpointing = true
+gradient_accumulation_steps = 1
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Memory optimization
+xformers = true
+cache_latents = true
+cache_latents_to_disk = true
+
+# Misc
+seed = 42
+clip_skip = 2  # Keep at 2 for 3D content
+
+# Dataset configuration
+[[datasets]]
+resolution = [512, 512]
+batch_size = 4
+enable_bucket = true
+min_bucket_reso = 384
+max_bucket_reso = 768
+bucket_reso_steps = 64
+bucket_no_upscale = false
+
+  [[datasets.subsets]]
+  image_dir = "/mnt/data/ai_data/training_data/3d_characters/character_name/images"
+  num_repeats = 1
+  shuffle_caption = true
+  keep_tokens = 2  # Keep "3d animated character" at beginning
+  caption_extension = ".txt"
+  color_aug = false  # Disable for 3D - colors are consistent
+  flip_aug = false  # Disable for 3D - breaks model consistency
+
+# 3D-specific notes:
+# - Lower clip_skip (2) for realistic rendering
+# - Disable color/flip augmentation (3D models are consistent)
+# - Use higher resolution buckets (up to 768) for detailed 3D renders
+# - Keep "3d animated character" prefix in captions
+# - Training on 200-500 images typically sufficient for 3D characters
+#   (more consistent than 2D anime which needs 500-1000)
