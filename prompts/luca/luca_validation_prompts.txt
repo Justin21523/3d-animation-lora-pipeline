@@ -1,0 +1,48 @@
+# Luca Validation Prompts
+# These prompts test the LoRA's ability to generate Luca in various scenarios
+# Format: One prompt per line, seeds will be randomized during generation
+
+# Close-up portraits
+a 3d animated character, luca paguro, close-up portrait, smiling warmly, pixar style, smooth shading, studio lighting, high quality
+a 3d animated character, luca paguro, close-up face, concerned expression, furrowed brows, pixar film quality, soft lighting
+a 3d animated character, luca paguro, portrait, looking at viewer, gentle smile, brown eyes, pixar rendering
+
+# Full body poses
+a 3d animated character, luca paguro, full body, standing confidently, hands on hips, pixar style, outdoor lighting
+a 3d animated character, luca paguro, full body, running pose, dynamic movement, pixar film quality
+a 3d animated character, luca paguro, full body, sitting casually, relaxed pose, pixar rendering, soft shadows
+
+# Different angles
+a 3d animated character, luca paguro, three-quarter view, looking to the side, pixar style, even illumination
+a 3d animated character, luca paguro, side profile, standing straight, pixar film quality, natural lighting
+a 3d animated character, luca paguro, back view, looking over shoulder, pixar rendering
+
+# Various environments
+a 3d animated character, luca paguro, standing on beach, ocean background, sunny day, pixar style, natural lighting
+a 3d animated character, luca paguro, in italian village, cobblestone street, warm afternoon light, pixar film quality
+a 3d animated character, luca paguro, indoors, cozy room, soft window light, pixar rendering
+
+# Different expressions
+a 3d animated character, luca paguro, excited expression, eyes wide, big smile, pixar style, bright lighting
+a 3d animated character, luca paguro, thoughtful expression, hand on chin, pixar film quality, soft lighting
+a 3d animated character, luca paguro, surprised face, mouth open, eyebrows raised, pixar rendering
+
+# Action scenes
+a 3d animated character, luca paguro, eating pasta, happy expression, pixar style, warm indoor lighting
+a 3d animated character, luca paguro, pointing forward, determined look, pixar film quality, dramatic lighting
+a 3d animated character, luca paguro, waving hello, friendly smile, pixar rendering, outdoor lighting
+
+# Clothing variations
+a 3d animated character, luca paguro, wearing striped shirt, casual outfit, pixar style, natural lighting
+a 3d animated character, luca paguro, wearing simple t-shirt, relaxed clothing, pixar film quality
+a 3d animated character, luca paguro, wearing vest, formal casual, pixar rendering, soft lighting
+
+# Lighting tests
+a 3d animated character, luca paguro, dramatic side lighting, strong shadows, pixar style, cinematic
+a 3d animated character, luca paguro, backlit silhouette, rim lighting, pixar film quality, sunset
+a 3d animated character, luca paguro, soft diffused lighting, no harsh shadows, pixar rendering, overcast
+
+# Composition tests
+a 3d animated character, luca paguro, medium shot, waist up, centered composition, pixar style
+a 3d animated character, luca paguro, extreme close-up, face only, detailed features, pixar film quality
+a 3d animated character, luca paguro, wide shot, full body in environment, pixar rendering
