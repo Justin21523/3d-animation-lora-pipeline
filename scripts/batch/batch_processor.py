@@ -177,7 +177,39 @@ class BatchProcessor:
         check_type = check['type']
 
         try:
-            if check_type == "directory_exists":
+            if check_type == "backgrounds_complete":
+                # Count frames in source directory
+                frames_dir = Path(self._resolve_template(check['frames_dir'], job.film))
+                if not frames_dir.exists():
+                    print(f"⚠️  Frames directory not found: {frames_dir}")
+                    return False
+
+                total_frames = len(list(frames_dir.glob("*.jpg")))
+                if total_frames == 0:
+                    print(f"⚠️  No frames found in {frames_dir}")
+                    return False
+
+                # Count backgrounds produced
+                backgrounds_dir = Path(self._resolve_template(check['path'], job.film))
+                if not backgrounds_dir.exists():
+                    return False
+
+                backgrounds_count = len(list(backgrounds_dir.glob("*.jpg")))
+
+                # Check if at least tolerance% of frames processed
+                tolerance = check.get('tolerance', 0.95)
+                required_count = int(total_frames * tolerance)
+
+                is_complete = backgrounds_count >= required_count
+
+                if is_complete:
+                    print(f"✅ {job.name}/{job.film}: {backgrounds_count}/{total_frames} backgrounds ({backgrounds_count*100/total_frames:.1f}%)")
+                else:
+                    print(f"⏳ {job.name}/{job.film}: {backgrounds_count}/{total_frames} backgrounds ({backgrounds_count*100/total_frames:.1f}%, need {required_count})")
+
+                return is_complete
+
+            elif check_type == "directory_exists":
                 path = Path(self._resolve_template(check['path'], job.film))
                 if not path.exists():
                     return False
@@ -270,15 +302,26 @@ class BatchProcessor:
             job.end_time = datetime.now().isoformat()
             job.duration_seconds = end - start
 
-            success = result.returncode == 0
+            # Check both exit code AND completion check
+            exit_success = result.returncode == 0
 
-            if success:
+            # Even if exit code is 0, verify actual completion
+            completion_verified = self._check_completion(job)
+
+            if exit_success and completion_verified:
                 job.status = "completed"
                 print(f"✅ Completed: {job.name} for {job.film} ({job.duration_seconds:.1f}s)")
+                success = True
+            elif exit_success and not completion_verified:
+                job.status = "failed"
+                job.error_message = "Process exited successfully but completion check failed"
+                print(f"⚠️  Warning: {job.name} for {job.film} exited OK but output incomplete")
+                success = False
             else:
                 job.status = "failed"
                 job.error_message = f"Exit code {result.returncode}"
                 print(f"❌ Failed: {job.name} for {job.film} (exit code {result.returncode})")
+                success = False
 
             self._save_progress()
             return success
@@ -381,7 +424,10 @@ class BatchProcessor:
             if not runnable_jobs:
                 break  # All done or stuck
 
-            for job in runnable_jobs:
+            # Process ONE job at a time (sequential mode for GPU constraint)
+            if runnable_jobs:
+                job = runnable_jobs[0]  # Take first runnable job only
+
                 # Check if already completed (for resume/skip)
                 if self._check_completion(job):
                     job.status = "skipped"
@@ -398,6 +444,9 @@ class BatchProcessor:
                     print(f"⏳ Retry {job.attempts}/{job.retry['max_attempts']} in {backoff}s...")
                     if not self.dry_run:
                         time.sleep(backoff)
+                else:
+                    # Job completed or exhausted retries, move to next
+                    continue
 
         # Final summary
         self._print_summary()

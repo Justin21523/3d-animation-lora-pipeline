@@ -8,7 +8,7 @@ discovery:
   base_dir: "/mnt/data/ai_data/datasets/3d-anime"
   film_pattern: "*"  # Glob pattern for film directories
   exclude:
-    - "luca"  # Already processed or currently processing
+    - "luca"  # Already processed manually
 
 jobs:
   # Job 1: SAM2 Instance Segmentation
@@ -31,9 +31,10 @@ jobs:
         --context-mode: "transparent"
 
     completion_check:
-      type: "directory_exists"
-      path: "{base_dir}/{film}/{film}_instances_sam2_v2/instances"
-      min_files: 10  # At least 10 character instances
+      type: "backgrounds_complete"
+      path: "{base_dir}/{film}/{film}_instances_sam2_v2/backgrounds"
+      frames_dir: "{frames_dir}"
+      tolerance: 0.95  # 95% of frames must be processed
 
     resources:
       gpu: true
