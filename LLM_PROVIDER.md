@@ -315,3 +315,4 @@ tests/integration/test_full_pipeline.py
 ## Version
 
 v1.0.0 - Initial 3D animation pipeline (2025-11-08)
+- 等一下 你好像搞錯了 我們現在早就該回到3d-animation-lora-pipeline原先的專案了阿 另外  後面記得我想先來規劃相關後續實作的程式碼這樣之後 等SAM相關分割inpainting都結束後就可以開始進行了
