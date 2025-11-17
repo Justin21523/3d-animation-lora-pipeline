@@ -12,12 +12,12 @@ project:
 # Base paths
 paths:
   base_dir: "/mnt/data/ai_data/datasets/3d-anime/luca"
-  frames: "${base_dir}/frames"
-  instances: "${base_dir}/instances_sampled"
-  instances_inpainted: "${base_dir}/instances_inpainted"
-  clustered: "${base_dir}/clustered"
-  clustered_refined: "${base_dir}/clustered_refined"
-  pose_subclusters: "${base_dir}/pose_subclusters"
+  frames: "${paths.base_dir}/frames"
+  instances: "${paths.base_dir}/instances_sampled"
+  instances_inpainted: "${paths.base_dir}/instances_inpainted"
+  clustered: "${paths.base_dir}/clustered"
+  clustered_refined: "${paths.base_dir}/clustered_refined"
+  pose_subclusters: "${paths.base_dir}/pose_subclusters"
   training_data: "/mnt/data/ai_data/training_data/3d_characters/luca"
 
 # Main characters
@@ -142,8 +142,6 @@ pipeline_stages:
     enabled: true
   - name: "instance_segmentation"
     enabled: true
-  - name: "inpainting"
-    enabled: true
   - name: "identity_clustering"
     enabled: true
   - name: "interactive_review"
@@ -151,6 +149,8 @@ pipeline_stages:
   - name: "pose_subclustering"
     enabled: false
   - name: "caption_generation"
+    enabled: true
+  - name: "dataset_preparation"
     enabled: true
   - name: "lora_training"
     enabled: true
