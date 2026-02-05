@@ -113,5 +113,5 @@ caption_examples:
   bullying: "ercole threatening with menacing expression, hazel eyes cold, ciccio and guido flanking, intimidating pose, pixar 3d animation"
   defeat: "ercole in fountain, pink sweater wet and shrinking, shocked crying expression, humiliated, pixar 3d style, comedic"
 
-source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_ercole.md
+source_file: docs/films/luca/characters/ercole.md
 version: 1.0.0

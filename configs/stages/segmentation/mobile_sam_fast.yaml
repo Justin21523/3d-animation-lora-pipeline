@@ -1,0 +1,22 @@
+# MobileSAM Fast Segmentation Configuration
+# Lightweight testing and preview mode
+
+model:
+  type: "mobile_sam"
+  path: "${models.segmentation.mobile_sam}"
+  device: "cuda"
+
+generation:
+  points_per_side: 16       # Lower for speed
+  pred_iou_thresh: 0.80     # Higher threshold = fewer masks
+  stability_score_thresh: 0.85
+
+processing:
+  max_instances: 8
+  nms_threshold: 0.6
+
+output:
+  save_masks: true
+  save_rgba: true
+  format: "png"
+  quality: 85

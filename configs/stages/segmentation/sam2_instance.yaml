@@ -1,0 +1,79 @@
+# SAM2 Instance Segmentation Configuration
+# Full-frame instance detection for multi-character extraction
+#
+# Usage:
+#   python scripts/generic/segmentation/instance_segmentation.py \
+#     --config configs/stages/segmentation/sam2_instance.yaml
+
+# Model settings
+model:
+  model_type: "sam2_hiera_large"  # sam2_hiera_large | base_plus | small | tiny
+  checkpoint_path: "${MODELS_DIR}/segmentation/sam2_hiera_large.pt"
+  device: "cuda"
+
+# Automatic mask generation parameters
+# Tuned for 2D animation (2025-11-16)
+mask_generation:
+  # Point grid density
+  points_per_side: 32  # High for detailed detection
+  points_per_batch: 64
+
+  # Quality thresholds
+  pred_iou_thresh: 0.70  # Lowered to catch more instances
+  stability_score_thresh: 0.80  # Lowered for partial occlusions
+
+  # Mask processing
+  crop_n_layers: 1
+  crop_n_points_downscale_factor: 2
+
+  # Minimum/maximum mask sizes
+  min_mask_region_area: 4096  # ~64x64 pixels minimum
+  max_mask_region_area: null  # No upper limit
+
+# Instance filtering
+filtering:
+  # Size filtering
+  min_mask_size: 4096  # Pixels
+  max_instances: 15  # Per frame
+
+  # Quality filtering
+  min_iou: 0.70
+  min_stability: 0.80
+
+# Output settings
+output:
+  save_masks: true
+  save_rgba: true
+  save_metadata: true
+  output_format: "png"
+
+  # Directory structure
+  instances_subdir: "instances"
+  masks_subdir: "masks"
+
+# Processing settings
+processing:
+  batch_size: 1  # SAM2 is memory-intensive
+  num_workers: 2
+
+# 2D Animation notes
+notes: |
+  SAM2 Instance Segmentation:
+
+  1. More thorough than ToonOut but slower
+     - Detects ALL potential instances per frame
+     - Better for scenes with multiple characters
+
+  2. Tuned parameters:
+     - Lower thresholds to catch more instances
+     - Higher point density for detailed detection
+     - Min mask size catches distant characters
+
+  3. Post-processing required:
+     - Use instance_prefilter.py to remove background
+     - Run identity clustering to group by character
+
+  4. Memory requirements:
+     - Large model: ~6GB VRAM
+     - Base model: ~4GB VRAM
+     - Small/Tiny: ~2GB VRAM

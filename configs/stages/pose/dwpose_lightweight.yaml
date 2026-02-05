@@ -1,0 +1,29 @@
+# DWpose Lightweight Configuration
+# CPU-friendly fallback for pose estimation
+
+model:
+  type: "dwpose"
+  path: "${models.pose.dwpose_small}"
+  device: "cpu"
+  backend: "onnx"
+
+detection:
+  det_model: "yolox_s"  # Smaller detector
+  pose_model: "dw-s_ucoco_256"  # Smaller pose model
+  det_threshold: 0.6
+
+keypoints:
+  format: "coco"
+  include_face: false  # Skip for speed
+  include_hands: false
+  normalize: true
+
+processing:
+  batch_size: 4
+  max_persons: 3
+  nms_threshold: 0.5
+
+output:
+  save_visualization: false
+  save_keypoints: true
+  format: "json"

@@ -1,0 +1,163 @@
+# Example Batch Configuration for LoRA Data Preparation
+#
+# This is a complete example showing all available options.
+# Copy and modify for your specific needs.
+
+# =============================================================================
+# BASE CONFIGURATION
+# =============================================================================
+# Applied to all jobs unless overridden in individual job configs.
+# Uses 'character' preset as starting point.
+
+base_config:
+  # Hardware settings
+  device: cuda
+  batch_size: 32
+  caption_batch_size: 8
+
+  # Dataset settings
+  repeats: 10  # Kohya repeats value
+
+  # Feature extraction (for clustering)
+  feature_extractor:
+    type: clip
+    model_name: openai/clip-vit-large-patch14
+    normalize: true
+
+  # Clustering algorithm
+  clusterer:
+    type: hdbscan
+    min_cluster_size: 12
+    min_samples: 2
+    metric: euclidean
+    standardize: true
+
+  # Caption generation
+  caption_engine:
+    type: template  # Fast template-based captions
+    max_length: 77
+    temperature: 0.7
+    prefix: "a 3d animated character, pixar style"
+
+  # Quality filters
+  quality_filters:
+    - type: blur
+      threshold: 100.0  # Laplacian variance threshold
+    - type: size
+      min_width: 256
+      min_height: 256
+    - type: dedup
+      threshold: 8  # Perceptual hash threshold
+
+# =============================================================================
+# BATCH EXECUTION SETTINGS
+# =============================================================================
+
+batch_settings:
+  max_workers: 1  # Number of parallel jobs (1 = sequential)
+  continue_on_error: true  # Continue if one job fails
+  save_checkpoints: true  # Save progress after each job
+
+# =============================================================================
+# JOBS
+# =============================================================================
+# Each job is one preparer execution (one character/scene/style)
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Character Identity LoRAs
+  # ---------------------------------------------------------------------------
+
+  - job_id: character_bryce
+    preparer_type: character
+    name: bryce
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/characters_inpainted/bryce
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/bryce_identity
+    config:
+      # Job-specific overrides
+      repeats: 15  # More repeats for main character
+      caption_engine:
+        prefix: "bryce, a young teen boy, 3d animated character, pixar style"
+
+  - job_id: character_caleb
+    preparer_type: character
+    name: caleb
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/characters_inpainted/caleb
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/caleb_identity
+    config:
+      caption_engine:
+        prefix: "caleb, a young teen boy with dark hair, 3d animated character, pixar style"
+
+  - job_id: character_elio
+    preparer_type: character
+    name: elio
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/characters_inpainted/elio
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/elio_identity
+    config:
+      repeats: 15  # Main character
+      caption_engine:
+        prefix: "elio, a young boy, 3d animated character, pixar style"
+
+  # ---------------------------------------------------------------------------
+  # Expression LoRAs (optional)
+  # ---------------------------------------------------------------------------
+
+  - job_id: expression_bryce
+    preparer_type: expression
+    name: bryce
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/expressions_captioned/bryce
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/bryce_expression
+    config:
+      repeats: 10
+      clusterer:
+        min_cluster_size: 8  # Smaller clusters for expressions
+      quality_filters:
+        - type: blur
+          threshold: 120.0  # Stricter for facial details
+        - type: size
+          min_width: 256
+          min_height: 256
+
+  # ---------------------------------------------------------------------------
+  # Pose LoRAs (optional)
+  # ---------------------------------------------------------------------------
+
+  - job_id: pose_elio
+    preparer_type: pose
+    name: elio
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/poses/elio
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/elio_pose
+    config:
+      repeats: 10
+      clusterer:
+        min_cluster_size: 10  # Moderate clusters for poses
+      quality_filters:
+        - type: blur
+          threshold: 100.0
+        - type: size
+          min_width: 384
+          min_height: 384  # Larger for full-body poses
+
+  # ---------------------------------------------------------------------------
+  # Background LoRAs (optional)
+  # ---------------------------------------------------------------------------
+
+  - job_id: background_space_station
+    preparer_type: background
+    name: space_station
+    input_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/backgrounds/space_station
+    output_dir: /mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/space_station_bg
+    config:
+      repeats: 5  # Lower for backgrounds
+      clusterer:
+        min_cluster_size: 15  # Larger clusters for scenes
+      caption_engine:
+        prefix: "a futuristic space station interior, 3d rendered environment, pixar style"
+      quality_filters:
+        - type: blur
+          threshold: 80.0  # Allow some DoF blur
+        - type: size
+          min_width: 512
+          min_height: 512
+        - type: dedup
+          threshold: 5  # Aggressive deduplication for backgrounds

@@ -1,0 +1,260 @@
+film:
+  title: Luca
+  year: 2021
+  studio: Pixar Animation Studios
+  directors:
+  - Enrico Casarosa
+  theme: friendship, coming-of-age, Italian summer nostalgia, accepting differences,
+    found family, adolescent identity exploration
+  style: 3D computer-animated, Italian coastal aesthetic, watercolor-inspired color
+    grading, soft painterly lighting reminiscent of Studio Ghibli
+  setting: Portorosso, a fictional Italian seaside town on the Italian Riviera, 1950s-60s
+    period
+  visual_characteristics: sun-drenched coastal palette, saturated warm colors (orange
+    terracotta, turquoise sea, golden sunlight), soft character shading with subtle
+    subsurface scattering, impressionistic backgrounds, hand-painted textures
+characters:
+  luca_human:
+    full_name: Luca Paguro
+    age: 13 years old
+    role: protagonist, sea monster boy in human disguise
+    appearance: slim pre-teen boy, olive/medium-tan Italian complexion, short curly
+      dark brown hair (slightly tousled and wavy), large expressive brown eyes, soft
+      rounded facial features, small nose
+    outfit_default: white undershirt, brown or beige shorts, barefoot or simple sandals
+    outfit_variants:
+    - red swimming trunks (beach scenes)
+    - 'racing outfit: colorful patched together racing uniform for Portorosso Cup'
+    - 'sea monster form: green and purple scales, fins, tail, gills, yellow eyes (appears
+      when wet)'
+    personality: curious and eager to learn, sheltered and cautious initially, becomes
+      braver through friendship, loyal and empathetic, conflict between underwater
+      safety and surface world curiosity
+    distinctive_features: curly brown hair, wide curious eyes, sea monster form when
+      wet, barefoot most of the time, gestures with hands when excited
+    emotional_range:
+    - nervous/hesitant when first arriving on surface
+    - awestruck/wonder discovering Portorosso and human world
+    - joyful/carefree during summer adventures with Alberto
+    - conflicted when hiding sea monster identity
+    - vulnerable when facing rejection or exposure
+    - determined during Portorosso Cup race
+    relationships:
+      alberto_scorfano: best friend who introduces him to surface world, intense platonic
+        bond (often read as queer-coded), learns independence and confidence through
+        their friendship
+      giulia_marcovaldo: human friend and racing partner, sparks jealousy subplot
+        with Alberto, represents Luca's bridge to human society
+      paguro_parents: overprotective sea monster parents who fear the surface world,
+        Luca's journey is partly about breaking free from their restrictions
+    signature_scenes:
+    - first transformation from sea monster to human on beach
+    - Vespa fantasies with Alberto (shared imagination sequences)
+    - racing through Portorosso streets
+    - rain scene revealing sea monster form
+    - final goodbye at train station
+    trigger_words:
+    - luca_paguro
+    - luca_pixar
+    - curly_brown_hair_boy
+    - italian_boy
+    - sea_monster_human
+    - luca_2021
+    negative_prompts:
+    - blond hair
+    - adult
+    - muscular
+    - realistic photo
+    - sea monster form (when human form intended)
+  alberto_human:
+    full_name: Alberto Scorfano
+    age: 14-15 years old (slightly older than Luca)
+    role: deuteragonist, Luca's best friend and mentor to surface world
+    appearance: slim teenage boy with slightly more athletic build than Luca, warm
+      tan Italian complexion, messy curly dark hair (longer and wilder than Luca's),
+      brown eyes, confident posture, often shirtless or in minimal clothing
+    outfit_default: green or teal shorts, barefoot, shirtless or simple tank top
+    outfit_racing: makeshift racing outfit similar to Luca's, colorful patches
+    personality: confident and adventurous, hides insecurity and abandonment issues,
+      protective of Luca, reckless and impulsive, learns vulnerability and trust,
+      struggles with jealousy and fear of being left behind
+    distinctive_features: wild messy hair, sun-bronzed skin, often bare-chested, confident
+      swagger, sea monster form (teal/blue scales, fins) when wet, missing his father
+      (abandoned), lives alone in old tower
+    emotional_range:
+    - confident/cocky when teaching Luca about surface world
+    - playful/mischievous during adventures
+    - vulnerable when insecurities surface
+    - jealous/hurt when Giulia joins and Luca bonds with her
+    - defensive/angry when exposed as sea monster
+    - brave/selfless during climactic race scene
+    - bittersweet during goodbye
+    relationships:
+      luca_paguro: first true friend, teaches Luca confidence and independence, intense
+        bond with undertones of abandonment fear
+      giulia_marcovaldo: initial jealousy, eventually learns to trust and include
+        her, represents his growth in accepting others
+      massimo_marcovaldo: father figure he desperately needs, finds acceptance and
+        belonging with Massimo after reveal
+    signature_props:
+    - Vespa (imagined and real)
+    - harpoon
+    - tower hideout
+    - sea monster form
+    trigger_words:
+    - alberto_scorfano
+    - alberto_luca
+    - wild_curly_hair
+    - shirtless_teen_boy
+    - italian_coastal
+    - sea_monster_boy
+    negative_prompts:
+    - adult
+    - muscular
+    - blond
+    - clean-cut hair
+    - formal clothing
+  giulia:
+    full_name: Giulia Marcovaldo
+    age: 13 years old
+    role: tritagonist, human friend and catalyst for plot conflict
+    appearance: energetic teenage girl, light skin with freckles, bright red curly/wavy
+      hair (very distinctive), brown eyes, round face, stocky athletic build
+    outfit_default: yellow shirt or tank top, blue or brown shorts, sometimes suspenders,
+      casual summer clothes, often barefoot or sandals
+    personality: outspoken and determined, passionate about winning Portorosso Cup
+      to prove herself, intelligent and curious (loves astronomy), fiercely loyal
+      once she befriends someone, initially competitive, becomes protective friend
+    distinctive_features: bright red curly hair (most visually striking trait), freckles,
+      energetic gestures, loud voice, competitive spirit, astronomy books and telescope
+    emotional_range:
+    - determined/competitive during training
+    - excited when making new friends
+    - protective when discovering boys' secret
+    - passionate when talking about stars and school
+    - brave during final race
+    relationships:
+      luca_paguro: racing partner, opens Luca's eyes to education and wider world
+        beyond Portorosso
+      alberto_scorfano: initially creates jealousy, eventually becomes trusted friend
+      massimo_marcovaldo: loving father, fisherman, one-armed, accepting and kind
+    signature_props:
+    - astronomy books
+    - telescope
+    - racing bicycle
+    - Portorosso Cup trophy goal
+    trigger_words:
+    - giulia_marcovaldo
+    - giulia_luca
+    - red_curly_hair_girl
+    - freckled_girl
+    - italian_girl
+    - pixar_2021
+    negative_prompts:
+    - blond hair
+    - adult
+    - thin build
+    - shy
+    - quiet
+visual_style:
+  color_palette:
+  - warm terracotta oranges
+  - turquoise and cobalt blues
+  - golden yellow sunlight
+  - deep green waters
+  - soft pastel pinks and purples
+  - weathered earth tones
+  lighting:
+  - sun-drenched coastal lighting with strong rim lights
+  - soft diffused shadows
+  - 'underwater scenes: volumetric god rays, cool blue-green tones'
+  - golden hour warm glows
+  - 'night scenes: cool moonlight with warm interior lights'
+  materials:
+  - smooth skin with subtle subsurface scattering (more painterly than photorealistic)
+  - sea monster scales (iridescent, wet look)
+  - weathered stone and plaster (Italian architecture)
+  - ocean water (stylized, not photorealistic)
+  - fabric (loose summer clothes)
+  - Vespa metal and chrome
+  settings:
+  - 'Portorosso: colorful Italian coastal town, stacked pastel buildings, narrow streets,
+    harbor with boats'
+  - 'Underwater: soft filtered light, coral, sea plants, Luca''s family home'
+  - 'Island tower: Alberto''s hideout, rundown structure with Vespa posters'
+  - 'Marcovaldo home: cozy fisherman''s cottage, warm interiors'
+  - 'Piazza: town square for racing and festivals'
+  artistic_influences: Studio Ghibli (particularly Hayao Miyazaki), Italian neorealism,
+    Amedeo Modigliani (elongated forms), watercolor painting techniques
+caption_guidelines:
+  prefix_template: a 3d animated character from Pixar's Luca (2021), {character_name},
+    {appearance_details}, smooth shading, {coastal_or_underwater_context}
+  mandatory_keywords:
+  - 3d animation
+  - pixar style
+  - luca film
+  - smooth shading
+  - italian coastal
+  context_suggestions:
+  - italian coastal town
+  - portorosso streets
+  - sunny beach
+  - harbor with boats
+  - underwater scene
+  - vespa racing
+  - golden hour lighting
+  - mediterranean setting
+  character_specific_tags:
+    luca_human: specify sea monster form vs human form, emotional state (curious/nervous/joyful),
+      Vespa fantasy context
+    alberto_human: confident posture, barefoot/shirtless common, sea monster transformation
+      status, relationship context (with Luca/alone/with Giulia)
+    giulia: red hair is key identifier, competitive/friendly mood, astronomy props
+      when relevant
+  token_limit:
+  - 40
+  - 77
+  avoid_terms:
+  - 2d anime
+  - flat shading
+  - low quality
+  - realistic photo
+  - photorealistic
+  - dark/gritty (contradicts film's warm tone)
+  film_disambiguation: use 'from luca (2021 pixar film)', 'portorosso', 'italian riviera'
+    tags to avoid confusion
+training_config:
+  recommended_dataset_size:
+    luca_human: 200-300 frames (protagonist, emotional range)
+    alberto_human: 180-250 frames (deuteragonist, key relationship dynamic)
+    giulia: 120-180 frames (important supporting character)
+  augmentation_policy:
+    horizontal_flip: false
+    color_jitter: false
+    random_crop: true
+    brightness_adjustment: minimal (preserve warm coastal lighting signature)
+  quality_filters:
+    blur_threshold: 80
+    min_size: 512
+    aspect_ratio_range:
+    - 0.75
+    - 1.33
+  sea_monster_handling:
+    note: Separate datasets for human vs sea monster forms recommended
+    human_form: primary training target for character identity
+    sea_monster_form: optional secondary dataset or separate LoRA
+    transformation_scenes: exclude ambiguous mid-transformation frames
+metadata:
+  created_by: llm-provider-tooling-pipeline
+  version: 1.0.0
+  last_updated: '2025-11-20'
+  data_source: Luca film analysis and character documentation
+  notes: Character configurations for Pixar's Luca (2021). Focuses on human forms
+    of sea monster characters for LoRA training. Optimized for Italian coastal summer
+    aesthetic with warm lighting and painterly style.
+  awards: Nominated for Academy Award for Best Animated Feature
+  box_office: Limited theatrical release due to COVID-19, released on Disney+ June
+    2021
+  themes_meta: Film widely interpreted as queer allegory (sea monsters = coming out
+    metaphor), celebration of neurodivergence and outsider experiences, Italian immigrant
+    nostalgia (director's semi-autobiographical)

@@ -1,0 +1,117 @@
+# ============================================================================
+# P3D Multi-Character SDXL LoRA (to be merged into a single checkpoint)
+# ============================================================================
+#
+# Goal:
+# - Train a multi-concept LoRA that encodes:
+#   - 14 character tokens: p3d_<character>
+#   - pair interactions (two characters)
+#   - Pixar/3D style token: p3d_style
+#
+# Captions (required):
+# - Solo: p3d_<char>, p3d_style, solo, ...
+# - Pairs: p3d_A, p3d_B, p3d_style, two characters, ...
+#
+# Dataset layout (Kohya repeats via folder name):
+#   train_data_dir/
+#     1_p3d_solo/   (renamed single-character images + captions)
+#     2_p3d_pairs/  (pair images + captions)
+#
+# Assemble dataset with:
+#   scripts/batch/assemble_p3d_multichar_kohya_dataset.py
+#
+# Reference:
+#   docs/3d-training/SDXL_MULTI_CHARACTER_CHECKPOINT.md
+# ============================================================================
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+sdxl = true
+
+[paths]
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/kohya_dataset_p3d_multichar_20260129"
+output_dir = "/mnt/data/ai_data/models/lora/p3d_multichar/sdxl_checkpoint_trial1"
+output_name = "p3d_multichar_sdxl_trial1"
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/p3d_multichar_training/trial1"
+log_prefix = "p3d_multichar_trial1"
+log_with = "tensorboard"
+
+[network]
+network_module = "networks.lora"
+network_dim = 128
+network_alpha = 96
+network_dropout = 0.0
+conv_dim = 0
+conv_alpha = 0
+
+[training]
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+mixed_precision = "bf16"
+save_precision = "bf16"
+full_bf16 = true
+
+gradient_checkpointing = true
+train_batch_size = 1
+gradient_accumulation_steps = 4
+
+learning_rate = 8e-5
+text_encoder_lr = 5e-5
+unet_lr = 8e-5
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 1
+lr_warmup_steps = 100
+
+min_snr_gamma = 5.0
+noise_offset = 0.05
+
+# Dataset is large; start with 1 epoch and evaluate.
+max_train_epochs = 1
+save_every_n_epochs = 1
+keep_only_last_n_checkpoints = 2
+save_model_as = "safetensors"
+
+cache_latents = true
+cache_latents_to_disk = true
+# NOTE: SDXL trainer cannot train Text Encoder while caching its outputs.
+# Keep these disabled unless you also disable Text Encoder training.
+cache_text_encoder_outputs = false
+cache_text_encoder_outputs_to_disk = false
+vae_batch_size = 1
+
+[dataset]
+resolution = "1024,1024"
+enable_bucket = false
+min_bucket_reso = 1024
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+caption_extension = ".txt"
+max_token_length = 225
+
+# IMPORTANT: preserve the prefix tokens for multi-character training.
+shuffle_caption = false
+keep_tokens = 4
+
+color_aug = false
+flip_aug = false
+
+[advanced]
+clip_skip = 2
+seed = 42
+max_grad_norm = 1.0
+
+# RTX 5080 compatibility
+xformers = false
+mem_eff_attn = false
+sdpa = true
+
+[sample_generation]
+sample_every_n_epochs = 1
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/p3d/p3d_multichar_validation_prompts.txt"
+sample_sampler = "euler_a"
+sample_steps = 25

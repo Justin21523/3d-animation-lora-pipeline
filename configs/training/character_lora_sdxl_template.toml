@@ -1,0 +1,136 @@
+# ============================================================================
+# SDXL Character Identity LoRA Template (Super Wings Optimized)
+# ============================================================================
+#
+# Based on successful training results from Pixar character LoRAs:
+# - Best checkpoints achieved at Epoch 1-2
+# - network_dim=64, alpha=32 optimal for character identity
+# - AdamW8bit + BF16 + gradient checkpointing for 16GB VRAM
+# - CLIP skip=2 critical for 3D animated characters
+#
+# Target: 3D animated character identity (appearance, colors, design)
+# Dataset: 200-300 images (with augmentation if needed)
+# VRAM: 16GB (RTX 5080 compatible)
+#
+# Reference: docs/progress/sdxl_lora_results.md
+# ============================================================================
+
+[model]
+# SDXL base model and VAE
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+
+[paths]
+# Output paths (filled by config generator)
+output_dir = "/mnt/c/ai_models/lora_sdxl/super-wings/{CHARACTER_NAME}"
+output_name = "super-wings-{CHARACTER_NAME}-sdxl"
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/super_wings_training/{CHARACTER_NAME}"
+
+# Training data (Kohya format: {repeat}_{concept}/)
+train_data_dir = "/mnt/data/datasets/general/super-wings/training_data/{CHARACTER_NAME}"
+
+[network]
+# LoRA network configuration
+network_module = "networks.lora"
+
+# Character Identity: Proven optimal dimensions
+network_dim = 64          # Optimal for character features
+network_alpha = 32        # alpha = dim/2 (standard ratio)
+
+# Minimal conv for 3D character details
+conv_dim = 0              # Not needed for character identity
+conv_alpha = 0
+
+[training]
+# Training epochs (based on successful results)
+max_train_epochs = 2      # Best results at Epoch 1-2 for character LoRAs
+save_every_n_epochs = 1   # Save each epoch for checkpoint comparison
+
+# Learning rates (proven successful config)
+learning_rate = 0.0001    # Main LR
+unet_lr = 0.0001          # U-Net LR
+text_encoder_lr = 6e-05   # Text encoder LR (slightly lower)
+
+# Learning rate scheduling
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 1      # Single cycle for 2 epochs
+lr_warmup_steps = 100            # Warmup
+
+# Optimizer (8-bit for memory efficiency)
+optimizer_type = "AdamW8bit"     # Critical: saves ~6GB VRAM
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+# Mixed precision (BF16 for SDXL + RTX 5080)
+mixed_precision = "bf16"         # Critical: saves ~8GB VRAM
+save_precision = "bf16"
+full_bf16 = true                 # Full BF16 for stability
+
+# Memory optimization (16GB VRAM)
+gradient_checkpointing = true    # Critical: saves ~8GB VRAM
+gradient_accumulation_steps = 2  # Effective batch = 2-8
+
+# Checkpoint management
+save_model_as = "safetensors"
+keep_only_last_n_checkpoints = 3 # Keep last 3 epochs
+
+[dataset]
+# Image resolution and bucketing
+resolution = "1024,1024"
+enable_bucket = false      # All images exactly 1024x1024 (letterboxed)
+min_bucket_reso = 1024
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+# Batch size (optimized for 16GB VRAM)
+train_batch_size = 1      # Conservative for 16GB
+
+# Caption handling
+caption_extension = ".txt"
+max_token_length = 225    # SDXL dual text encoders
+shuffle_caption = false   # Keep consistent caption order
+keep_tokens = 0           # Process all tokens
+
+# Caching for speed
+cache_latents = true
+cache_latents_to_disk = true
+cache_text_encoder_outputs = true
+cache_text_encoder_outputs_to_disk = true
+
+# No augmentations (3D animation specific)
+color_aug = false         # Breaks PBR materials
+flip_aug = false          # Breaks asymmetric designs
+
+[advanced]
+# SDXL-specific settings
+clip_skip = 2             # CRITICAL: Best for 3D character LoRAs
+
+# Quality preservation (proven successful)
+min_snr_gamma = 5.0       # Improves quality at high noise levels
+noise_offset = 0.05       # Slight offset for better details
+
+# V-prediction (SDXL uses epsilon)
+v_pred_like_loss = 0.0
+
+# Hardware compatibility (RTX 5080 Blackwell)
+xformers = false          # CRITICAL: RTX 5080 incompatible
+mem_eff_attn = false      # Use SDPA instead
+sdpa = true               # Native SDPA faster on RTX 5080
+
+# Determinism
+seed = 42                 # Reproducible training
+
+[logging]
+# Logging configuration
+log_with = "tensorboard"
+log_prefix = "{CHARACTER_NAME}"
+
+# Validation (optional - sample images during training)
+# sample_every_n_epochs = 1
+# sample_prompts = [
+#     "a 3d animated character, {character_name}, front view, neutral expression",
+#     "a 3d animated character, {character_name}, three-quarter view, happy",
+#     "a 3d animated character, {character_name}, side view, action pose"
+# ]
+# sample_sampler = "euler_a"
+# sample_steps = 20

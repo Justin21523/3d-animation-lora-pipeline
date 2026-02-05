@@ -1,0 +1,126 @@
+# ============================================================================
+# SDXL LoRA Training Configuration - POSE TYPE V2 (Incremental Training)
+# ============================================================================
+#
+# V2 增量訓練：基於 v1 checkpoint 繼續訓練，補強 sitting/walking poses
+#
+# Changes from v1:
+# - 使用 network_weights 載入 v1 checkpoint
+# - 降低學習率（避免破壞已學知識）
+# - 減少 epochs（10 instead of 25）
+# - 新資料集包含更多 sitting/walking poses
+#
+# Author: LLMProvider Tooling
+# Date: 2025-12-04
+# ============================================================================
+
+[model]
+# SDXL base model and VAE
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+
+[paths]
+# Output paths for v2
+output_dir = "/mnt/c/ai_models/lora_sdxl/synthetic/universal_pose_v2"
+output_name = "universal_pose_v2_lora_sdxl"
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/synthetic_training/universal_pose_v2"
+
+# Training data (improved v2 dataset with balanced sitting/walking)
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/datasets/universal_pose_v2"
+
+[network]
+# LoRA network configuration
+network_module = "networks.lora"
+network_train_unet_only = true
+
+# ⭐ CRITICAL: Load v1 checkpoint as starting point
+# UPDATE THIS PATH after v1 training completes (use best checkpoint, typically epoch 18-20)
+network_weights = "/mnt/c/ai_models/lora_sdxl/synthetic/universal_pose/universal_pose_lora_sdxl-000020.safetensors"
+
+# Same network architecture as v1
+network_dim = 128
+network_alpha = 64
+conv_dim = 56
+conv_alpha = 28
+
+[training]
+# Incremental training settings
+max_train_epochs = 10  # Reduced from 25 (only need to learn new patterns)
+
+# ⭐ Lower learning rate (50% of v1) to preserve existing knowledge
+learning_rate = 0.00005  # v1 was 0.0001
+unet_lr = 0.00005
+
+# Learning rate scheduling
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2  # Fewer cycles for shorter training
+lr_warmup_steps = 100  # Reduced from 200
+
+# Optimizer
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+# Mixed precision
+mixed_precision = "bf16"
+save_precision = "bf16"
+
+# Memory optimization
+gradient_checkpointing = true
+gradient_accumulation_steps = 4
+
+# Checkpoint saving (more frequent for shorter training)
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+
+[dataset]
+# Image resolution and bucketing
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+# Batch size
+train_batch_size = 2
+
+# Caption handling
+caption_extension = ".txt"
+max_token_length = 225
+shuffle_caption = false
+keep_tokens = 0
+
+# Caching for speed
+cache_latents = true
+cache_latents_to_disk = true
+cache_text_encoder_outputs = true
+cache_text_encoder_outputs_to_disk = true
+
+[advanced]
+# SDXL-specific settings
+clip_skip = 2
+
+# Quality preservation
+min_snr_gamma = 5.0
+noise_offset = 0.05
+
+# V-prediction
+v_pred_like_loss = 0.0
+
+# Hardware compatibility
+xformers = false
+mem_eff_attn = false
+sdpa = true
+
+# Determinism
+seed = 42
+
+[logging]
+# Logging configuration
+log_with = "tensorboard"
+log_prefix = "universal_pose_v2"
+
+# Validation (sequential evaluation during training)
+sample_every_n_epochs = 2
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras_filtered/sample_prompts_pose.txt"
+sample_sampler = "euler_a"

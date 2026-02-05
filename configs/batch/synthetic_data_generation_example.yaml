@@ -1,0 +1,115 @@
+# Example Configuration for Batch Synthetic Data Generation
+# ===========================================================
+#
+# This configuration file defines parameters for large-scale synthetic
+# data generation using existing identity LoRAs.
+#
+# Usage:
+#   bash scripts/batch/synthetic_data_generation/batch_synthetic_data_pipeline.sh \
+#     --config configs/batch/synthetic_data_generation_example.yaml
+
+# ============================================================================
+# PATHS
+# ============================================================================
+
+# Directory containing identity LoRA files (*.safetensors)
+identity_loras_dir: /mnt/c/ai_models/lora_sdxl/BEST_CHECKPOINTS_COLLECTION
+
+# Base SDXL model path
+base_model_path: /mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors
+
+# Output workspace directory
+workspace_dir: /mnt/c/ai_projects/synthetic_data_output
+
+# ============================================================================
+# GENERATION PARAMETERS
+# ============================================================================
+
+# Number of prompts to generate for each LoRA type
+# Higher values = more variety but longer generation time
+# Recommended: 50-100 for production, 10-20 for testing
+num_prompts_per_type: 50
+
+# Number of images to generate per prompt
+# Higher values = more images but longer generation time
+# Recommended: 5-15 for production, 2-5 for testing
+images_per_prompt: 10
+
+# Number of inference steps for image generation
+# Higher = better quality but slower
+# Recommended: 25-40 for production, 15-25 for testing
+num_inference_steps: 30
+
+# Guidance scale for image generation
+# Higher = stricter prompt following
+# Recommended: 7.0-8.5
+guidance_scale: 7.5
+
+# ============================================================================
+# LORA TYPES
+# ============================================================================
+
+# Types of LoRAs to generate synthetic data for
+# Each type will have its own vocabulary and dataset
+lora_types:
+  - pose        # Body poses and camera angles
+  - expression  # Facial expressions
+  - action      # Dynamic actions and activities
+
+# ============================================================================
+# RETRY AND RECOVERY
+# ============================================================================
+
+# Maximum number of retry attempts for failed tasks
+max_retries: 3
+
+# Delay between retry attempts (seconds)
+retry_delay: 60
+
+# Delay for GPU recovery after crash (seconds)
+gpu_recovery_delay: 120
+
+# ============================================================================
+# FILTERING PARAMETERS
+# ============================================================================
+
+# Quality filtering settings
+filtering:
+  blur_threshold: 80              # Higher = stricter blur filtering
+  min_resolution: 512             # Minimum image resolution
+  brightness_range: [0.2, 0.9]    # Valid brightness range
+  contrast_threshold: 0.3         # Minimum contrast
+  enable_nsfw_filter: true        # Filter NSFW content
+  enable_face_detection: true     # Require face in image
+  min_face_size: 64               # Minimum face size (pixels)
+  enable_deduplication: true      # Remove duplicate/similar images
+  similarity_threshold: 0.95      # Similarity threshold for dedup
+
+# ============================================================================
+# DATASET ORGANIZATION
+# ============================================================================
+
+# Dataset preparation settings
+dataset:
+  repeat_count: 10                # Repeat count for training
+  min_resolution: 512
+  max_resolution: 2048
+  target_resolution: 1024
+  resize_if_needed: true
+  copy_images: true
+  generate_captions: true
+  caption_style: "3d_animation"   # Caption style template
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+# Expected output (for 14 characters with default settings):
+# - 14 chars × 3 types × 50 prompts × 10 images = 21,000 images
+# - After filtering (assuming ~40-50% retention): ~10,000-15,000 images
+# - Estimated time: 18-24 hours
+
+# Customize this file for different projects:
+# 1. Copy to a new file (e.g., project_specific_config.yaml)
+# 2. Update paths and parameters as needed
+# 3. Run pipeline with: --config <your_config.yaml>

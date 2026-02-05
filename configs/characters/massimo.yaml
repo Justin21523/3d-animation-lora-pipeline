@@ -114,5 +114,5 @@ caption_examples:
   cooking: "massimo cooking trenette al pesto, stirring pot with one arm, warm kitchen, steam rising, cozy domestic scene, pixar 3d animation"
   protective: "massimo standing protectively, intimidating glare, muscular silhouette, facing mob, heroic lighting, pixar 3d style"
 
-source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_massimo.md
+source_file: docs/films/luca/characters/massimo.md
 version: 1.0.0

@@ -1,0 +1,84 @@
+# Russell (Up) - Identity LoRA Training Config
+# Based on Trial 3.6 proven configuration
+# Dataset: 243 images, 15 repeats = 3645 steps/epoch
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "russell_identity_lora"
+output_dir = "/mnt/data/ai_data/models/lora/up/russell_identity"
+
+# Network architecture (Trial 3.6 proven settings)
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.1
+
+# Dataset (243 images, 15 repeats = 3645 steps per epoch)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/up/lora_data/training_data/russell_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters
+max_train_epochs = 16
+train_batch_size = 6
+gradient_accumulation_steps = 2
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (Trial 3.6 proven settings)
+optimizer_type = "AdamW8bit"
+learning_rate = 6e-5
+unet_lr = 6e-5
+text_encoder_lr = 3e-5
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+# Regularization (Trial 3.6 proven settings)
+min_snr_gamma = 5.0
+noise_offset = 0.05
+max_grad_norm = 1.0
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = false
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/up/russell_identity/logs"
+log_prefix = "russell_identity"
+log_with = "tensorboard"
+
+# Sample generation
+sample_prompts = "a 3d animated character, pixar style, russell, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, russell, full body, standing, natural lighting\na 3d animated character, pixar style, russell, close-up face, smiling, soft lighting\na 3d animated character, pixar style, russell, three-quarter view, cinematic lighting"
+sample_every_n_epochs = 2
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "Russell"
+character_source = "Pixar's Up (2009)"
+film = "Up"
+style = "3D Animation, Pixar Style"
+dataset_size = 243
+lora_type = "character_identity"
+trigger_words = "russell"
+notes = "Based on Trial 3.6 proven configuration. Dataset: 243 curated instances (162 original + 81 augmented) with LLMProvider AI identity captions."

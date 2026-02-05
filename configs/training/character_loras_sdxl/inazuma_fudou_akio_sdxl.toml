@@ -1,0 +1,125 @@
+# Inazuma Eleven SDXL LoRA Training Config
+# Character: Fudou Akio (不動明王)
+# Generated: 2025-12-19
+# Adapted from 3D config to 2D anime optimization
+
+[general]
+# Output configuration
+output_name = "inazuma_fudou_akio_lora_sdxl"
+output_dir = "/mnt/data/ai_data/models/lora_sdxl/inazuma-eleven/fudou_akio_identity"
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+
+# Model architecture
+v2 = false
+v_parameterization = false
+sdxl = true
+
+[dataset]
+# Dataset paths
+train_data_dir = "/mnt/data/datasets/general/inazuma-eleven/lora_data/training_data_sdxl/fudou_akio_identity"
+
+# Caption format
+caption_extension = ".txt"
+shuffle_caption = true
+
+# Resolution and bucketing (SDXL optimized)
+resolution = "1024,1024"
+enable_bucket = true
+bucket_reso_steps = 64
+bucket_no_upscale = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+
+# Dataset repeats (200 images × 10 = 2000 steps/epoch)
+dataset_repeats = 10
+
+[training]
+# Learning rates (2D anime optimized - slightly lower than 3D)
+learning_rate = 5e-05
+unet_lr = 5e-05
+text_encoder_lr = 1e-05
+
+# LR scheduler (cosine with restarts for anime features)
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+# Gradient clipping (CRITICAL for SDXL stability)
+max_grad_norm = 0.5
+
+# Network architecture (identity-focused)
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+
+# Optimizer (memory-efficient)
+optimizer_type = "AdamW"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+# Batch configuration (memory-safe)
+train_batch_size = 1
+gradient_accumulation_steps = 2
+# Effective batch size = 1 × 2 = 2
+
+# Training duration
+max_train_epochs = 8
+# Total steps ≈ 200 images × 10 repeats × 8 epochs / 2 = ~8,000 steps
+
+# Regularization (2D anime specific)
+caption_dropout_rate = 0.1
+caption_dropout_every_n_epochs = 1
+keep_tokens = 2  # Keep "inazuma_eleven, inazuma_fudou_akio"
+
+# Data loading
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 4
+
+# VAE configuration
+vae_batch_size = 2
+
+# Memory optimization
+mixed_precision = "bf16"
+full_bf16 = true
+cache_latents = true
+cache_latents_to_disk = false  # RAM cache for speed (64GB available)
+gradient_checkpointing = true
+# xformers disabled - not available in environment
+
+# Stability knobs (avoid NaN)
+no_half_vae = true
+noise_offset = 0.05
+adaptive_noise_scale = 0.00357
+
+# Checkpointing
+save_every_n_epochs = 2
+save_last_n_epochs_state = 3
+save_model_as = "safetensors"
+save_precision = "bf16"
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora_sdxl/inazuma-eleven/fudou_akio_identity/logs"
+log_with = "tensorboard"
+log_prefix = "inazuma_fudou_akio"
+
+# Sample generation (saved to: output_dir/sample/)
+sample_at_first = true
+sample_every_n_epochs = 2
+sample_sampler = "euler_a"
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/inazuma/inazuma_fudou_akio_sample_prompts.txt"
+
+# Quality settings
+clip_skip = 2
+# min_snr_gamma disabled - causes NaN loss in SDXL
+# noise_offset disabled initially for stability
+
+# Reproducibility
+seed = 42
+max_token_length = 225
+
+# Character-specific metadata (for reference)
+# Trigger word: inazuma_fudou_akio
+# Position: midfielder
+# Element: mountain
+# Key features: mohawk_hair, intimidating_expression, sharp_eyes
+# Timeline support: original, go, ares, orion (via caption tags)

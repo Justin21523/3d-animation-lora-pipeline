@@ -1,0 +1,23 @@
+# Elio Movie - Bryce & Caleb Training Batch
+# Auto-train after Giulia completes
+
+characters:
+  - movie: elio
+    char_dir: bryce
+    char_name: bryce
+    display_name: "Bryce Markwell"
+    source_type: inpainted
+    image_count: 48
+    repeats: 20
+    epochs: 15
+    batch_size: 8
+
+  - movie: elio
+    char_dir: caleb
+    char_name: caleb
+    display_name: "Caleb"
+    source_type: inpainted
+    image_count: 30
+    repeats: 20
+    epochs: 18
+    batch_size: 8

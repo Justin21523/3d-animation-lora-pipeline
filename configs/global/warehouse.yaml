@@ -1,0 +1,167 @@
+# AI_WAREHOUSE 3.0 Path Configuration
+# Central configuration for all storage paths across the pipeline
+# Last Updated: 2025-12-02
+
+version: "3.0"
+
+# ============================================================================
+# ROOT DIRECTORIES
+# ============================================================================
+# These are the base paths for the AI_WAREHOUSE 3.0 architecture
+# /mnt/c/ (2TB SSD) - Fast storage for models, code, and cache
+# /mnt/data/ (4TB HDD) - Large storage for datasets and training outputs
+
+roots:
+  # Fast SSD storage (2TB)
+  models: "/mnt/c/ai_models"
+  projects: "/mnt/c/ai_projects"
+  tools: "/mnt/c/ai_tools"
+  cache: "/mnt/c/ai_cache"
+
+  # Large HDD storage (4TB)
+  datasets: "/mnt/data/datasets"
+  training: "/mnt/data/training"
+  extracted: "/mnt/data/extracted"
+  videos: "/mnt/data/videos"
+
+# ============================================================================
+# 2D ANIMATION PIPELINE PATHS
+# ============================================================================
+# Specific paths for the 2D animation LoRA training pipeline
+
+animation_2d:
+  # Dataset storage (organized by content type)
+  datasets: "${roots.datasets}/general"
+
+  # Training data preparation
+  training_data: "${roots.training}/lora/2d_characters"
+
+  # LoRA model outputs
+  lora_outputs: "${roots.models}/lora"
+  lora_sdxl_outputs: "${roots.models}/lora_sdxl"
+
+  # Evaluation results
+  evaluation: "${roots.training}/lora/evaluation"
+
+  # Training logs and metrics
+  logs: "${roots.training}/logs"
+
+  # Extracted frames and intermediates
+  extracted_frames: "${roots.extracted}/frames"
+  sam_masks: "${roots.extracted}/sam_masks"
+
+# ============================================================================
+# 3D ANIMATION PIPELINE PATHS (for reference/compatibility)
+# ============================================================================
+# Paths used by the 3D animation pipeline
+
+animation_3d:
+  datasets: "${roots.datasets}/general/3d-anime"
+  training_data: "${roots.training}/lora/3d_characters"
+  lora_outputs: "${roots.models}/lora"
+  lora_sdxl_outputs: "${roots.models}/lora_sdxl"
+  evaluation: "${roots.training}/lora/evaluation"
+
+# ============================================================================
+# CACHE PATHS
+# ============================================================================
+# HuggingFace, PyTorch, and pip cache locations
+# These should be set as environment variables
+
+cache:
+  huggingface: "${roots.cache}/huggingface"
+  torch: "${roots.cache}/torch"
+  pip: "${roots.cache}/pip"
+  transformers: "${roots.cache}/huggingface"
+
+# Environment variable mappings
+env_vars:
+  HF_HOME: "${cache.huggingface}"
+  TRANSFORMERS_CACHE: "${cache.transformers}"
+  TORCH_HOME: "${cache.torch}"
+  XDG_CACHE_HOME: "${roots.cache}"
+  PIP_CACHE_DIR: "${cache.pip}"
+
+# ============================================================================
+# MODEL STORAGE STRUCTURE
+# ============================================================================
+# Organization of model weights on /mnt/c/ai_models/
+
+model_structure:
+  # Segmentation models
+  segmentation: "${roots.models}/segmentation"
+
+  # Detection models (YOLO, etc.)
+  detection: "${roots.models}/detection"
+
+  # Pose estimation models
+  pose: "${roots.models}/pose"
+
+  # CLIP and embedding models
+  clip: "${roots.models}/clip"
+
+  # Stable Diffusion base models
+  stable_diffusion: "${roots.models}/stable-diffusion"
+
+  # Face recognition models
+  face: "${roots.models}/face"
+
+  # VLM models for captioning
+  vlm: "${roots.models}/vlm"
+
+  # Inpainting models (LaMa, etc.)
+  inpainting: "${roots.models}/inpainting"
+
+  # Upscaling models (RealESRGAN, etc.)
+  upscaling: "${roots.models}/upscaling"
+
+# ============================================================================
+# DATASET STRUCTURE
+# ============================================================================
+# Expected directory structure within datasets
+
+dataset_structure:
+  # Per-project structure
+  project_layout:
+    - "frames"           # Extracted video frames
+    - "segmented"        # Segmented character instances
+    - "clustered"        # Identity-clustered characters
+    - "training_data"    # Prepared training datasets
+    - "captions"         # Generated captions
+    - "metadata"         # JSON metadata files
+
+  # Per-character structure within training_data
+  character_layout:
+    - "images"           # Training images
+    - "captions"         # Per-image caption files
+    - "masks"            # Optional mask files
+
+# ============================================================================
+# DEPRECATED PATHS - DO NOT USE
+# ============================================================================
+# These paths are from older versions and should NOT be used in new code
+# The validation tools will warn if these paths are detected
+
+deprecated:
+  - "/mnt/data/ai_data"
+  - "/mnt/data/ai_data/datasets"
+  - "/mnt/data/ai_data/training_data"
+  - "/mnt/data/ai_data/models"
+  - "~/ai_data"
+  - "$HOME/datasets"
+  - "$HOME/ai_data"
+
+# Migration notes
+migration_notes: |
+  AI_WAREHOUSE 3.0 reorganizes storage for better performance:
+
+  OLD PATH (deprecated)              -> NEW PATH
+  /mnt/data/ai_data/datasets/        -> /mnt/data/datasets/
+  /mnt/data/ai_data/training_data/   -> /mnt/data/training/
+  /mnt/data/ai_data/models/          -> /mnt/c/ai_models/
+
+  Key changes:
+  1. Models moved to SSD (/mnt/c) for faster loading
+  2. Datasets organized by type, not flat structure
+  3. Cache centralized under /mnt/c/ai_cache/
+  4. Training outputs separated from raw datasets

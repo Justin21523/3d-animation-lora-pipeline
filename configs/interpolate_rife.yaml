@@ -1,0 +1,9 @@
+input_dir: "outputs/animation/frames"
+output_dir: "outputs/animation/interpolated"
+times: 2
+model_path: null
+backend: "stub"
+device: "cpu"
+precision: "fp32"
+use_stub: true
+log_dir: "logs"

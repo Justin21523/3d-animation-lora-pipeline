@@ -1,0 +1,30 @@
+# SAM2 High Quality Segmentation Configuration
+# For complex scenes with multiple overlapping characters
+
+model:
+  type: "sam2_hiera_large"
+  path: "${models.segmentation.sam2_hiera_large}"
+  device: "cuda"
+
+generation:
+  points_per_side: 32       # High density for more instances
+  pred_iou_thresh: 0.70     # Lowered for more candidates
+  stability_score_thresh: 0.80
+  min_mask_region_area: 4096  # ~64x64 pixels minimum
+
+processing:
+  max_instances: 15
+  nms_threshold: 0.7
+  crop_n_layers: 1
+  crop_overlap_ratio: 0.5
+
+quality:
+  use_refinement: true
+  edge_detection: true
+  boundary_smoothing: true
+
+output:
+  save_masks: true
+  save_rgba: true
+  save_instances_separately: true
+  format: "png"

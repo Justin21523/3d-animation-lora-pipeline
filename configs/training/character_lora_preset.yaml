@@ -1,0 +1,77 @@
+# Character Identity LoRA Preset Configuration
+# Inherits from lora_base_config.yaml
+#
+# Purpose: Train character-specific LoRAs that capture unique visual identity
+# Input: Curated character instances from clustering + identity captions
+# Target: 200-500 images per character
+# Priority: HIGH
+
+# Reference base config
+base_config: "lora_base_config.yaml"
+
+# Training overrides for character identity
+training:
+  # Character LoRAs train faster
+  max_train_epochs: 15
+  save_every_n_epochs: 3
+
+  # Character identity benefits from higher learning rate
+  batch_size: 4
+  gradient_accumulation_steps: 1
+
+# Optimizer overrides
+optimizer:
+  learning_rate: 1.5e-4  # Slightly higher for character identity
+  unet_lr: 1.5e-4
+  text_encoder_lr: 7.5e-5
+
+# Network architecture for character identity
+network:
+  # Higher dim for complex characters (faces, outfits, accessories)
+  network_dim: 128
+  network_alpha: 64
+
+  # Convolution layers help with spatial features
+  conv_dim: 64
+  conv_alpha: 32
+
+# Dataset requirements for character LoRA
+dataset:
+  target_size: 400
+  min_size: 200
+  max_size: 500
+
+  # Caption settings
+  caption_mode: "identity"
+  caption_prefix: "a 3d animated character, pixar style, smooth shading"
+
+  # Keep character name in captions
+  keep_tokens: 2
+
+# Quality thresholds (3D-specific)
+quality_thresholds:
+  min_resolution: 512
+  blur_threshold: 80  # 3D-specific: allow DoF blur
+  alpha_threshold: 0.15  # 3D-specific: soft anti-aliased edges
+
+  # Character-specific quality checks
+  face_required: true
+  min_face_size: 64
+  max_occlusion: 0.3
+
+# Sampling prompts for character identity testing
+sample:
+  sample_every_n_epochs: 3
+  sample_prompts:
+    - "a 3d animated character, pixar style, {character_name}, portrait, neutral expression"
+    - "a 3d animated character, pixar style, {character_name}, full body, standing"
+    - "a 3d animated character, pixar style, {character_name}, close-up face, smiling"
+    - "a 3d animated character, pixar style, {character_name}, three-quarter view"
+
+# Output configuration
+output:
+  output_name: "{film_name}_{character_id}_identity_lora"
+  metadata:
+    lora_type: "character_identity"
+    description: "Character identity LoRA for {character_name} from {film_name}"
+    tags: ["3d", "pixar", "character", "identity"]

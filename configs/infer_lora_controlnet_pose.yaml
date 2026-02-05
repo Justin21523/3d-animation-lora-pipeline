@@ -1,0 +1,18 @@
+pose_metadata_path: "metadata/poses.parquet"
+output_dir: "outputs/inference"
+output_metadata_path: "outputs/inference/metadata.parquet"
+image_size: 512
+num_samples: 4
+seed: 42
+prompt: "1girl, best quality, anime style"
+negative_prompt: ""
+num_inference_steps: 20
+guidance_scale: 7.5
+sd_model_path: null
+controlnet_path: null
+lora_path: null
+scheduler: "dpmpp_2m"
+device: "cpu"
+dtype: "fp16"
+use_stub: true
+log_dir: "logs"

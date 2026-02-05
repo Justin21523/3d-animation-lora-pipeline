@@ -1,0 +1,156 @@
+# Aggressive LoRA Training Configuration
+# Higher learning rates, longer training for difficult subjects
+#
+# Use when:
+# - Character is hard to learn (subtle features)
+# - Previous training underfit
+# - Need stronger style transfer
+#
+# Usage:
+#   python scripts/training/unified_training_orchestrator.py \
+#     --config configs/stages/training/lora_aggressive.yaml \
+#     --character-name "character_name"
+
+# Model settings
+model:
+  base_model: "runwayml/stable-diffusion-v1-5"
+  variant: "sd15"
+  vae: null
+  use_safetensors: true
+
+# LoRA network settings (higher capacity)
+network:
+  type: "lora"
+  rank: 64  # Higher rank for more capacity
+  alpha: 32  # Alpha = rank/2
+  conv_rank: 32
+  conv_alpha: 16
+
+  target_modules:
+    - "to_q"
+    - "to_k"
+    - "to_v"
+    - "to_out.0"
+    - "proj_in"
+    - "proj_out"
+    # Include more layers for aggressive training
+    - "ff.net.0.proj"
+    - "ff.net.2"
+
+  dropout: 0.05  # Light dropout for regularization
+
+# Aggressive training hyperparameters
+training:
+  # Longer training
+  epochs: 20  # Double the default
+  max_train_steps: null
+
+  # Higher learning rates
+  learning_rate: 2.0e-4  # 2x default
+  unet_lr: 2.0e-4
+  text_encoder_lr: 1.0e-4
+
+  # Aggressive scheduler
+  lr_scheduler: "cosine"  # Simple cosine decay
+  lr_warmup_steps: 200
+
+  # Optimizer
+  optimizer: "prodigy"  # Adaptive optimizer for aggressive training
+  optimizer_args:
+    weight_decay: 0.02  # Slightly higher regularization
+    use_bias_correction: true
+    safeguard_warmup: true
+
+  # Larger effective batch
+  train_batch_size: 4
+  gradient_accumulation_steps: 4  # Effective batch = 16
+
+  mixed_precision: "bf16"  # BF16 for stability at higher LR
+  max_grad_norm: 0.5  # Tighter gradient clipping
+  seed: 42
+
+# Dataset settings
+dataset:
+  resolution: 512
+  enable_bucket: true
+  min_bucket_reso: 384
+  max_bucket_reso: 768
+
+  # Aggressive augmentation
+  flip_aug: true
+  color_aug: true
+  random_crop: true  # Enable for variety
+
+  shuffle_caption: true
+  caption_dropout_rate: 0.1  # Higher dropout for regularization
+  keep_tokens: 1
+
+  reg_data_dir: null
+  reg_factor: 0.5  # Lower reg factor for more character influence
+
+# Noise settings
+noise:
+  noise_offset: 0.1  # Higher offset for contrast
+  adaptive_noise_scale: 0.0
+  multires_noise_iterations: 6  # Enable multires noise
+  multires_noise_discount: 0.3
+
+# Checkpointing (more frequent for long training)
+checkpoint:
+  save_every_n_epochs: 2
+  save_model_as: "safetensors"
+  save_state: true  # Save state for resume
+  save_last_n_epochs: 10  # Keep more checkpoints
+
+# Logging
+logging:
+  log_with: "tensorboard"
+  logging_dir: null
+  log_prefix: "aggressive_"
+
+# Validation
+validation:
+  enabled: true  # Enable validation to monitor progress
+  prompts:
+    - "{trigger_word}, solo, simple background"
+    - "{trigger_word}, detailed portrait, looking at viewer"
+    - "{trigger_word}, full body, dynamic pose"
+  negative_prompt: "lowres, bad anatomy, worst quality, blurry"
+  num_images_per_prompt: 2
+  guidance_scale: 7.5
+  validation_epochs: 4
+
+# Output settings
+output:
+  output_dir: "${TRAINING_DIR}/lora/2d_characters/{character_name}_aggressive"
+  output_name: "{character_name}_aggressive_lora"
+
+# Aggressive training notes
+notes: |
+  Aggressive LoRA Training:
+
+  1. When to use:
+     - Character has subtle distinguishing features
+     - Previous training showed underfitting
+     - Need strong style/character resemblance
+     - Large diverse dataset (800+ images)
+
+  2. Risks:
+     - Overfitting if dataset is small
+     - Mode collapse at very high epochs
+     - Style bleeding into other characters
+
+  3. Monitoring:
+     - Watch validation images closely
+     - Check training loss doesn't plateau too early
+     - Compare epoch 10 vs epoch 20 outputs
+
+  4. Recommended adjustments:
+     - If overfitting: reduce epochs, increase dropout
+     - If underfitting: increase rank, add more data
+     - If unstable: reduce LR, use cosine_with_restarts
+
+  5. Post-training:
+     - Evaluate checkpoints at epochs 10, 15, 20
+     - Best checkpoint often around epoch 15
+     - Use lower weight (0.6-0.8) at inference if strong

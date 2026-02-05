@@ -1,0 +1,66 @@
+# Current Character LoRA Training Batch
+#
+# This YAML config defines characters for automated batch training.
+# Used by: scripts/batch/train_character_loras_from_config.sh
+#
+# Format:
+#   movie: Movie/series identifier (maps to dataset directory)
+#   char_dir: Directory name in lora_data/characters_*
+#   char_name: Canonical character name (used in file names)
+#   display_name: Human-readable name for logs
+#   source_type: "inpainted" or "augmented" (determines source directory)
+#   image_count: Expected number of images (for validation)
+#   repeats: Kohya SS repeats parameter
+#   epochs: Training epochs
+#   batch_size: Training batch size
+
+characters:
+  - movie: onward
+    char_dir: ian
+    char_name: ian_lightfoot
+    display_name: Ian Lightfoot
+    source_type: inpainted
+    image_count: 359
+    repeats: 10
+    epochs: 14
+    batch_size: 8
+
+  - movie: up
+    char_dir: russell
+    char_name: russell
+    display_name: Russell
+    source_type: augmented
+    image_count: 243
+    repeats: 12
+    epochs: 16
+    batch_size: 6
+
+  - movie: onward
+    char_dir: barley
+    char_name: barley_lightfoot
+    display_name: Barley Lightfoot
+    source_type: inpainted
+    image_count: 258
+    repeats: 12
+    epochs: 14
+    batch_size: 6
+
+  - movie: turning-red
+    char_dir: tyler
+    char_name: tyler
+    display_name: Tyler
+    source_type: augmented
+    image_count: 276
+    repeats: 12
+    epochs: 16
+    batch_size: 6
+
+  - movie: luca
+    char_dir: giulia
+    char_name: giulia
+    display_name: Giulia
+    source_type: inpainted
+    image_count: 273
+    repeats: 12
+    epochs: 14
+    batch_size: 6

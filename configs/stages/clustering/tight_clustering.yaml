@@ -1,0 +1,74 @@
+# Tight Clustering Configuration
+# For animation with distinct visual styles (Simpsons, South Park)
+#
+# Best for:
+# - Characters with unique color schemes (yellow skin, distinct outfits)
+# - Shows with consistent animation style across episodes
+# - Characters that are visually very different from each other
+
+# Face-based identity clustering (stricter)
+face_clustering:
+  face_model: "retinaface"
+  embedding_model: "arcface"
+  face_confidence: 0.4  # Higher than 2D default
+  min_face_size: 40
+  device: "cuda"
+  fallback_to_clip: true
+  animation_mode: "2d"
+
+# HDBSCAN with tighter parameters
+hdbscan:
+  min_cluster_size: 15  # Smaller clusters (more separation)
+  min_samples: 2  # Stricter core point requirement
+  metric: "euclidean"
+  cluster_selection_method: "leaf"  # Prefer smaller, purer clusters
+  allow_single_cluster: false
+
+# CLIP clustering (tighter)
+clip_clustering:
+  model: "ViT-L/14"  # Larger model for better discrimination
+  device: "cuda"
+  min_cluster_size: 12
+  min_samples: 2
+  use_umap: true
+  umap_n_neighbors: 10  # Fewer neighbors = tighter clusters
+  umap_n_components: 30
+  umap_min_dist: 0.05  # Smaller = tighter clusters
+
+# Quality filtering (stricter)
+quality_filter:
+  enabled: true
+  min_resolution: 160
+  max_blur_threshold: 120
+  remove_duplicates: true
+  phash_threshold: 6  # Stricter duplicate detection
+
+# Prefiltering
+prefilter:
+  enabled: true
+  mode: "strict"
+  semantic_filter: true
+  min_character_score: 0.4
+
+output:
+  save_visualization: true
+  save_report: true
+  export_format: "json"
+  create_cluster_dirs: true
+  copy_images: true
+
+processing:
+  batch_size: 32
+  num_workers: 4
+
+notes: |
+  Tight Clustering is best for:
+  - The Simpsons (yellow skin makes characters very distinct)
+  - South Park (simple, distinct character designs)
+  - Adventure Time (unique character shapes/colors)
+
+  Expected behavior:
+  - More clusters with fewer images each
+  - Higher purity per cluster
+  - More images in noise category
+  - Better for distinct character identification

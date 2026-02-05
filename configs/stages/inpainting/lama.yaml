@@ -1,0 +1,26 @@
+# LaMa Inpainting Configuration
+# Fast background inpainting for character removal
+
+model:
+  type: "lama"
+  path: "${models.inpainting.lama}"
+  device: "cuda"
+
+inference:
+  pad_mode: "reflect"
+  pad_to_modulo: 8
+  dilate_kernel_size: 11
+
+quality:
+  use_refinement: false
+  max_resolution: 2048
+  preserve_aspect_ratio: true
+
+fallback:
+  enabled: true
+  method: "opencv_telea"  # CPU fallback
+  
+output:
+  save_debug_masks: false
+  format: "png"
+  quality: 95

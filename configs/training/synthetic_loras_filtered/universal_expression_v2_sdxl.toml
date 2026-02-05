@@ -1,0 +1,81 @@
+# ============================================================================
+# SDXL LoRA Training Configuration - EXPRESSION TYPE V2 (Incremental Training)
+# ============================================================================
+#
+# V2 增量訓練：基於 v1 checkpoint 繼續訓練，改進表情表現
+#
+# Author: LLMProvider Tooling
+# Date: 2025-12-04
+# ============================================================================
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+
+[paths]
+output_dir = "/mnt/c/ai_models/lora_sdxl/synthetic/universal_expression_v2"
+output_name = "universal_expression_v2_lora_sdxl"
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/synthetic_training/universal_expression_v2"
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/datasets/universal_expression_v2"
+
+[network]
+network_module = "networks.lora"
+network_train_unet_only = true
+
+# ⭐ Load v1 checkpoint
+network_weights = "/mnt/c/ai_models/lora_sdxl/synthetic/universal_expression/universal_expression_lora_sdxl-000024.safetensors"
+
+network_dim = 112
+network_alpha = 56
+conv_dim = 48
+conv_alpha = 24
+
+[training]
+max_train_epochs = 10
+learning_rate = 0.00005
+unet_lr = 0.00005
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+mixed_precision = "bf16"
+save_precision = "bf16"
+gradient_checkpointing = true
+gradient_accumulation_steps = 4
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+
+[dataset]
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 64
+bucket_no_upscale = true
+train_batch_size = 2
+caption_extension = ".txt"
+max_token_length = 225
+shuffle_caption = false
+keep_tokens = 0
+cache_latents = true
+cache_latents_to_disk = true
+cache_text_encoder_outputs = true
+cache_text_encoder_outputs_to_disk = true
+
+[advanced]
+clip_skip = 2
+min_snr_gamma = 5.0
+noise_offset = 0.05
+v_pred_like_loss = 0.0
+xformers = false
+mem_eff_attn = false
+sdpa = true
+seed = 42
+
+[logging]
+log_with = "tensorboard"
+log_prefix = "universal_expression_v2"
+sample_every_n_epochs = 2
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras_filtered/sample_prompts_expression.txt"
+sample_sampler = "euler_a"

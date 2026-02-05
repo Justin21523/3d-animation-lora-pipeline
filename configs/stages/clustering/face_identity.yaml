@@ -1,0 +1,37 @@
+# Face-Based Identity Clustering Configuration
+# Uses ArcFace embeddings for identity-focused clustering
+
+face_detection:
+  primary_backend: "retinaface"
+  fallback_backends: ["mtcnn", "haar"]
+  min_face_size: 48
+  detection_threshold: 0.8
+  max_faces_per_image: 3
+
+face_embedding:
+  model: "arcface_r100"  # InsightFace ArcFace ResNet-100
+  embedding_size: 512
+  normalize: true
+
+clustering:
+  algorithm: "hdbscan"
+  min_cluster_size: 8
+  min_samples: 2
+  metric: "cosine"
+
+merge_strategy:
+  enabled: true
+  similarity_threshold: 0.65
+  merge_small_clusters: true
+  min_cluster_size_for_merge: 3
+
+quality_filter:
+  min_face_quality: 0.5
+  blur_threshold: 80
+  occlusion_threshold: 0.3
+
+output:
+  save_face_crops: true
+  save_embeddings: true
+  save_cluster_report: true
+  visualization: true

@@ -1,0 +1,107 @@
+# ============================================================================
+# P3D SDXL Full Fine-tune (v1)
+# ============================================================================
+#
+# Goal:
+# - Produce a single SDXL checkpoint (not LoRA) that preserves character identity
+#   and improves multi-character/pair cohesion, using our best known checkpoint
+#   as initialization.
+#
+# Notes:
+# - This uses kohya sd-scripts `sdxl_train.py` (full fine-tune), not LoRA.
+# - Start conservatively (UNet-only; no text encoder training).
+# - Run 1 epoch first as a pilot; evaluate before scaling up.
+#
+# Dataset is expected to be a Kohya folder structure with repeats in folder names.
+# ============================================================================
+
+[model]
+pretrained_model_name_or_path = "/mnt/data/ai_data/models/checkpoints/p3d_multichar/p3d_multichar_sdxl_trial1_merged_20260129_210411.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+sdxl = true
+
+[paths]
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/kohya_dataset_p3d_fullft_v1_20260131"
+output_dir = "/mnt/data/ai_data/models/checkpoints/p3d_multichar"
+output_name = "p3d_multichar_sdxl_fullft_v1_blockft"
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/p3d_full_finetune/v1"
+log_with = "tensorboard"
+
+[training]
+optimizer_type = "AdamW8bit"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+mixed_precision = "bf16"
+save_precision = "bf16"
+full_bf16 = true
+
+gradient_checkpointing = true
+train_batch_size = 1
+gradient_accumulation_steps = 4
+
+learning_rate = 5e-6
+text_encoder_lr = 0
+
+# IMPORTANT: full UNet fine-tune does not fit on 16GB VRAM due to optimizer state.
+# Use block-wise LR to train only the last few U-Net blocks (dramatically reduces
+# trainable params & optimizer memory), while still outputting a full checkpoint.
+#
+# block indices (23 total):
+# 0=time_embed/label_emb
+# 1-9=input_blocks.0-8
+# 10-12=middle_block.0-2
+# 13-21=output_blocks.0-8
+# 22=out
+#
+# Train only output_blocks.7-8 and out (blocks 20-22).
+block_lr = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5e-6,5e-6,5e-6"
+
+lr_scheduler = "cosine"
+lr_warmup_steps = 200
+
+min_snr_gamma = 5.0
+noise_offset = 0.0
+
+max_train_epochs = 1
+save_every_n_epochs = 1
+keep_only_last_n_checkpoints = 2
+save_model_as = "safetensors"
+
+cache_latents = true
+cache_latents_to_disk = true
+cache_text_encoder_outputs = false
+cache_text_encoder_outputs_to_disk = false
+vae_batch_size = 1
+
+[dataset]
+resolution = "1024,1024"
+enable_bucket = false
+min_bucket_reso = 1024
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+caption_extension = ".txt"
+max_token_length = 225
+shuffle_caption = false
+keep_tokens = 4
+
+color_aug = false
+flip_aug = false
+
+[advanced]
+seed = 42
+max_grad_norm = 1.0
+
+# Full fine-tune defaults:
+# - If you want to train text encoders too, you must pass --train_text_encoder
+#   and set learning_rate_te1/te2 via CLI or config (not recommended for v1).
+xformers = false
+mem_eff_attn = false
+sdpa = true
+
+[sample_generation]
+sample_every_n_epochs = 1
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/p3d/p3d_multichar_pair_validation_prompts_v3_inference.txt"
+sample_sampler = "dpmpp_2m_karras"
+sample_steps = 45

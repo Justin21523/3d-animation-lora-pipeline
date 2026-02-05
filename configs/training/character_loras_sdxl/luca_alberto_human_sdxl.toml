@@ -1,0 +1,89 @@
+# SDXL Character Identity LoRA Training Config - RETRAIN v3
+# Character: Alberto (Human Form) from Luca (Pixar)
+# Dataset: 509 images × 2 repeats = 1018 steps/epoch
+# Target: 2 epochs (2036 total steps)
+#
+# RETRAIN CONFIGURATION (Using Batch 1 Success Parameters):
+# - REVERTED to Batch 1 LR (0.0001) - Batch 2's 0.00007 was still too low
+# - NO dropout (0.0) - Batch 1 showed dropout caused instability
+# - Only 2 epochs - stop before overfitting
+# - Proven parameters from Orion/Bryce/Caleb success
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+v2 = false
+v_parameterization = false
+sdxl = true
+
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.0
+network_args = []
+
+[paths]
+train_data_dir = "/mnt/data/datasets/general/luca/lora_data/training_data_sdxl/alberto_identity"
+output_dir = "/mnt/c/ai_models/lora_sdxl/luca/alberto_identity"
+output_name = "alberto_lora_sdxl"
+logging_dir = "/mnt/c/ai_models/lora_sdxl/luca/alberto_identity/logs"
+log_prefix = "alberto_sdxl"
+
+[training]
+optimizer_type = "AdamW8bit"
+mixed_precision = "bf16"
+full_bf16 = true
+gradient_checkpointing = true
+
+train_batch_size = 1
+gradient_accumulation_steps = 2
+
+# REVERTED to Batch 1 Learning Rates
+learning_rate = 0.0001
+text_encoder_lr = 6e-05
+unet_lr = 0.0001
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 1
+lr_warmup_steps = 100
+
+min_snr_gamma = 5.0
+noise_offset = 0.05
+adaptive_noise_scale = 0.0
+multires_noise_iterations = 0
+multires_noise_discount = 0.3
+
+# EARLY STOPPING at 2 epochs
+max_train_epochs = 2
+save_every_n_epochs = 1
+save_last_n_epochs = 2
+
+cache_latents = true
+cache_latents_to_disk = false
+vae_batch_size = 2
+
+[resolution]
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 128
+bucket_no_upscale = false
+
+[augmentation]
+color_aug = false
+flip_aug = false
+random_crop = false
+shuffle_caption = true
+keep_tokens = 1
+
+[sample_generation]
+# Disabled to maximize training speed
+
+[performance]
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 6
+lowram = false
+max_token_length = 225
+seed = 42
+clip_skip = 2
+max_grad_norm = 1.0

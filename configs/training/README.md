@@ -222,8 +222,8 @@ python configs/my_char/train.py
 
 ## 📚 相關文檔
 
-- **詳細解釋：** `/docs/TOML_CONFIG_EXPLAINED.md` - 為什麼會有這兩種格式
-- **訓練指南：** `/docs/KOHYA_TRAINING_GUIDE.md` - 完整的訓練流程
+- **詳細解釋：** `docs/training/toml-config.md` - TOML 配置結構與注意事項
+- **訓練指南：** `docs/training/kohya_guide.md` - 完整的訓練流程
 - **快速參考：** `/QUICK_REFERENCE_LORA.md` - 快速開始訓練
 
 ---

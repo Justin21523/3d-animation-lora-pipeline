@@ -1,0 +1,87 @@
+# Miguel Rivera (Coco) - Identity LoRA Fine-tuning Config
+# Fine-tune from epoch-12 checkpoint to improve sharpness and consistency
+# Strategy: Higher capacity + Lower LR for detail refinement
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "miguel_rivera_identity_lora_v2"
+output_dir = "/mnt/data/ai_data/models/lora/coco/miguel_identity_v2"
+
+# Load existing LoRA weights as starting point (epoch-12)
+network_weights = "/mnt/data/ai_data/models/lora/coco/miguel_identity/miguel_rivera_identity_lora-000012.safetensors"
+
+# Network architecture (INCREASED capacity for details)
+network_module = "networks.lora"
+network_dim = 128  # Increased from 64 to capture more details
+network_alpha = 64  # Increased proportionally (half of dim)
+network_dropout = 0.1
+
+# Dataset - Use same training data as original
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/coco/lora_data/training_data/miguel_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters (SHORTER fine-tuning)
+max_train_epochs = 5  # Just 5 epochs for fine-tuning
+train_batch_size = 8
+gradient_accumulation_steps = 2
+save_every_n_epochs = 1  # Save every epoch to track progress
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (LOWER learning rate for fine-tuning)
+optimizer_type = "AdamW8bit"
+learning_rate = 2e-5  # Reduced from 6e-5 for gentle refinement
+unet_lr = 2e-5
+text_encoder_lr = 1e-5  # Reduced from 3e-5
+lr_scheduler = "cosine"  # Simple cosine, no restarts for stability
+lr_warmup_steps = 50
+
+# Regularization (INCREASED for stability and detail preservation)
+min_snr_gamma = 7.0  # Increased from 5.0 for better detail preservation
+noise_offset = 0.05
+max_grad_norm = 0.5  # Reduced from 1.0 for more stable gradient updates
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = false
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/coco/miguel_identity_v2/logs"
+log_prefix = "miguel_identity_v2"
+log_with = "tensorboard"
+
+# Sample generation
+sample_prompts = "a 3d animated character, pixar style, miguel rivera, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, miguel rivera, full body, standing with guitar, natural lighting\na 3d animated character, pixar style, miguel rivera, close-up face, smiling, soft lighting\na 3d animated character, pixar style, miguel rivera, three-quarter view, singing pose, cinematic lighting\na 3d animated character, pixar style, miguel rivera, playing guitar, warm lighting\na 3d animated character, pixar style, miguel rivera, in land of the dead, colorful lighting"
+sample_every_n_epochs = 1
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "Miguel Rivera"
+character_source = "Pixar's Coco (2017)"
+film = "Coco"
+style = "3D Animation, Pixar Style"
+dataset_size = 449
+lora_type = "character_identity_finetune"
+trigger_words = "miguel_rivera"
+version = "v2_finetune"
+notes = "Fine-tuned from v1 epoch-12 checkpoint. Improvements: network_dim 64→128, network_alpha 32→64, learning_rate 6e-5→2e-5, min_snr_gamma 5.0→7.0. Goal: Sharper details and more consistent generation while preserving high character consistency."

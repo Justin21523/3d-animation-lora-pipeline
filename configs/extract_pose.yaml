@@ -1,0 +1,7 @@
+frames_dir: "data_frames/frames"
+detections_path: "metadata/detections.parquet"
+output_pose_dir: "data_pose/vis"
+output_metadata_path: "metadata/poses.parquet"
+pose_type: "dwpose"
+use_stub: true
+log_dir: "logs"

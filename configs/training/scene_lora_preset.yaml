@@ -1,0 +1,77 @@
+# Scene/Background LoRA Preset Configuration
+# Inherits from lora_base_config.yaml
+#
+# Purpose: Generate consistent backgrounds and environments
+# Input: Clustered background scenes (DINOv2 embeddings)
+# Target: 100-200 images per scene type
+# Priority: MEDIUM-LOW
+
+# Reference base config
+base_config: "lora_base_config.yaml"
+
+# Training overrides for scene LoRA
+training:
+  # Scene LoRAs train faster
+  max_train_epochs: 15
+  save_every_n_epochs: 3
+
+  # Larger batch for scenes
+  batch_size: 6
+  gradient_accumulation_steps: 1
+
+# Optimizer overrides
+optimizer:
+  learning_rate: 1.5e-4  # Higher rate for environment learning
+  unet_lr: 1.5e-4
+  text_encoder_lr: 7.5e-5
+
+# Network architecture for scene LoRA
+network:
+  # Higher dim for complex environments
+  network_dim: 128
+  network_alpha: 64
+
+  # Convolution layers crucial for spatial layouts
+  conv_dim: 64
+  conv_alpha: 32
+
+# Dataset requirements for scene LoRA
+dataset:
+  target_per_scene: 150
+  min_size: 100
+  max_size: 200
+
+  # Caption settings
+  caption_mode: "scene"
+  caption_prefix: "a 3d rendered scene, pixar style"
+
+  # Scene attributes
+  scene_attributes:
+    - lighting: ["bright daylight", "warm indoor", "cool night", "dramatic lighting"]
+    - location: ["indoor", "outdoor", "urban", "natural", "fantastical"]
+    - mood: ["cheerful", "mysterious", "cozy", "grand", "intimate"]
+
+# Scene clustering settings
+scene_clustering:
+  model: "dinov2-giant"
+  method: "kmeans"
+  hierarchical: true
+  k_range: [30, 150]
+
+# Sampling prompts for scene testing
+sample:
+  sample_every_n_epochs: 3
+  sample_prompts:
+    - "a 3d rendered scene, pixar style, {scene_name}, bright daylight"
+    - "a 3d rendered scene, pixar style, {scene_name}, warm indoor lighting"
+    - "a 3d rendered scene, pixar style, {scene_name}, dramatic cinematic lighting"
+    - "a 3d rendered scene, pixar style, {scene_name}, wide establishing shot"
+    - "a 3d rendered scene, pixar style, {scene_name}, detailed environment"
+
+# Output configuration
+output:
+  output_name: "{film_name}_scene_{scene_id}_lora"
+  metadata:
+    lora_type: "scene_background"
+    description: "Scene and background LoRA for {scene_name} from {film_name}"
+    tags: ["3d", "pixar", "scene", "background", "environment"]

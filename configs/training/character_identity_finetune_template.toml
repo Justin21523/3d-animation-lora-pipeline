@@ -1,0 +1,129 @@
+# Character Identity LoRA Fine-tuning Template
+# Purpose: Fine-tune from existing checkpoint to improve sharpness and consistency
+# Strategy: Higher capacity + Lower LR for detail refinement
+#
+# HOW TO USE:
+# 1. Copy this file to character_loras/{character_name}_finetune.toml
+# 2. Replace all {PLACEHOLDERS} with actual values
+# 3. Adjust network_weights to point to desired checkpoint (usually epoch 10-12)
+# 4. Run training command
+
+# ============================================================================
+# REQUIRED MODIFICATIONS - Replace these before training:
+# ============================================================================
+# {CHARACTER_NAME} - lowercase with underscores, e.g., "miguel_rivera", "alberto_human"
+# {CHARACTER_DISPLAY_NAME} - human readable, e.g., "Miguel Rivera", "Alberto (Human)"
+# {FILM_NAME} - e.g., "Coco", "Luca"
+# {DATASET_SIZE} - number of training images
+# {ORIGINAL_LORA_DIR} - path to original LoRA model directory
+# {SOURCE_CHECKPOINT} - filename of checkpoint to fine-tune from (e.g., "miguel_rivera_identity_lora-000012.safetensors")
+# ============================================================================
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "{CHARACTER_NAME}_identity_lora_v2"
+output_dir = "/mnt/data/ai_data/models/lora/{FILM_NAME}/{CHARACTER_NAME}_identity_v2"
+
+# Load existing LoRA weights as starting point
+# IMPORTANT: Choose checkpoint that shows good character consistency (usually epoch 10-12, NOT final)
+network_weights = "{ORIGINAL_LORA_DIR}/{SOURCE_CHECKPOINT}"
+
+# Network architecture (INCREASED capacity for details)
+network_module = "networks.lora"
+network_dim = 128  # Increased from 64 to capture more details
+network_alpha = 64  # Increased proportionally (half of dim)
+network_dropout = 0.1
+
+# Dataset - Use same training data as original
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/{FILM_NAME}/lora_data/training_data/{CHARACTER_NAME}_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters (SHORTER fine-tuning)
+max_train_epochs = 5  # Just 5 epochs for fine-tuning (adjust if needed: 3-7 epochs)
+train_batch_size = 8
+gradient_accumulation_steps = 2
+save_every_n_epochs = 1  # Save every epoch to track progress
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (LOWER learning rate for fine-tuning)
+optimizer_type = "AdamW8bit"
+learning_rate = 2e-5  # Reduced from 6e-5 for gentle refinement
+unet_lr = 2e-5
+text_encoder_lr = 1e-5  # Reduced from 3e-5
+lr_scheduler = "cosine"  # Simple cosine, no restarts for stability
+lr_warmup_steps = 50
+
+# Regularization (INCREASED for stability and detail preservation)
+min_snr_gamma = 7.0  # Increased from 5.0 for better detail preservation
+noise_offset = 0.05
+max_grad_norm = 0.5  # Reduced from 1.0 for more stable gradient updates
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = false
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/{FILM_NAME}/{CHARACTER_NAME}_identity_v2/logs"
+log_prefix = "{CHARACTER_NAME}_identity_v2"
+log_with = "tensorboard"
+
+# Sample generation - Update prompts for your character
+sample_prompts = "a 3d animated character, pixar style, {CHARACTER_NAME}, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, {CHARACTER_NAME}, full body, standing, natural lighting\na 3d animated character, pixar style, {CHARACTER_NAME}, close-up face, smiling, soft lighting\na 3d animated character, pixar style, {CHARACTER_NAME}, three-quarter view, cinematic lighting"
+sample_every_n_epochs = 1
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "{CHARACTER_DISPLAY_NAME}"
+character_source = "Pixar's {FILM_NAME}"
+film = "{FILM_NAME}"
+style = "3D Animation, Pixar Style"
+dataset_size = {DATASET_SIZE}
+lora_type = "character_identity_finetune"
+trigger_words = "{CHARACTER_NAME}"
+version = "v2_finetune"
+notes = "Fine-tuned from v1 checkpoint. Improvements: network_dim 64→128, network_alpha 32→64, learning_rate 6e-5→2e-5, min_snr_gamma 5.0→7.0. Goal: Sharper details and more consistent generation."
+
+# ============================================================================
+# PARAMETER TUNING GUIDE (if default settings don't work well):
+# ============================================================================
+#
+# If results are TOO SHARP / OVERFIT:
+# - Reduce max_train_epochs to 3
+# - Reduce learning_rate to 1e-5
+# - Increase network_dropout to 0.15
+#
+# If results are STILL BLURRY:
+# - Increase network_dim to 192 and network_alpha to 96
+# - Increase max_train_epochs to 7
+# - Try loading from an even earlier checkpoint (e.g., epoch 8)
+#
+# If CONSISTENCY DECREASED:
+# - Increase min_snr_gamma to 9.0
+# - Reduce learning_rate to 1.5e-5
+# - Load from earlier checkpoint
+#
+# If VRAM OUT OF MEMORY:
+# - Reduce train_batch_size to 4
+# - Increase gradient_accumulation_steps to 4
+# ============================================================================

@@ -1,0 +1,85 @@
+# Elio Solis (Elio 2025) - Identity LoRA Training Config
+# Based on Trial 3.6 FINAL (proven best configuration)
+# Adjusted for 679 training images
+# Optimized batch size for RTX 5080
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "elio_solis_identity_lora"
+output_dir = "/mnt/data/ai_data/models/lora/elio/elio_identity"
+
+# Network architecture (Trial 3.6 proven settings)
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.1
+
+# Dataset (679 images with identity captions, 7 repeats = 4753 steps per epoch)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/elio_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters (adjusted for 679 images)
+max_train_epochs = 12
+train_batch_size = 8
+gradient_accumulation_steps = 2
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (Trial 3.6 proven settings)
+optimizer_type = "AdamW8bit"
+learning_rate = 6e-5
+unet_lr = 6e-5
+text_encoder_lr = 3e-5
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+# Regularization (Trial 3.6 proven settings)
+min_snr_gamma = 5.0
+noise_offset = 0.05
+max_grad_norm = 1.0
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = true
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/elio/elio_identity/logs"
+log_prefix = "elio_identity"
+log_with = "tensorboard"
+
+# Sample generation
+sample_prompts = "a 3d animated character, pixar style, elio solis, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, elio solis, full body, wearing colander helmet and purple cape, natural lighting\na 3d animated character, pixar style, elio solis, close-up face with eyepatch, smiling, soft lighting\na 3d animated character, pixar style, elio solis, three-quarter view, holding ham radio, cinematic lighting\na 3d animated character, pixar style, elio solis, at communiverse, colorful lighting\na 3d animated character, pixar style, elio solis, at camp carver, outdoor lighting"
+sample_every_n_epochs = 2
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "Elio Solis"
+character_source = "Pixar's Elio (2025)"
+film = "Elio"
+style = "3D Animation, Pixar Style, Sci-Fi"
+dataset_size = 679
+lora_type = "character_identity"
+trigger_words = "elio_solis, elio_pixar, young_boy_eyepatch, colander_helmet, purple_cape"
+notes = "Elio Solis Identity LoRA - Based on Trial 3.6 proven configuration. Dataset: 679 curated character instances with LLMProvider AI generated identity captions. Optimized batch_size=8 for RTX 5080 (16GB VRAM). Configuration adjustments from Miguel: Dataset 449 → 679 images, Epochs 14 → 12, LR Cycles 2 → 2. Preserved Trial 3.6 core strengths: network_dim=64, network_dropout=0.1, learning_rate=6e-5, cosine_with_restarts scheduler, min_snr_gamma=5.0 + noise_offset=0.05."

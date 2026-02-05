@@ -1,0 +1,86 @@
+# Pose/View LoRA Preset Configuration
+# Inherits from lora_base_config.yaml
+#
+# Purpose: Control character pose and camera angle
+# Input: Pose-clustered instances with RTM-Pose annotations
+# Target: 400-600 images per character
+# Priority: MEDIUM
+
+# Reference base config
+base_config: "lora_base_config.yaml"
+
+# Training overrides for pose LoRA
+training:
+  # Pose LoRAs need moderate training
+  max_train_epochs: 20
+  save_every_n_epochs: 4
+
+  # Batch settings
+  batch_size: 4
+  gradient_accumulation_steps: 1
+
+# Optimizer overrides
+optimizer:
+  learning_rate: 1.2e-4
+  unet_lr: 1.2e-4
+  text_encoder_lr: 6.0e-5
+
+# Network architecture for pose LoRA
+network:
+  # Moderate dim for pose and view
+  network_dim: 112
+  network_alpha: 56
+
+  # Convolution layers important for spatial features
+  conv_dim: 56
+  conv_alpha: 28
+
+# Dataset requirements for pose LoRA
+dataset:
+  target_size: 500
+  min_size: 400
+  max_size: 600
+
+  # Caption settings
+  caption_mode: "pose"
+  caption_prefix: "a 3d animated character, pixar style"
+
+  # Include pose/view in captions
+  pose_views: ["front", "three-quarter", "profile", "back"]
+  pose_actions: ["standing", "sitting", "walking", "running", "jumping"]
+
+# Pose detection settings
+pose_detection:
+  model: "rtmpose-m"
+  keypoint_threshold: 0.5
+
+  # View classification (based on keypoint geometry)
+  view_classification:
+    front: "nose visible, both shoulders visible"
+    three_quarter: "nose visible, one shoulder prominent"
+    profile: "only one eye visible, one shoulder visible"
+    back: "back of head visible, shoulders from behind"
+
+# Pose feature extraction
+pose_features:
+  normalize_scale: true
+  normalize_rotation: true
+  center_on_torso: true
+
+# Sampling prompts for pose testing
+sample:
+  sample_every_n_epochs: 4
+  sample_prompts:
+    - "a 3d animated character, pixar style, {character_name}, front view, standing"
+    - "a 3d animated character, pixar style, {character_name}, three-quarter view, walking"
+    - "a 3d animated character, pixar style, {character_name}, profile view, sitting"
+    - "a 3d animated character, pixar style, {character_name}, back view, standing"
+    - "a 3d animated character, pixar style, {character_name}, close-up, upper body"
+
+# Output configuration
+output:
+  output_name: "{film_name}_{character_id}_pose_lora"
+  metadata:
+    lora_type: "pose_view"
+    description: "Pose and view control LoRA for {character_name}"
+    tags: ["3d", "pixar", "pose", "view", "angle"]

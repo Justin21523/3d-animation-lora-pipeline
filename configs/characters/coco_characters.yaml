@@ -1,0 +1,291 @@
+film:
+  title: Coco
+  year: 2017
+  studio: Disney•Pixar
+  directors:
+  - Lee Unkrich
+  - Adrian Molina
+  theme: Día de los Muertos, Mexican culture, family, music, remembrance, memory and
+    grief
+  style: 3D animation, vibrant warm color palette, Mexican cultural details, marigold
+    petals, papel picado decorations
+  setting: Santa Cecilia, Mexico (Land of the Living) and the Land of the Dead
+  visual_characteristics: rich textures, warm lighting, cultural authenticity, smooth
+    character shading, detailed costumes, rounded soft silhouettes
+characters:
+  miguel:
+    full_name: Miguel Rivera
+    age: 12 years old
+    role: protagonist
+    appearance: slim pre-teen boy, warm medium-brown Mexican complexion, short dark
+      brown/black straight hair with messy bangs, large brown expressive eyes, rounded
+      cheeks, soft jawline, small nose and mouth
+    outfit_default: red zip-up hoodie (often unzipped), white sleeveless tank top
+      underneath, faded blue jeans, worn off-white sneakers
+    personality: passionate about music, talented and determined, creative and resourceful,
+      loving but conflicted with family, stubborn when pursuing dreams
+    distinctive_features: hand-made white guitar with skull-shaped headstock, red
+      hoodie, expressive brown eyes, youthful energy, animated facial expressions
+    visual_variants:
+    - 'human_everyday: neutral/warm daylight, simpler backgrounds in Santa Cecilia'
+    - 'human_facepaint: white skull face paint with dark eye sockets, festival lighting'
+    - 'skeleton_form: exposed bones with clothes on top, skull retains expressive
+      eyes and eyebrows, elastic movements'
+    - 'performance: spotlight lighting, strong stage colors, dynamic poses mid-song'
+    emotional_range:
+    - shy/anxious during early performances
+    - excited/awestruck arriving at Land of the Dead
+    - defiant/angry arguing about music or confronting Ernesto
+    - grief/vulnerability risking losing Héctor or when Coco doesn't remember
+    - joyful performance in final song to Mamá Coco
+    trigger_words:
+    - miguel_rivera
+    - miguel_coco
+    - young_mexican_boy
+    - red_hoodie
+    - white_guitar_skull_headstock
+    negative_prompts:
+    - skeleton
+    - old person
+    - adult
+    - blond hair
+    - muscular
+  hector:
+    full_name: Héctor Rivera
+    age: adult skeleton (appears 21)
+    role: deuteragonist
+    appearance: skeletal form with visible bones, thin and scrappy build, tattered
+      clothing (worn vest, torn purple jacket), straw hat, bony structure, empty eye
+      sockets with glowing effects, missing tooth
+    outfit_default: patched clothes, straw sombrero hat, loose brown vest, purple
+      pants, tattered appearance
+    personality: charming and witty, caring father figure, trickster with loyalty,
+      loving but erased from family memory
+    distinctive_features: skeleton anatomy, tattered clothes, straw hat, guitar, expressive
+      skull face despite lacking flesh, purple jacket
+    emotional_range:
+    - comic and mischievous with Miguel
+    - deep emotional pain about being forgotten
+    - betrayal and anger toward Ernesto
+    - tender loving father to Coco
+    trigger_words:
+    - hector_coco
+    - skeleton
+    - skull_face
+    - purple_jacket
+    - straw_hat
+    - tattered_clothes
+    negative_prompts:
+    - human flesh
+    - muscular
+    - fully clothed
+    - new clothes
+    - young child
+  ernesto:
+    full_name: Ernesto de la Cruz
+    age: adult (appears 40s in life, skeleton in afterlife)
+    role: antagonist
+    appearance: tall and handsome (in life), charismatic, slicked-back dark hair,
+      white mariachi outfit with gold trim (in life), skeleton form in Land of the
+      Dead with same outfit
+    outfit_default: white mariachi suit with gold embroidery, glamorous stage attire
+    personality: charming but narcissistic, fame-obsessed, manipulative and deceptive,
+      hides murder and plagiarism
+    distinctive_features: white suit with gold embroidery, guitars, confident posture,
+      glamorous appearance, stadium and TV backdrops, broad shoulders
+    visual_design_note: sharper, pointier shapes for antagonistic character (vs rounded
+      shapes of sympathetic characters)
+    trigger_words:
+    - ernesto_coco
+    - mariachi
+    - white_suit_gold_trim
+    - famous_musician
+    - de_la_cruz
+    negative_prompts:
+    - humble
+    - simple clothes
+    - shy
+    - young boy
+    - tattered
+  imelda:
+    full_name: Mamá Imelda Rivera
+    age: elderly (appears 70s in life, skeleton in afterlife)
+    role: matriarch, deuteragonist
+    appearance: tall skeleton woman, purple and orange dress (Day of the Dead colors),
+      black hair with white streaks (in life), stern but caring facial expression,
+      regal bearing
+    outfit_default: purple dress, family matriarch clothing, marigold flower accessories
+    personality: strict but loving, protective of family, strong-willed, talented
+      shoemaker, initially anti-music but softens
+    distinctive_features: purple dress, skeleton form, regal posture, marigold flower
+      accessories, family matriarch presence, apron, dramatic eye sockets
+    trigger_words:
+    - imelda_coco
+    - mama_imelda
+    - grandmother_skeleton
+    - purple_dress
+    - matriarch
+    negative_prompts:
+    - young
+    - musician
+    - playful
+    - child
+    - casual clothes
+  coco:
+    full_name: Mamá Coco (Socorro Rivera)
+    age: elderly woman in wheelchair
+    role: emotional core, Miguel's great-grandmother
+    appearance: wrinkled elderly woman, soft design, wheelchair-bound, warm features
+      reflecting age and dementia
+    personality: loving great-grandmother, holds key memory of Héctor, represents
+      memory and connection across generations
+    distinctive_features: wheelchair, very elderly appearance, soft warm lighting
+      in scenes, intimate close-ups with Miguel
+    emotional_importance: scenes with Coco embody memory, affection, and the film's
+      message about remembrance
+    trigger_words:
+    - mama_coco
+    - elderly_woman
+    - wheelchair
+    - great_grandmother
+    negative_prompts:
+    - young
+    - skeleton
+    - standing
+    - energetic
+  dante:
+    full_name: Dante
+    age: street dog
+    role: spirit guide, comic relief
+    appearance: Xoloitzcuintli (Mexican hairless dog), purple tongue, mismatched ears,
+      skinny build, goofy expression
+    personality: loyal to Miguel, playful and goofy, protective spirit guide
+    distinctive_features: hairless dog, purple tongue, lanky build, transforms into
+      alebrije (winged spirit guide with vibrant colors) in Land of the Dead
+    trigger_words:
+    - dante_coco
+    - xolo_dog
+    - xoloitzcuintli
+    - spirit_guide
+    - alebrije
+    negative_prompts:
+    - furry dog
+    - cat
+    - realistic dog
+    - human
+visual_style:
+  color_palette:
+  - warm oranges
+  - marigold yellows
+  - vibrant purples
+  - deep reds
+  - gold accents
+  - terracotta browns
+  lighting:
+  - warm ambient light
+  - candlelight glow
+  - marigold petal illumination
+  - sunset warmth
+  - colorful papel picado shadows
+  - 'Land of the Dead: saturated purples, blues, greens with bright accent lights,
+    night scenes'
+  - 'Santa Cecilia: soft natural daylight, dusty textures'
+  materials:
+  - smooth skin shading
+  - bone textures (for skeletons)
+  - fabric (cotton, silk)
+  - leather (shoes, guitar straps)
+  - metal (guitar strings)
+  - papel picado (perforated paper)
+  - marigold petals
+  cultural_elements:
+  - marigold petals and bridge
+  - ofrendas (altars) with portraits, candles, favorite foods
+  - papel picado banners
+  - sugar skulls
+  - guitars and mariachi attire
+  - Day of the Dead face makeup
+  - alebrijes (spirit animals like Pepita)
+  world_design:
+    santa_cecilia: humble architecture, warm earth tones, markets and plazas, family
+      shoe workshop, soft natural lighting
+    land_of_the_dead: towering vertical city of stacked colonial facades and neon
+      signage, highly saturated colors, glowing marigolds, complex volumetric lighting,
+      skeletal citizens in varied outfits
+caption_guidelines:
+  prefix_template: a 3d animated character from Pixar's Coco (2017), {character_name},
+    {appearance_details}, smooth shading, vibrant colors, Mexican cultural style
+  mandatory_keywords:
+  - 3d animation
+  - pixar style
+  - coco film
+  - smooth shading
+  context_suggestions:
+  - Day of the Dead setting
+  - marigold petals
+  - Mexican architecture
+  - colorful environment
+  - in Santa Cecilia plaza
+  - on glowing marigold bridge
+  - in Land of the Dead city
+  - near ofrenda altar
+  - cemetery sequence
+  token_limit:
+  - 40
+  - 77
+  avoid_terms:
+  - 2d anime
+  - flat shading
+  - low quality
+  - realistic photo
+  - concept art
+  character_design_notes:
+    sympathetic_characters: rounded, soft silhouettes (Miguel, family, Héctor) for
+      warmth and approachability
+    antagonistic_characters: sharper, pointier shapes (Ernesto) for subtle discomfort
+training_config:
+  recommended_dataset_size:
+    miguel: 200-300 frames (main protagonist)
+    hector: 150-200 frames (deuteragonist)
+    ernesto: 100-150 frames (antagonist)
+    imelda: 100-150 frames (supporting matriarch)
+    coco: 60-100 frames (emotional core character)
+    dante: 80-120 frames (animal character/spirit guide)
+  augmentation_policy:
+    horizontal_flip: false
+    color_jitter: false
+    random_crop: true
+    brightness_adjustment: minimal (preserve cultural color accuracy and warm lighting)
+  quality_filters:
+    blur_threshold: 100
+    min_size: 512
+    aspect_ratio_range:
+    - 0.75
+    - 1.33
+  segmentation_strategy:
+    foreground: separate LoRA per character, consider separate labels for Miguel's
+      human/facepaint/skeleton forms
+    background_style_layers:
+    - Santa Cecilia streets and plazas (warm daylight, markets, shoe shop)
+    - Land of the Dead cityscapes, marigold bridge, stadiums, talent-show stages
+    - Ofrendas and cemetery sequences for lighting and emotional tone
+  frame_selection_guidelines:
+  - prioritize sharp, well-lit frames with clear silhouettes and readable facial expressions
+  - 'capture broad range of poses and emotions: walking, playing guitar, arguing,
+    crying, performing'
+  - for culturally dense scenes (ofrendas, cemetery), keep variations in angle and
+    distance
+  - avoid heavy motion blur from fast musical numbers unless targeting motion/blur
+    aesthetics
+metadata:
+  created_by: llm-provider-tooling-pipeline
+  version: 2.0.0
+  last_updated: '2025-11-19'
+  data_source: docs/films/coco/characters/ (character descriptions)
+  notes: Character configurations for Pixar's Coco (2017). Built from official project
+    documentation including character profiles and film overview. Optimized for 3D
+    character LoRA training with cultural authenticity and Mexican Día de los Muertos
+    aesthetic. Coco 2 sequel confirmed for 2029 theatrical release.
+  awards: Academy Award for Best Animated Feature, Best Original Song (Remember Me),
+    A+ CinemaScore
+  box_office: ~$814M worldwide

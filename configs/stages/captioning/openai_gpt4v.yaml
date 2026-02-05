@@ -1,0 +1,43 @@
+# OpenAI GPT-4V Caption Generation Configuration
+# Use with --use-openai-captions flag in unified_dataset_preparer.py
+
+api:
+  provider: "openai"
+  model: "gpt-4-vision-preview"
+  max_tokens: 150
+  temperature: 0.3
+  detail: "low"  # "low" (~$0.003), "high" (~$0.03) per image
+
+batching:
+  concurrent_requests: 10
+  rate_limit_rpm: 500
+  retry_attempts: 3
+  retry_delay: 1.0
+  batch_size: 20
+
+prompts:
+  2d_character: |
+    Describe this 2D animated character for AI training.
+    Include: appearance, clothing, expression, pose, art style.
+    Be concise. Use comma-separated descriptors.
+    Start with "a 2d animated character".
+
+  3d_character: |
+    Describe this 3D animated character for AI training.
+    Include: appearance, clothing, expression, pose, lighting.
+    Start with "a 3d animated character, pixar style".
+
+  default: |
+    Describe this animated character image for AI training.
+    Be concise. Use comma-separated descriptors.
+
+output:
+  format: "text"
+  max_length: 77  # CLIP token limit
+  save_metadata: true
+  cache_results: true
+
+cost_tracking:
+  enabled: true
+  log_path: "${warehouse.logs}/openai_usage.json"
+  warn_threshold_usd: 10.0

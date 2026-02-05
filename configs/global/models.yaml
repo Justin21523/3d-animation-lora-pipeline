@@ -1,107 +1,456 @@
-# AI Warehouse模型路徑配置
-# 所有腳本統一從這裡讀取路徑
+# Centralized Model Registry (2D + 3D pipelines)
+# All model references should route through this file when possible.
+# Last Updated: 2025-12-25
 
-warehouse_root: "/mnt/c/AI_LLM_projects/ai_warehouse/models"
+version: "1.1"
+
+# Primary model root (AI_WAREHOUSE 3.0)
+model_root: "/mnt/c/ai_models"
+
+# Legacy alias used by older scripts/configs
+warehouse_root: "${model_root}"
+
+# Older warehouse root still referenced in some docs
+legacy_warehouse_root: "/mnt/c/AI_LLM_projects/ai_warehouse/models"
 
 # ============================================================================
-# 基礎生成模型
+# SEGMENTATION MODELS
 # ============================================================================
+
+segmentation:
+  # SAM2 (Segment Anything Model 2)
+  sam2_hiera_large:
+    path: "${model_root}/segmentation/sam2_hiera_large.pt"
+    description: "SAM2 Large - best quality instance segmentation"
+    vram_required: "8GB"
+
+  sam2_hiera_base:
+    path: "${model_root}/segmentation/sam2_hiera_base.pt"
+    description: "SAM2 Base - balanced quality/speed"
+    vram_required: "4GB"
+
+  # Common aliases
+  sam2_large:
+    path: "${segmentation.sam2_hiera_large.path}"
+    description: "Alias for sam2_hiera_large"
+    vram_required: "8GB"
+
+  sam2_base:
+    path: "${segmentation.sam2_hiera_base.path}"
+    description: "Alias for sam2_hiera_base"
+    vram_required: "4GB"
+
+  # MobileSAM
+  mobile_sam:
+    path: "${model_root}/segmentation/mobile_sam.pt"
+    description: "MobileSAM - lightweight, fast segmentation"
+    vram_required: "2GB"
+
+  # ToonOut (2D animation specific)
+  toonout:
+    path: "${model_root}/segmentation/toonout.onnx"
+    description: "ToonOut - specialized for 2D cartoon segmentation"
+    vram_required: "2GB"
+
+  # BiRefNet
+  birefnet:
+    path: "${model_root}/segmentation/birefnet.pth"
+    description: "BiRefNet - bilateral reference for segmentation"
+    vram_required: "4GB"
+
+  # U2-Net
+  u2net:
+    path: "${model_root}/segmentation/u2net.pth"
+    description: "U2-Net - general purpose segmentation"
+    vram_required: "2GB"
+
+  # RMBG/ISNet
+  isnet:
+    path: "${model_root}/segmentation/isnet.pth"
+    description: "ISNet - background removal optimized"
+    vram_required: "2GB"
+
+# ============================================================================
+# DETECTION MODELS
+# ============================================================================
+
+detection:
+  # YOLO v11 (latest)
+  yolov11n:
+    path: "${model_root}/detection/yolov11n.pt"
+    description: "YOLOv11 Nano - fastest detection"
+    vram_required: "1GB"
+
+  yolov11s:
+    path: "${model_root}/detection/yolov11s.pt"
+    description: "YOLOv11 Small - balanced detection"
+    vram_required: "2GB"
+
+  yolov11m:
+    path: "${model_root}/detection/yolov11m.pt"
+    description: "YOLOv11 Medium - better accuracy"
+    vram_required: "4GB"
+
+  # YOLO v8 (stable fallback)
+  yolov8n:
+    path: "${model_root}/detection/yolov8n.pt"
+    description: "YOLOv8 Nano - lightweight fallback"
+    vram_required: "1GB"
+
+  yolov8s:
+    path: "${model_root}/detection/yolov8s.pt"
+    description: "YOLOv8 Small"
+    vram_required: "2GB"
+
+# ============================================================================
+# POSE ESTIMATION MODELS
+# ============================================================================
+
+pose:
+  # DWPose
+  dwpose:
+    path: "${model_root}/pose/dwpose"
+    description: "DWPose - state-of-the-art pose estimation"
+    vram_required: "4GB"
+
+  # RTMPose
+  rtmpose:
+    path: "${model_root}/pose/rtmpose"
+    description: "RTMPose - real-time pose estimation"
+    vram_required: "2GB"
+
+  # MediaPipe (CPU)
+  mediapipe:
+    path: "mediapipe"  # Uses pip package
+    description: "MediaPipe - CPU-based pose detection"
+    vram_required: "0GB"
+
+# ============================================================================
+# CLIP / EMBEDDING MODELS
+# ============================================================================
+
+clip:
+  # OpenAI CLIP
+  vit_l_14:
+    hf_id: "openai/clip-vit-large-patch14"
+    description: "CLIP ViT-L/14 - high quality embeddings"
+    vram_required: "4GB"
+
+  vit_b_32:
+    hf_id: "openai/clip-vit-base-patch32"
+    description: "CLIP ViT-B/32 - fast embeddings"
+    vram_required: "2GB"
+
+  # SigLIP
+  siglip:
+    hf_id: "google/siglip-base-patch16-224"
+    description: "SigLIP - improved CLIP variant"
+    vram_required: "2GB"
+
+# ============================================================================
+# STABLE DIFFUSION BASE MODELS
+# ============================================================================
+
+stable_diffusion:
+  # SD 1.5
+  sd_v1_5:
+    path: "${model_root}/stable-diffusion/v1-5-pruned-emaonly.safetensors"
+    description: "Stable Diffusion 1.5 - standard base model"
+    vram_required: "8GB"
+
+  # SD 2.1 (optional)
+  sd_v2_1:
+    path: "${model_root}/stable-diffusion/stable-diffusion-v2-1"
+    description: "Stable Diffusion 2.1 - optional base model"
+    vram_required: "10GB"
+
+  # SDXL
+  sdxl_base:
+    path: "${model_root}/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+    description: "SDXL Base 1.0 - high resolution generation"
+    vram_required: "12GB"
+
+  sdxl_refiner:
+    path: "${model_root}/stable-diffusion/checkpoints/sd_xl_refiner_1.0.safetensors"
+    description: "SDXL Refiner - detail enhancement"
+    vram_required: "12GB"
+
+  # VAE
+  sdxl_vae:
+    path: "${model_root}/stable-diffusion/vae/sdxl_vae.safetensors"
+    description: "SDXL VAE for encoding/decoding"
+    vram_required: "2GB"
+
+  # 3D animation style bases (optional, for inference/experiments)
+  pixar_style:
+    path: "${model_root}/stable-diffusion/checkpoints/pixarStyleModel_v10.safetensors"
+    description: "Pixar-style base checkpoint (optional)"
+    vram_required: "12GB"
+
+  disney_pixar:
+    path: "${model_root}/stable-diffusion/checkpoints/disneyPixarCartoon_v10.safetensors"
+    description: "Disney/Pixar-style base checkpoint (optional)"
+    vram_required: "12GB"
+
+# ============================================================================
+# VLM MODELS (Captioning)
+# ============================================================================
+
+vlm:
+  # Qwen2-VL
+  qwen2_vl_7b:
+    hf_id: "Qwen/Qwen2-VL-7B-Instruct"
+    description: "Qwen2-VL 7B - best quality captions"
+    vram_required: "16GB"
+
+  qwen2_vl_2b:
+    hf_id: "Qwen/Qwen2-VL-2B-Instruct"
+    description: "Qwen2-VL 2B - lighter alternative"
+    vram_required: "6GB"
+
+  # InternVL2
+  internvl2_8b:
+    hf_id: "OpenGVLab/InternVL2-8B"
+    description: "InternVL2 8B - strong visual understanding"
+    vram_required: "18GB"
+
+  internvl2_2b:
+    hf_id: "OpenGVLab/InternVL2-2B"
+    description: "InternVL2 2B - efficient alternative"
+    vram_required: "6GB"
+
+  # BLIP2
+  blip2:
+    hf_id: "Salesforce/blip2-opt-2.7b"
+    description: "BLIP2 - fast captioning baseline"
+    vram_required: "8GB"
+
+# ============================================================================
+# FACE RECOGNITION MODELS
+# ============================================================================
+
+face:
+  # ArcFace
+  arcface:
+    path: "${model_root}/face/arcface.onnx"
+    description: "ArcFace - face identity embeddings"
+    vram_required: "2GB"
+
+  # RetinaFace
+  retinaface:
+    path: "${model_root}/face/retinaface.onnx"
+    description: "RetinaFace - face detection"
+    vram_required: "2GB"
+
+  # InsightFace (combined)
+  insightface:
+    path: "${model_root}/face/insightface"
+    description: "InsightFace - detection + recognition"
+    vram_required: "4GB"
+
+# ============================================================================
+# INPAINTING MODELS
+# ============================================================================
+
+inpainting:
+  # LaMa
+  lama:
+    path: "${model_root}/inpainting/big-lama.pt"
+    description: "LaMa - large mask inpainting"
+    vram_required: "4GB"
+
+  # PowerPaint
+  powerpaint:
+    hf_id: "JunhaoZhuang/PowerPaint-v2-1"
+    description: "PowerPaint - text-guided inpainting"
+    vram_required: "8GB"
+
+  # MAT
+  mat:
+    path: "${model_root}/inpainting/mat.pt"
+    description: "MAT - mask-aware transformer"
+    vram_required: "6GB"
+
+# ============================================================================
+# UPSCALING MODELS
+# ============================================================================
+
+upscaling:
+  # RealESRGAN
+  realesrgan_x4:
+    path: "${model_root}/upscaling/RealESRGAN_x4plus.pth"
+    description: "RealESRGAN 4x - general upscaling"
+    vram_required: "4GB"
+
+  realesrgan_anime:
+    path: "${model_root}/upscaling/RealESRGAN_x4plus_anime_6B.pth"
+    description: "RealESRGAN Anime - optimized for animation"
+    vram_required: "4GB"
+
+  # CodeFormer (face restoration)
+  codeformer:
+    path: "${model_root}/upscaling/codeformer.pth"
+    description: "CodeFormer - face restoration and enhancement"
+    vram_required: "4GB"
+
+  # GFPGAN
+  gfpgan:
+    path: "${model_root}/upscaling/GFPGANv1.4.pth"
+    description: "GFPGAN - face enhancement"
+    vram_required: "4GB"
+
+# ============================================================================
+# FRAME INTERPOLATION
+# ============================================================================
+
+interpolation:
+  # RIFE
+  rife:
+    path: "${model_root}/interpolation/rife"
+    description: "RIFE - real-time frame interpolation"
+    vram_required: "4GB"
+
+  # FILM
+  film:
+    path: "${model_root}/interpolation/film"
+    description: "FILM - frame interpolation for large motion"
+    vram_required: "6GB"
+
+# ============================================================================
+# DEFAULT SELECTIONS
+# ============================================================================
+
+defaults:
+  # Primary choices for 2D animation
+  segmentation: "toonout"
+  detection: "yolov11n"
+  pose: "mediapipe"
+  clip: "vit_l_14"
+  vlm: "qwen2_vl_2b"
+  face: "insightface"
+  inpainting: "lama"
+  upscaling: "realesrgan_anime"
+
+  # Stable Diffusion base for LoRA training
+  sd_base: "sdxl_base"
+  sd_fallback: "sd_v1_5"
+
+# 3D-oriented defaults (kept separate to avoid changing 2D defaults)
+defaults_3d:
+  segmentation: "sam2_hiera_large"
+  detection: "yolov11s"
+  pose: "mediapipe"
+  clip: "vit_l_14"
+  vlm: "qwen2_vl_7b"
+  face: "insightface"
+  inpainting: "lama"
+  upscaling: "realesrgan_x4"
+  sd_base: "sdxl_base"
+  sd_fallback: "sd_v1_5"
+
+# ============================================================================
+# VRAM PROFILES
+# ============================================================================
+
+vram_profiles:
+  # 8GB VRAM (RTX 3060/3070)
+  "8gb":
+    segmentation: "mobile_sam"
+    detection: "yolov11n"
+    vlm: "blip2"
+    sd_base: "sd_v1_5"
+
+  # 12GB VRAM (RTX 3080/4070)
+  "12gb":
+    segmentation: "sam2_hiera_base"
+    detection: "yolov11s"
+    vlm: "qwen2_vl_2b"
+    sd_base: "sdxl_base"
+
+  # 16GB+ VRAM (RTX 4080/4090/A5000)
+  "16gb+":
+    segmentation: "sam2_hiera_large"
+    detection: "yolov11m"
+    vlm: "qwen2_vl_7b"
+    sd_base: "sdxl_base"
+
+# ============================================================================
+# LEGACY COMPATIBILITY (3D pipeline scripts/configs)
+# ============================================================================
+
 base_models:
-  # Vanilla SD 1.5 (推薦用於訓練 - 更通用、可擴展)
-  sd_v1_5: "${warehouse_root}/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+  sd_v1_5: "${stable_diffusion.sd_v1_5.path}"
+  pixar_style: "${stable_diffusion.pixar_style.path}"
+  disney_pixar: "${stable_diffusion.disney_pixar.path}"
+  sd_v2_1: "${stable_diffusion.sd_v2_1.path}"
+  sdxl: "${stable_diffusion.sdxl_base.path}"
 
-  # Pixar Style base model (可選 - 用於inference或比較實驗)
-  pixar_style: "${warehouse_root}/stable-diffusion/checkpoints/pixarStyleModel_v10.safetensors"
-  disney_pixar: "${warehouse_root}/stable-diffusion/checkpoints/disneyPixarCartoon_v10.safetensors"
-
-  # Other base models
-  sd_v2_1: "${warehouse_root}/base/stable-diffusion-v2-1"
-  sdxl: "${warehouse_root}/base/sd-xl-base-1.0"
-
-# ============================================================================
-# VLM模型 (Caption生成和評估)
-# ============================================================================
 vlm_models:
-  qwen2_vl_7b: "${warehouse_root}/vlm/Qwen2-VL-7B-Instruct"
-  qwen2_vl_2b: "${warehouse_root}/vlm/Qwen2-VL-2B-Instruct"
-  internvl2_8b: "${warehouse_root}/vlm/InternVL2-8B"
-  blip2: "${warehouse_root}/vlm/BLIP2"
+  qwen2_vl_7b: "${vlm.qwen2_vl_7b.hf_id}"
+  qwen2_vl_2b: "${vlm.qwen2_vl_2b.hf_id}"
+  internvl2_8b: "${vlm.internvl2_8b.hf_id}"
+  blip2: "${vlm.blip2.hf_id}"
 
-# ============================================================================
-# SOTA評估模型
-# ============================================================================
 evaluation_models:
-  # Prompt alignment (replaces CLIP)
-  internvl2: "${warehouse_root}/vlm/InternVL2-8B"
+  internvl2: "${vlm.internvl2_8b.hf_id}"
+  clip_vit_l: "ViT-L/14"
+  eva_clip: "EVA-CLIP-L-14"
+  aesthetics: "cafeai/cafe_aesthetic"
+  insightface: "${face.insightface.path}"
+  arcface: "${face.arcface.path}"
+  musiq: "musiq"
+  musiq_koniq: "musiq-koniq"
+  lpips: "lpips"
 
-  # Fallback CLIP models (if InternVL2 not available)
-  clip_vit_l: "ViT-L/14"  # Will use torch cache
-  eva_clip: "${warehouse_root}/evaluation/clip/EVA-CLIP-L-14"
-
-  # Aesthetics scoring
-  aesthetics: "cafeai/cafe_aesthetic"  # HuggingFace model ID
-
-  # Character consistency
-  insightface: "${warehouse_root}/evaluation/face/insightface"
-  arcface: "${warehouse_root}/evaluation/face/arcface"
-
-  # Image quality
-  musiq: "musiq"  # PyIQA metric name
-  musiq_koniq: "musiq-koniq"  # Alternative
-
-  # Perceptual diversity
-  lpips: "lpips"  # Will initialize from package
-
-# ============================================================================
-# 分割模型
-# ============================================================================
 segmentation_models:
-  sam2_large: "${warehouse_root}/segmentation/sam2/sam2_hiera_large.pt"
-  sam2_base: "${warehouse_root}/segmentation/sam2/sam2_hiera_base.pt"
-  isnet: "isnet-general-use"  # Via rembg
-  u2net: "${warehouse_root}/segmentation/u2net"
+  sam2_large: "${segmentation.sam2_hiera_large.path}"
+  sam2_base: "${segmentation.sam2_hiera_base.path}"
+  isnet: "${segmentation.isnet.path}"
+  u2net: "${segmentation.u2net.path}"
 
-# ============================================================================
-# Inpainting模型
-# ============================================================================
 inpainting_models:
-  lama: "${warehouse_root}/inpainting/lama"
+  lama: "${inpainting.lama.path}"
+  powerpaint: "${inpainting.powerpaint.hf_id}"
 
-# ============================================================================
-# 輸出目錄
-# ============================================================================
 output_directories:
-  lora_base: "${warehouse_root}/lora"
-  lora_luca: "${warehouse_root}/lora/luca"
-  lora_toy_story: "${warehouse_root}/lora/toy_story"
+  lora_base: "${model_root}/lora"
   evaluation_output: "/mnt/data/ai_data/lora_evaluation"
   training_data: "/mnt/data/ai_data/training_data"
 
-# ============================================================================
-# 項目特定配置 - Luca
-# ============================================================================
 projects:
   luca:
-    # 推薦：使用vanilla SD 1.5訓練 - 學習完整角色特徵+風格
-    base_model: "${warehouse_root}/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
-
-    # 備選方案（如要實驗可改用）：
-    # base_model: "${warehouse_root}/stable-diffusion/checkpoints/pixarStyleModel_v10.safetensors"
-
-    caption_model: "${warehouse_root}/vlm/Qwen2-VL-7B-Instruct"
+    base_model: "${stable_diffusion.sd_v1_5.path}"
+    caption_model: "${vlm.qwen2_vl_7b.hf_id}"
     evaluation_models:
-      internvl2: "${warehouse_root}/vlm/InternVL2-8B"
+      internvl2: "${vlm.internvl2_8b.hf_id}"
       aesthetics: "cafeai/cafe_aesthetic"
-      insightface: "buffalo_l"
+      insightface: "${face.insightface.path}"
       musiq: "musiq"
       lpips: "lpips"
     dataset_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/curated_dataset"
-    output_dir: "${warehouse_root}/lora/luca"
+    output_dir: "${model_root}/lora/luca"
     style: "pixar_3d"
     character_type: "human_realistic"
-
-    # Caption prefix for vanilla SD 1.5 training
     caption_prefix: "a 3d animated character, pixar style, smooth shading, studio lighting"
 
-    # Alternative prefix if using pixar_style base:
-    # caption_prefix: "a 3d animated character"
+# ============================================================================
+# HYBRID ALIASES (stage configs expecting `models.*`)
+# ============================================================================
+models:
+  segmentation:
+    sam2_hiera_large: "${segmentation.sam2_hiera_large.path}"
+    sam2_hiera_base: "${segmentation.sam2_hiera_base.path}"
+    mobile_sam: "${segmentation.mobile_sam.path}"
+    toonout: "${segmentation.toonout.path}"
+    birefnet: "${segmentation.birefnet.path}"
+    u2net: "${segmentation.u2net.path}"
+    isnet: "${segmentation.isnet.path}"
+  detection:
+    yolov11n: "${detection.yolov11n.path}"
+    yolov11s: "${detection.yolov11s.path}"
+    yolov11m: "${detection.yolov11m.path}"
+    yolov8n: "${detection.yolov8n.path}"
+    yolov8s: "${detection.yolov8s.path}"
+  inpainting:
+    lama: "${inpainting.lama.path}"
+    powerpaint: "${inpainting.powerpaint.hf_id}"

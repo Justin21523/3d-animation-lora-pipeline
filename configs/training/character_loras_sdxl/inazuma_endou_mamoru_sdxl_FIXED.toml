@@ -1,0 +1,91 @@
+# FIXED Inazuma Eleven SDXL LoRA Training Config
+# Character: Endou Mamoru (円堂守)
+# Fixed NaN loss issues
+
+[general]
+output_name = "inazuma_endou_mamoru_lora_sdxl"
+output_dir = "/mnt/data/ai_data/models/lora_sdxl/inazuma-eleven/endou_mamoru_identity"
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+
+# Model architecture
+v2 = false
+v_parameterization = false
+sdxl = true
+
+[dataset]
+train_data_dir = "/mnt/data/datasets/general/inazuma-eleven/lora_data/training_data_sdxl/endou_mamoru_identity"
+
+# Resolution and bucketing
+resolution = "1024,1024"
+enable_bucket = true
+bucket_reso_steps = 64
+bucket_no_upscale = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+
+# Dataset repeats
+dataset_repeats = 10
+
+[training]
+# CRITICAL FIX: Much lower learning rates for SDXL stability
+learning_rate = 1e-4
+unet_lr = 1e-4
+text_encoder_lr = 1e-5  # 10x lower than unet_lr
+
+# LR scheduler
+lr_scheduler = "cosine"
+lr_warmup_steps = 100
+
+# CRITICAL FIX: Stronger gradient clipping
+max_grad_norm = 0.5
+
+# Network architecture
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+
+# CRITICAL FIX: Use standard AdamW instead of 8bit
+optimizer_type = "AdamW"
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+# Batch configuration
+train_batch_size = 1
+gradient_accumulation_steps = 4  # Larger effective batch size for stability
+
+# Training duration
+max_train_epochs = 10
+
+# Regularization
+caption_dropout_rate = 0.05
+keep_tokens = 2
+
+# Data loading
+persistent_data_loader_workers = false  # Disable for stability
+max_data_loader_n_workers = 2
+
+# Memory optimization
+mixed_precision = "bf16"  # CRITICAL FIX: Use bf16 instead of fp16
+full_bf16 = true
+cache_latents = true
+cache_latents_to_disk = false
+gradient_checkpointing = true
+
+# CRITICAL FIX: Enable noise offset for stability
+noise_offset = 0.05
+adaptive_noise_scale = 0.00357
+
+# Checkpointing
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "bf16"
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora_sdxl/inazuma-eleven/endou_mamoru_identity/logs"
+log_with = "tensorboard"
+log_prefix = "inazuma_endou_mamoru_fixed"
+
+# Quality settings
+clip_skip = 2
+
+# Reproducibility
+seed = 42

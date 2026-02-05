@@ -1,0 +1,56 @@
+selection:
+  # target_count: fill cutouts until each character reaches target_cutouts_per_character
+  mode: "target_count"
+  source_root: "/mnt/data/ai_data/synthetic_lora_data/generated_data"
+  characters:
+    - alberto
+    - alberto_seamonster
+    - barley_lightfoot
+    - bryce
+    - caleb
+    - elio
+    - giulia
+    - ian_lightfoot
+    - luca
+    - luca_seamonster
+    - miguel
+    - orion
+    - russell
+    - tyler
+  types: ["pose", "action", "expression"]
+  # For target_count/per_prompt_sample
+  seed: 1234
+  target_cutouts_per_character: 320
+  max_prompts_per_type: 100       # cap prompt groups per type (100 is default)
+  per_prompt_cap: 3               # max images per prompt group
+
+  # For report_topk mode (optional)
+  report_json: "/mnt/c/ai_projects/3d-animation-lora-pipeline/outputs/reports/synthetic_single_character_report.json"
+  per_type_top_k: 80
+
+io:
+  stage_root: "/mnt/data/ai_data/synthetic_lora_data/interaction_cutout_stage"
+  sam2_output_root: "/mnt/data/ai_data/synthetic_lora_data/interaction_cutouts_sam2_raw"
+  out_root: "/mnt/data/ai_data/synthetic_lora_data/interaction_cutouts"
+  # Prevent SAM2 resume-skip causing empty metadata
+  clean_sam2_output: true
+
+sam2:
+  python_executable: "/home/justin/miniconda3/envs/ai_env/bin/python"
+  model_type: "sam2_hiera_large"
+  device: "cuda"
+  min_size: 16384       # 128*128
+  context_padding: 10
+  use_async_io: true
+  prefetch_size: 16
+  save_workers: 4
+
+filtering:
+  # Candidate filtering (area relative to full image)
+  min_area_ratio: 0.06
+  max_area_ratio: 0.95
+
+  # Multi-character heuristic: if 2nd large instance is comparable and separated, skip
+  multi_second_area_ratio_min: 0.12
+  multi_second_area_ratio_max: 0.55
+  multi_bbox_iou_max: 0.08

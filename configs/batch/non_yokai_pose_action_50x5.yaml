@@ -1,0 +1,128 @@
+# ============================================================================
+# Synthetic Data Generation (Extra) - Non-Yokai Pose+Action Round-Robin
+# ============================================================================
+#
+# Goal:
+# - Exclude `yokai-watch`
+# - Generate NEW prompts: 50 pose + 50 action per character (100 total prompts/character)
+# - Generate 5 variations per prompt
+# - Write into a separate generated_data subdir to avoid overwriting prior runs
+#
+# Typical workflow:
+#   1) Prompts only:
+#      conda run -n ai_env python scripts/batch/synthetic_data_orchestrator.py \
+#        --config configs/batch/non_yokai_pose_action_50x5.yaml --phase 1
+#   2) Round-robin images:
+#      conda run -n ai_env python scripts/batch/round_robin_image_generator.py \
+#        --config configs/batch/non_yokai_pose_action_50x5.yaml
+#
+# =====================================================================
+
+workspace:
+  root: "/mnt/data/ai_data/synthetic_lora_data"
+  subdirs:
+    logs: "logs"
+    checkpoints: "checkpoints"
+    # Use the existing per-character folders
+    generated_data: "generated_data"
+    filtered_data: "filtered_data"
+    datasets: "datasets"
+
+models:
+  base_model: "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+  identity_loras_dir: "/mnt/c/ai_models/lora_sdxl/BEST_CHECKPOINTS_COLLECTION"
+
+# Characters to process (non-yokai-watch)
+# Tip: if you want to auto-discover from an existing generated_data folder,
+# use: `python scripts/batch/discover_characters_from_generated_data.py --help`
+characters:
+  - alberto
+  - alberto_seamonster
+  - barley_lightfoot
+  - bryce
+  - caleb
+  - elio
+  - giulia
+  - ian_lightfoot
+  - luca
+  - luca_seamonster
+  - miguel
+  - orion
+  - russell
+  - tyler
+
+character_descriptions:
+  default: "a 3D animated character, pixar style"
+  alberto: "Alberto Scorfano, a young Italian teen with wild curly brown hair and sun-kissed tanned skin"
+  alberto_seamonster: "Alberto Scorfano in sea monster form, a purple and blue scaled sea creature with fins and aquatic features"
+  barley_lightfoot: "Barley Lightfoot, a large elf teenager with blue skin, purple hair and pointy ears"
+  bryce: "Bryce, a teenage boy with blonde spiky hair and athletic build"
+  caleb: "Caleb, a young boy with dark curly hair and curious expression"
+  elio: "Elio, a young boy with brown curly hair and expressive eyes"
+  giulia: "Giulia Marcovaldo, an Italian girl with red curly hair and freckles"
+  ian_lightfoot: "Ian Lightfoot, a young elf with blue skin, dark hair and pointy ears"
+  luca: "Luca Paguro, a young Italian boy with brown wavy hair and gentle features"
+  luca_seamonster: "Luca Paguro in sea monster form, a green and purple scaled aquatic creature with fins"
+  miguel: "Miguel Rivera, a Mexican boy with dark spiky hair and brown eyes"
+  orion: "Orion, a young character with distinctive features"
+  russell: "Russell, a young boy with round face and enthusiastic expression"
+  tyler: "Tyler, a teenage boy with distinctive hairstyle"
+
+# Only the 2 requested types
+lora_types:
+  - pose
+  - action
+
+vocabulary_generation:
+  # 50 prompts per type => 100 prompts per character across 2 types
+  num_prompts_per_type: 50
+  use_templates: true
+  template_variations: 5
+  ensure_template_coverage: true
+  # Set a fixed seed if you want reproducible prompt packs; null = random
+  seed: 20260118
+
+caption_generation:
+  enabled: true
+  min_tokens: 60
+  max_tokens: 225
+  target_tokens: 100
+  auto_enhance: true
+  generic_subject: "a 3d animated character"
+
+image_generation:
+  num_images_per_prompt: 5
+  num_inference_steps: 40
+  guidance_scale: 7.5
+  height: 1024
+  width: 1024
+  use_random_seeds: true
+  negative_prompt: "multiple people, two people, group, crowd, duplicate character, duplicate person, clone, second person, extra character, photograph, photo, realistic, photorealistic, real person, real life, live action, hyperrealistic, real human, candid photo, portrait photo, stock photo, adult, elderly, old person, mature, grown-up, old man, baby, toddler, infant, young child, girl, female, woman, extra limbs, extra arms, extra legs, extra hands, extra fingers, missing limbs, missing arms, missing legs, missing hands, missing fingers, deformed, disfigured, distorted, malformed, mutated, mutation, bad anatomy, wrong anatomy, anatomically incorrect, blurry, out of focus, unfocused, fuzzy, hazy, soft focus, low quality, bad quality, worst quality, low resolution, low res, jpeg artifacts, compression artifacts, pixelated, grainy, noisy, watermark, text, signature, username, artist name, bad proportions, gross proportions, unnatural proportions"
+  lora_scale: 1.0
+  device: "cuda"
+
+resilience:
+  max_retries: 3
+  retry_delay_seconds: 60
+  gpu_recovery_delay_seconds: 120
+  enable_checkpointing: true
+  checkpoint_filename: "pipeline_progress_pose_action_50x5.json"
+
+round_robin:
+  checkpoint_filename: "round_robin_progress_pose_action_50x5.json"
+  # Avoid collisions with existing `images/prompt_####_img_##.png` from older runs
+  filename_suffix: "pose_action_50x5_v2"
+
+logging:
+  main_log_pattern: "main_pipeline_{timestamp}.log"
+  status_log: "status.log"
+  error_log: "errors.log"
+  log_level: "INFO"
+
+conda:
+  env_name: "ai_env"
+
+expected_output:
+  total_vocabularies: 28  # 14 characters × 2 lora_types
+  total_images_per_character: 500  # 2 types × 50 prompts × 5 images
+  total_images_all: 7000  # 14 characters × 500

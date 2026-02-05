@@ -1,0 +1,127 @@
+# ============================================================================
+# SDXL LoRA Training Configuration - POSE TYPE
+# ============================================================================
+#
+# Optimized for learning body poses, stances, and limb positions.
+# Higher network_dim (112) to capture structural body information.
+# 20 epochs - pose patterns converge faster than actions/expressions.
+#
+# Target: Precise control over character body position and camera angle
+# Dataset: ~400-500 images per character, repeat=1
+#
+# Author: LLMProvider Tooling
+# Date: 2025-12-04
+# ============================================================================
+
+[model]
+# SDXL base model and VAE
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+
+[paths]
+# Output paths (will be filled by config generator)
+output_dir = "/mnt/c/ai_models/lora_sdxl/synthetic/luca_seamonster_pose"  # e.g., /mnt/c/ai_models/lora_sdxl/{character}/pose
+output_name = "luca_seamonster_pose_lora_sdxl"  # e.g., {character}_pose_lora
+logging_dir = "/mnt/c/ai_projects/3d-animation-lora-pipeline/logs/synthetic_training/luca_seamonster_pose"  # e.g., /mnt/data/ai_data/synthetic_lora_data/logs/training/{character}_pose
+
+# Training data (Kohya format: {repeat}_{concept}/)
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/datasets/luca_seamonster_pose"  # e.g., /mnt/data/ai_data/synthetic_lora_data/datasets/{character}_pose
+
+[network]
+# LoRA network configuration
+network_module = "networks.lora"
+network_train_unet_only = true
+
+# Pose LoRA: Higher dim for structural body information
+network_dim = 112  # Body structure needs higher capacity than identity (96)
+network_alpha = 56  # alpha = dim/2 (standard ratio)
+
+# Enable conv layers for spatial understanding of body position
+conv_dim = 56
+conv_alpha = 28
+
+[training]
+# Training epochs and scheduling
+max_train_epochs = 20  # Pose patterns converge faster
+
+# Learning rates
+learning_rate = 0.0001  # Slightly higher for structural learning
+unet_lr = 0.0001
+
+# Learning rate scheduling
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 3  # 3 restarts over 20 epochs
+lr_warmup_steps = 200  # ~3 epochs warmup
+
+# Optimizer
+optimizer_type = "AdamW8bit"  # Memory-efficient
+optimizer_args = ["weight_decay=0.01", "betas=0.9,0.999"]
+
+# Mixed precision (bf16 for SDXL)
+mixed_precision = "bf16"
+save_precision = "bf16"
+
+# Memory optimization
+gradient_checkpointing = true
+gradient_accumulation_steps = 2  # Effective batch = 8
+
+# Checkpoint saving
+save_every_n_epochs = 2  # Save checkpoints every 2 epochs
+save_model_as = "safetensors"
+
+[dataset]
+# Image resolution and bucketing
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+# Batch size (optimized for 16GB VRAM)
+train_batch_size = 4
+
+# Caption handling
+caption_extension = ".txt"
+max_token_length = 225  # SDXL dual text encoders (CLIP-L + OpenCLIP-G)
+shuffle_caption = false  # Keep caption order for consistency
+keep_tokens = 0  # Process all tokens
+
+# Caching for speed
+cache_latents = true
+cache_latents_to_disk = true
+cache_text_encoder_outputs = true
+cache_text_encoder_outputs_to_disk = true
+
+[advanced]
+# SDXL-specific settings
+clip_skip = 2  # Critical for 3D character LoRAs
+
+# Quality preservation
+min_snr_gamma = 5.0  # Improves quality at high noise levels
+noise_offset = 0.05  # Slight offset for better detail
+
+# V-prediction (SDXL uses epsilon)
+v_pred_like_loss = 0.0
+
+# Hardware compatibility
+xformers = false  # RTX 5080 incompatible, use PyTorch native attention
+mem_eff_attn = false
+sdpa = true  # Use scaled dot-product attention
+
+# Determinism
+seed = 42  # Reproducible training
+
+[logging]
+# Logging configuration
+log_with = "tensorboard"
+log_prefix = "luca_seamonster_pose"
+
+# Validation (sample images during training)
+sample_every_n_epochs = 2  # Generate samples every 2 epochs
+sample_prompts = [
+    "a 3d animated character, standing upright pose, front view, studio lighting",
+    "a 3d animated character, sitting pose, three-quarter view, soft lighting",
+    "a 3d animated character, walking stride, side view, cinematic lighting"
+]
+sample_sampler = "euler_a"

@@ -1,0 +1,30 @@
+# CLIP-Only Clustering Configuration
+# Fallback when face detection fails on stylized characters
+
+algorithm:
+  type: "hdbscan"
+  min_cluster_size: 15
+  min_samples: 2
+  cluster_selection_epsilon: 0.0
+
+embeddings:
+  model: "clip_vit_l14"  # ViT-L/14 for better visual understanding
+  batch_size: 16
+  normalize: true
+  use_image_features_only: true
+
+dimensionality_reduction:
+  enabled: true
+  method: "umap"
+  n_components: 30
+  n_neighbors: 10
+  min_dist: 0.05
+
+similarity:
+  metric: "cosine"
+  threshold: 0.75  # Higher threshold for tighter clusters
+
+output:
+  save_visualization: true
+  save_embeddings: true
+  format: "parquet"

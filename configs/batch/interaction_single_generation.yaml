@@ -1,0 +1,51 @@
+models:
+  base_model: "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+  identity_loras_dir: "/mnt/c/ai_models/lora_sdxl/BEST_CHECKPOINTS_COLLECTION"
+  lora_filename_pattern: "BEST_{character}_lora_sdxl.safetensors"
+
+conda:
+  env: "ai_env"
+
+characters:
+  - alberto
+  - alberto_seamonster
+  - barley_lightfoot
+  - bryce
+  - caleb
+  - elio
+  - giulia
+  - ian_lightfoot
+  - luca
+  - luca_seamonster
+  - miguel
+  - orion
+  - russell
+  - tyler
+
+prompts:
+  out_root: "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/interaction_single"
+  num_prompts: 40
+  seed: 1234
+  weights:
+    style: 1.35
+    pose: 1.60
+    camera: 1.25
+    framing: 1.20
+    background: 1.25
+    lighting: 1.15
+
+images:
+  out_root: "/mnt/data/ai_data/synthetic_lora_data/interaction_single"
+  num_images_per_prompt: 4
+  num_inference_steps: 40
+  guidance_scale: 7.5
+  height: 1024
+  width: 1024
+  lora_weight: 1.0
+  device: "cuda"
+
+resilience:
+  checkpoint_path: "/mnt/data/ai_data/synthetic_lora_data/checkpoints/interaction_single_orchestrator.json"
+  max_retries: 2
+  retry_delay_seconds: 90
+

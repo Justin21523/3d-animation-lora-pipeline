@@ -1,0 +1,6 @@
+fg_metadata_path: "metadata/fg.parquet"
+output_dir: "lora_datasets/characters"
+output_metadata_path: "lora_datasets/characters/metadata.parquet"
+class_name: "character"
+use_stub: true
+log_dir: "logs"

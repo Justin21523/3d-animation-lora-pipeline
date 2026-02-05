@@ -1,0 +1,25 @@
+# ToonOut 2D Segmentation Configuration
+# Optimized for 2D animation with hard line-art edges
+
+model:
+  type: "toonout"
+  path: "${models.segmentation.toonout}"
+  device: "cuda"
+  alpha: 0.25  # Higher for 2D hard edges (vs 0.15 for 3D)
+
+generation:
+  min_mask_size: 2048  # ~45x45 minimum
+  confidence_threshold: 0.7
+  edge_detection: true
+
+processing:
+  max_instances: 10
+  nms_threshold: 0.5
+  morph_kernel_size: 3
+
+output:
+  save_masks: true
+  save_rgba: true
+  save_background: true
+  format: "png"
+  quality: 95

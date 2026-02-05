@@ -1,0 +1,26 @@
+pose_metadata_path: "metadata/poses.parquet"
+output_dir: "outputs/animation/frames"
+output_metadata_path: "outputs/animation/frames/metadata.parquet"
+frame_size: 512
+num_frames: 8
+seed: 123
+prompt: "1girl, best quality, anime style"
+negative_prompt: ""
+num_inference_steps: 20
+guidance_scale: 7.5
+sd_model_path: null
+controlnet_path: null
+lora_path: null
+animatediff_path: null
+motion_module_path: null
+motion_bucket_id: null
+fps_id: null
+interp_steps: null
+cond_aug: null
+scheduler: "dpmpp_2m"
+device: "cpu"
+dtype: "fp16"
+fps: 12
+video_path: null
+use_stub: true
+log_dir: "logs"

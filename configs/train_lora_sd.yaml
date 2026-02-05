@@ -1,0 +1,22 @@
+data_dir: "lora_datasets/characters"
+output_dir: "checkpoints/lora_sd_stub"
+sd_model_path: null
+train_data_dir: null
+prompt: "1girl, best quality, anime style"
+resolution: 512
+image_size: 64
+batch_size: 2
+learning_rate: 0.001
+max_steps: 10
+epochs: 1
+num_workers: 0
+use_stub: true
+enable_diffusers: false
+lora_rank: 4
+lora_alpha: 8
+dtype: "fp16"
+device: "cpu"
+stub_dataset_size: 8
+log_every_n: 5
+save_every_n: 0
+log_dir: "logs"

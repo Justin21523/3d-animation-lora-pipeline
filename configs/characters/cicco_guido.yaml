@@ -98,5 +98,5 @@ caption_examples:
   carrying_sandwich: "ciccio and guido carrying large sandwich together for ercole, cooperative, following boss, portorosso street, pixar 3d style"
   rebellion: "ciccio and guido throwing ercole into fountain, fed up expressions, rebellion moment, dramatic action, pixar 3d animation, triumphant"
 
-source_file: /mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/info/character_cicco_guido.md
+source_file: docs/films/luca/characters/ciccio_guido.md
 version: 1.0.0

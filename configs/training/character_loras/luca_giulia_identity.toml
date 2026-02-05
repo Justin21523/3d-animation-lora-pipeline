@@ -1,0 +1,84 @@
+# Giulia (Luca) - Identity LoRA Training Config
+# Based on Trial 3.6 proven configuration
+# Dataset: 273 images, 10 repeats = 2730 steps/epoch
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "giulia_identity_lora"
+output_dir = "/mnt/data/ai_data/models/lora/luca/giulia_identity"
+
+# Network architecture (Trial 3.6 proven settings)
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.1
+
+# Dataset (273 images, 10 repeats = 2730 steps per epoch)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/luca/lora_data/training_data/giulia_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters
+max_train_epochs = 14
+train_batch_size = 6
+gradient_accumulation_steps = 2
+save_every_n_epochs = 2
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (Trial 3.6 proven settings)
+optimizer_type = "AdamW8bit"
+learning_rate = 6e-5
+unet_lr = 6e-5
+text_encoder_lr = 3e-5
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+# Regularization (Trial 3.6 proven settings)
+min_snr_gamma = 5.0
+noise_offset = 0.05
+max_grad_norm = 1.0
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = false
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/luca/giulia_identity/logs"
+log_prefix = "giulia_identity"
+log_with = "tensorboard"
+
+# Sample generation
+sample_prompts = "a 3d animated character, pixar style, giulia, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, giulia, full body, standing, natural lighting\na 3d animated character, pixar style, giulia, close-up face, smiling, soft lighting\na 3d animated character, pixar style, giulia, three-quarter view, cinematic lighting"
+sample_every_n_epochs = 2
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "Giulia"
+character_source = "Pixar's Luca (2021)"
+film = "Luca"
+style = "3D Animation, Pixar Style"
+dataset_size = 273
+lora_type = "character_identity"
+trigger_words = "giulia"
+notes = "Based on Trial 3.6 proven configuration. Dataset: 273 curated instances with LLMProvider AI identity captions."

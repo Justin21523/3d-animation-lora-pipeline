@@ -1,34 +1,13 @@
-# Character-Aware Inpainting Dependencies
-# Optimized for 3D animation with PowerPaint (ECCV 2024)
+# Inpainting Dependencies
+# LaMa and PowerPaint background inpainting
 
-# ============================================
-# PowerPaint (ECCV 2024)
-# ============================================
-diffusers>=0.24.0  # Stable Diffusion inpainting pipeline
-transformers>=4.36.0  # Text encoding
-accelerate>=0.25.0  # Optimized inference
-xformers>=0.0.23  # Memory-efficient attention
+# LaMa
+# Note: Install from source
+# pip install git+https://github.com/advimman/lama.git
 
-# ============================================
-# Traditional Inpainting (Fallback)
-# ============================================
-simple-lama-inpainting>=0.1.0  # LaMa for large mask inpainting
+# PowerPaint (uses diffusers)
+# Covered by training.txt dependencies
 
-# ============================================
-# Image Processing
-# ============================================
-opencv-python>=4.8.0
-Pillow>=10.0.0
-numpy>=1.24.0
-
-# ============================================
-# Core ML
-# ============================================
-torch>=2.0.0
-torchvision>=0.15.0
-
-# ============================================
-# Utilities
-# ============================================
-tqdm>=4.65.0
-pyyaml>=6.0
+# Quality metrics
+lpips>=0.1.4  # For perceptual quality
+pytorch-fid>=0.3.0  # For FID computation

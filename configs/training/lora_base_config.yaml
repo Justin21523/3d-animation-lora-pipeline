@@ -1,0 +1,181 @@
+# Base LoRA Training Configuration
+# This serves as the foundation for all LoRA training types
+#
+# Optimized for 3D animated character LoRA training (Pixar-style)
+# Based on Kohya sd-scripts training framework
+
+# Base model configuration
+base_model:
+  type: sd15
+  path: "/mnt/data/ai_data/models/stable-diffusion-v1-5"
+  # Alternative models:
+  # - "/mnt/data/ai_data/models/sd-v1-5-inpainting.ckpt"
+  # - "/mnt/data/ai_data/models/anything-v5.safetensors"
+
+# Training hyperparameters
+training:
+  # Image resolution
+  resolution: 512
+  enable_bucket: true  # Enable aspect ratio bucketing
+  min_bucket_reso: 256
+  max_bucket_reso: 1024
+  bucket_reso_steps: 64
+
+  # Batch settings
+  batch_size: 4
+  gradient_accumulation_steps: 1
+
+  # Training duration
+  max_train_epochs: 20
+  save_every_n_epochs: 2
+  save_precision: "fp16"
+
+  # Mixed precision training
+  mixed_precision: "fp16"
+  full_fp16: false
+
+  # Gradient settings
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+
+  # Memory optimization
+  xformers: true
+  cache_latents: true
+  cache_latents_to_disk: true
+
+# Optimizer configuration
+optimizer:
+  type: AdamW8bit  # Memory-efficient AdamW
+  learning_rate: 1.0e-4
+  unet_lr: 1.0e-4
+  text_encoder_lr: 5.0e-5
+
+  # Learning rate scheduler
+  lr_scheduler: cosine_with_restarts
+  lr_warmup_steps: 100
+  lr_scheduler_num_cycles: 1
+
+  # Optimizer parameters
+  optimizer_args:
+    betas: [0.9, 0.999]
+    weight_decay: 0.01
+    eps: 1.0e-8
+
+# LoRA network architecture
+network:
+  type: lora
+  network_module: "networks.lora"
+  network_dim: 128  # Rank of LoRA
+  network_alpha: 64  # Alpha value (typically half of network_dim)
+
+  # Convolution layers (optional, for better spatial features)
+  conv_dim: 64
+  conv_alpha: 32
+
+  # Network training settings
+  network_dropout: 0.0
+  rank_dropout: 0.0
+  module_dropout: 0.0
+
+  # Training layers
+  network_train_unet_only: false  # Train both UNet and text encoder
+  network_train_text_encoder_only: false
+
+# Data augmentation (3D-specific)
+augmentation:
+  # CRITICAL: 3D animation should NOT use color jitter or horizontal flip
+  # These break PBR materials and asymmetric accessories
+  flip_aug: false
+  color_aug: false
+
+  # Safe augmentations for 3D
+  random_crop: true
+  shuffle_caption: true
+  keep_tokens: 2  # Keep first 2 tokens (character name)
+
+  # Resolution modes
+  resolution_modes: [512, 640, 768]
+
+# Logging and checkpointing
+logging:
+  logging_dir: "logs/lora_training"
+  log_with: "tensorboard"
+  log_prefix: "lora"
+
+  # Weights & Biases (optional)
+  wandb_project: "3d-character-lora"
+  wandb_run_name: null  # Will be set per training run
+
+  # Checkpoint management
+  save_model_as: "safetensors"
+  save_state: true
+  resume: null  # Path to resume from
+
+# Hardware configuration
+device:
+  gpu_id: 0
+  num_cpu_processes: 4
+  persistent_data_loader_workers: true
+
+  # VRAM optimization
+  lowvram: false  # Set true if OOM with 16GB VRAM
+  medvram: false
+
+# Dataset configuration (will be overridden per training)
+dataset:
+  # Metadata format
+  caption_extension: ".txt"
+  caption_metadata_filename: null
+
+  # Image processing
+  color_aug: false
+  face_crop_aug_range: null
+
+  # Token limits
+  max_token_length: 225  # Standard for SD1.5
+  clip_skip: 2  # For anime/illustration models
+
+# Sampling during training (for monitoring)
+sample:
+  sample_every_n_epochs: 2
+  sample_every_n_steps: null
+  sample_sampler: "euler_a"
+  sample_prompts: null  # Will be set per character
+
+# Advanced options
+advanced:
+  # Noise offset for better dark/light generation
+  noise_offset: 0.0
+  adaptive_noise_scale: 0.0
+
+  # Multi-resolution noise
+  multires_noise_iterations: 0
+  multires_noise_discount: 0.3
+
+  # Min SNR gamma weighting
+  min_snr_gamma: 5.0
+
+  # IP-Noise for better diversity
+  ip_noise_gamma: 0.0
+
+  # Prior preservation (for character identity)
+  prior_loss_weight: 1.0
+
+  # V-prediction parameterization
+  v_parameterization: false
+  v_pred_like_loss: 0.0
+
+# Output configuration
+output:
+  output_dir: "/mnt/data/ai_data/training_data/loras"
+  output_name: "lora_model"
+
+  # Model metadata
+  metadata:
+    author: "3D Animation Pipeline"
+    description: "3D character LoRA"
+    tags: ["3d", "pixar", "character"]
+    license: "creativeml-openrail-m"
+
+# Seed for reproducibility
+seed: 42

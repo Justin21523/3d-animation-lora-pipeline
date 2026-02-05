@@ -1,0 +1,385 @@
+# Super Wings Comprehensive LoRA Evaluation
+# 每個角色: 30 prompts × 3 seeds × 2 LoRA strengths = 180 images
+# 或者: 30 prompts × 3 seeds = 90 images (single LoRA strength)
+
+characters:
+  jett:
+    name: "jett"
+    colors: "red and white"
+    personality: "enthusiastic, helpful, optimistic, energetic"
+    features: "red jet body with white accents, small compact aircraft, two blue eyes"
+
+  jerome:
+    name: "jerome"
+    colors: "blue"
+    personality: "experienced, wise, calm, mentor-like"
+    features: "blue jet body, larger transport aircraft, two blue eyes"
+
+  donnie:
+    name: "donnie"
+    colors: "yellow and blue"
+    personality: "builder, mechanical expert, practical, skilled"
+    features: "yellow jet body with blue accents, construction equipment, two blue eyes"
+
+# Negative prompts (共用)
+negative_prompt: |
+  human, person, people, boy, girl, man, woman, child, humanoid,
+  human face, human body, human features, realistic human,
+  multiple characters, two characters, group, crowd, duo,
+  extra eyes, three eyes, four eyes, multiple eyes, extra limbs,
+  wrong colors, incorrect colors, color swap, mismatched colors,
+  blurry, low quality, worst quality, bad quality, lowres,
+  distorted, deformed, disfigured, mutated, malformed,
+  ugly, amateur, draft, unfinished, bad anatomy, bad proportions,
+  jpeg artifacts, watermark, text, signature,
+  2d, anime style, cartoon, illustration, painting, drawing,
+  photographic, photo, photograph, real life,
+  cropped, cut off, frame, border,
+  noise, grainy, chromatic aberration,
+  multiple views, character sheet, reference sheet
+
+# 測試配置
+test_config:
+  lora_strengths: [0.8, 1.0]
+  seeds: [42, 123, 456]
+  steps: 40
+  cfg_scale: 8.0
+  width: 1024
+  height: 1024
+
+# ===== 10 ACTIONS (動作) =====
+actions:
+  - name: "taking_off"
+    prompt_template: |
+      {character}, solo Super Wings jet character, {colors} mechanical aircraft,
+      taking off from runway, wheels leaving ground, upward angle,
+      engines glowing with power, determined expression,
+      runway background with motion blur, dramatic lighting,
+      3d animated robot jet plane, exactly two blue eyes,
+      {personality}, {features},
+      professional 3d animation, Pixar quality render,
+      dynamic action shot, smooth metallic surface
+
+  - name: "mid_flight"
+    prompt_template: |
+      {character}, single {colors} jet flying through clouds,
+      soaring through blue sky, wings level, smooth flight,
+      white fluffy clouds around, beautiful sky background,
+      happy peaceful expression, wind effects,
+      Super Wings 3d mechanical character, two blue eyes,
+      {personality}, {features},
+      cinematic aerial shot, DreamWorks animation style,
+      vibrant colors, perfect lighting
+
+  - name: "landing_preparation"
+    prompt_template: |
+      {character}, solo {colors} Super Wings aircraft,
+      approaching landing, wheels extended, slight nose-up angle,
+      focused concentrated expression, landing lights on,
+      airport runway visible below, dramatic sunset lighting,
+      3d animated transforming robot jet, exactly two eyes,
+      {personality}, {features},
+      professional aviation shot, high quality 3d render,
+      realistic jet physics, smooth animation
+
+  - name: "turning_spinning"
+    prompt_template: |
+      {character}, {colors} mechanical jet performing barrel roll,
+      dynamic spinning motion, wings tilted, rotation blur,
+      excited joyful expression, speed lines effect,
+      clear blue sky background, motion trails,
+      Super Wings 3d robot aircraft, two blue eyes,
+      {personality}, {features},
+      action-packed shot, energetic composition,
+      Pixar level animation, vibrant dynamic pose
+
+  - name: "diving"
+    prompt_template: |
+      {character}, solo {colors} jet in steep dive,
+      nose pointing downward, high speed descent, wind resistance,
+      determined focused expression, speed effects,
+      aerial view background, dramatic angle,
+      3d animated mechanical character, exactly two eyes,
+      {personality}, {features},
+      dynamic action cinematography, professional render,
+      motion blur on background, sharp character focus
+
+  - name: "climbing"
+    prompt_template: |
+      {character}, single {colors} Super Wings jet,
+      climbing steeply upward, engines at full power, triumphant,
+      confident proud expression, contrails behind,
+      sky gradient background, heroic lighting,
+      3d robot transforming aircraft, two blue eyes,
+      {personality}, {features},
+      epic upward shot, inspirational composition,
+      Disney Pixar quality, glossy paint finish
+
+  - name: "victory_spread_pose"
+    prompt_template: |
+      {character}, {colors} Super Wings jet in victory pose,
+      arms spread wide open, legs extended apart, mouth open with big confident smile,
+      extremely happy triumphant expression, eyes shining with joy,
+      starry celebration background, spotlights, confetti,
+      solo mechanical aircraft character, exactly two blue eyes,
+      {personality}, {features},
+      iconic hero pose, dramatic presentation,
+      professional 3d animation, masterpiece quality,
+      perfect symmetrical composition, vibrant celebratory lighting
+
+  - name: "waving_hello"
+    prompt_template: |
+      {character}, friendly {colors} jet waving wing/arm,
+      welcoming gesture, warm smile, inviting pose,
+      cheerful friendly expression, greeting motion,
+      bright sunny background, welcoming atmosphere,
+      3d animated Super Wings character, two blue eyes,
+      {personality}, {features},
+      friendly greeting shot, approachable composition,
+      Pixar animation style, soft warm lighting
+
+  - name: "speed_dash"
+    prompt_template: |
+      {character}, {colors} mechanical jet at maximum speed,
+      horizontal speed dash, sonic boom effects, intense velocity,
+      determined fierce expression, eyes focused forward,
+      motion blur background, speed streaks,
+      solo Super Wings aircraft, exactly two eyes,
+      {personality}, {features},
+      high-speed action shot, dynamic cinematography,
+      professional 3d render, exhilarating composition
+
+  - name: "victory_pose_standing"
+    prompt_template: |
+      {character}, triumphant {colors} Super Wings jet,
+      standing tall in victory pose, one arm raised high,
+      proud confident smile, champion expression,
+      podium or platform, winner's background,
+      3d animated robot aircraft, two blue eyes,
+      {personality}, {features},
+      heroic winner shot, inspirational angle,
+      DreamWorks quality animation, golden hour lighting
+
+# ===== 10 EXPRESSIONS (表情) =====
+expressions:
+  - name: "happy_smile"
+    prompt_template: |
+      {character}, close-up portrait, {colors} jet face,
+      warm genuine smile, eyes crinkled with happiness,
+      joyful pleasant expression, friendly demeanor,
+      soft studio lighting, neutral background,
+      Super Wings 3d character, exactly two blue eyes,
+      {personality}, {features},
+      portrait photography style, sharp focus on face,
+      Pixar character quality, emotional warmth
+
+  - name: "excited"
+    prompt_template: |
+      {character}, {colors} mechanical jet very excited,
+      wide eyes, big grin, energetic pose,
+      thrilled enthusiastic expression, bouncy energy,
+      colorful vibrant background, dynamic lighting,
+      3d animated Super Wings aircraft, two blue eyes,
+      {personality}, {features},
+      energetic composition, lively atmosphere,
+      professional animation, infectious excitement
+
+  - name: "surprised"
+    prompt_template: |
+      {character}, shocked {colors} jet with surprised face,
+      eyes wide open, mouth in O shape, gasping expression,
+      startled astonished look, eyebrows raised,
+      dramatic lighting, attention-grabbing background,
+      solo 3d robot aircraft, exactly two eyes,
+      {personality}, {features},
+      dramatic surprise shot, comedic timing,
+      high quality 3d render, expressive animation
+
+  - name: "confident"
+    prompt_template: |
+      {character}, self-assured {colors} Super Wings jet,
+      slight smirk, determined eyes, bold posture,
+      confident assured expression, cool demeanor,
+      strong lighting, powerful background,
+      3d animated mechanical character, two blue eyes,
+      {personality}, {features},
+      heroic confident shot, empowering composition,
+      Pixar hero quality, strong character presence
+
+  - name: "focused_determined"
+    prompt_template: |
+      {character}, concentrated {colors} jet face,
+      narrowed eyes, serious expression, intense focus,
+      determined resolute look, mission-ready,
+      dramatic side lighting, serious atmosphere,
+      Super Wings 3d aircraft, exactly two blue eyes,
+      {personality}, {features},
+      serious professional shot, cinematic quality,
+      high-stakes composition, intense concentration
+
+  - name: "friendly"
+    prompt_template: |
+      {character}, welcoming {colors} mechanical jet,
+      kind gentle smile, soft eyes, approachable expression,
+      warm friendly demeanor, inviting presence,
+      soft warm lighting, comfortable background,
+      3d animated Super Wings character, two blue eyes,
+      {personality}, {features},
+      friendly portrait, welcoming composition,
+      heartwarming quality, gentle animation style
+
+  - name: "curious"
+    prompt_template: |
+      {character}, inquisitive {colors} jet tilting head,
+      wide curious eyes, interested expression,
+      wondering questioning look, eyebrows raised slightly,
+      interesting background elements, discovery lighting,
+      solo 3d robot aircraft, exactly two eyes,
+      {personality}, {features},
+      curious exploration shot, playful composition,
+      Pixar character animation, child-like wonder
+
+  - name: "proud"
+    prompt_template: |
+      {character}, proud {colors} Super Wings jet,
+      chest puffed out, satisfied smile, accomplished look,
+      prideful dignified expression, head held high,
+      achievement background, golden lighting,
+      3d animated mechanical character, two blue eyes,
+      {personality}, {features},
+      proud moment shot, dignified composition,
+      professional 3d quality, sense of achievement
+
+  - name: "encouraging"
+    prompt_template: |
+      {character}, supportive {colors} jet with thumbs up gesture,
+      warm encouraging smile, positive expression,
+      motivating inspiring look, you-can-do-it energy,
+      uplifting background, bright optimistic lighting,
+      Super Wings 3d aircraft, exactly two blue eyes,
+      {personality}, {features},
+      motivational shot, inspiring composition,
+      heartwarming animation, positive energy
+
+  - name: "joyful_laughing"
+    prompt_template: |
+      {character}, laughing {colors} mechanical jet,
+      mouth wide open with laughter, eyes squeezed shut with joy,
+      hilarious amused expression, shaking with laughter,
+      fun playful background, bright cheerful lighting,
+      3d animated Super Wings character, two blue eyes,
+      {personality}, {features},
+      joyful laughter shot, comedic composition,
+      Pixar humor quality, infectious happiness
+
+# ===== 10 POSES (姿勢) =====
+poses:
+  - name: "front_standing"
+    prompt_template: |
+      {character}, perfect front view, {colors} jet facing camera,
+      symmetrical composition, standing upright,
+      neutral pleasant expression, professional model pose,
+      clean studio background, even lighting,
+      Super Wings 3d character reference, exactly two blue eyes,
+      {personality}, {features},
+      character model sheet quality, technical precision,
+      professional 3d render, perfect symmetry
+
+  - name: "side_profile"
+    prompt_template: |
+      {character}, perfect side profile, {colors} jet 90-degree angle,
+      complete side view showing full length,
+      calm expression, profile silhouette,
+      neutral background, side lighting,
+      3d animated aircraft model, two blue eyes visible,
+      {personality}, {features},
+      technical side reference, clean composition,
+      high quality render, accurate proportions
+
+  - name: "three_quarter_view"
+    prompt_template: |
+      {character}, three-quarter angle view, {colors} Super Wings jet,
+      45-degree angle, showing front and side,
+      friendly expression, dynamic yet stable pose,
+      studio background, three-point lighting,
+      3d mechanical character, exactly two blue eyes,
+      {personality}, {features},
+      classic portrait angle, professional composition,
+      Pixar character quality, ideal viewing angle
+
+  - name: "back_view"
+    prompt_template: |
+      {character}, rear view, {colors} jet seen from behind,
+      back profile showing tail and rear features,
+      looking back over shoulder with friendly expression,
+      depth background, rim lighting,
+      Super Wings 3d aircraft, two blue eyes looking back,
+      {personality}, {features},
+      back reference shot, complete character view,
+      professional 3d model, detailed rear design
+
+  - name: "top_down_angle"
+    prompt_template: |
+      {character}, top-down view, {colors} mechanical jet from above,
+      aerial perspective, wings spread visible,
+      looking up at camera with smile,
+      flying over landscape, overhead lighting,
+      3d animated Super Wings character, exactly two blue eyes,
+      {personality}, {features},
+      bird's eye view composition, unique angle,
+      high quality render, aerial photography style
+
+  - name: "low_angle_heroic"
+    prompt_template: |
+      {character}, low angle shot, {colors} jet from below,
+      looking down heroically, powerful imposing view,
+      confident strong expression, dramatic perspective,
+      sky background, dramatic upward lighting,
+      Super Wings 3d aircraft, two blue eyes,
+      {personality}, {features},
+      heroic worm's eye view, empowering composition,
+      cinematic quality, inspirational angle
+
+  - name: "dynamic_tilted"
+    prompt_template: |
+      {character}, dynamic tilted angle, {colors} Super Wings jet,
+      dutch angle composition, 30-degree tilt,
+      energetic expression, action-ready pose,
+      dynamic background, dramatic lighting,
+      3d animated mechanical character, exactly two blue eyes,
+      {personality}, {features},
+      dynamic action composition, energetic framing,
+      professional cinematography, exciting angle
+
+  - name: "hovering_stationary"
+    prompt_template: |
+      {character}, hovering in place, {colors} jet suspended in air,
+      stationary floating, calm hovering pose,
+      peaceful serene expression, balanced posture,
+      clear sky background, soft ambient lighting,
+      Super Wings 3d aircraft, two blue eyes,
+      {personality}, {features},
+      peaceful hovering shot, zen-like composition,
+      smooth 3d animation, tranquil atmosphere
+
+  - name: "compact_tucked"
+    prompt_template: |
+      {character}, compact position, {colors} mechanical jet tucked in,
+      wings folded, streamlined aerodynamic form,
+      focused expression, speed-ready pose,
+      simple background, sleek lighting,
+      3d animated Super Wings character, exactly two blue eyes,
+      {personality}, {features},
+      aerodynamic composition, streamlined design,
+      technical precision, efficient form
+
+  - name: "extended_stretched"
+    prompt_template: |
+      {character}, fully extended pose, {colors} Super Wings jet,
+      wings spread wide, limbs stretched out,
+      free liberated expression, expansive posture,
+      open sky background, broad lighting,
+      3d robot aircraft, two blue eyes,
+      {personality}, {features},
+      expansive composition, freedom pose,
+      Pixar animation quality, majestic presentation

@@ -1,0 +1,260 @@
+# SDXL Character LoRA Training Configuration
+# Batch configuration for all characters across multiple films
+#
+# Usage:
+#   python scripts/training/unified_training_orchestrator.py sequential \
+#     --batch-config configs/training/sdxl_characters_batch.yaml
+
+metadata:
+  version: "2.0.0"
+  created_by: "llm-provider-tooling-pipeline"
+  created_at: "2025-11-22"
+  description: "SDXL character LoRA training configuration for all characters"
+  base_model: "stabilityai/stable-diffusion-xl-base-1.0"
+  resolution: "1024x1024"
+
+# Global SDXL training settings
+global_settings:
+  base_model_path: "/mnt/c/AI_LLM_projects/stable-diffusion-xl-base-1.0"
+  resolution: "1024,1024"
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 1.0e-4
+  text_encoder_lr: 5.0e-5
+  unet_lr: 1.0e-4
+  lr_scheduler: "cosine_with_restarts"
+  lr_warmup_steps: 100
+  max_train_epochs: 12
+  save_every_n_epochs: 2
+  save_model_as: "safetensors"
+  mixed_precision: "fp16"
+  gradient_checkpointing: true
+  xformers: true
+  clip_skip: 2
+
+  # SDXL-specific
+  max_token_length: 225
+  cache_text_encoder_outputs: true
+  cache_text_encoder_outputs_to_disk: true
+  no_half_vae: true
+
+  # Network config
+  network_module: "networks.lora"
+  network_dim: 128
+  network_alpha: 64
+
+  # Optimizer
+  optimizer_type: "AdamW8bit"
+
+  # Dataset
+  color_aug: false
+  flip_aug: false
+  shuffle_caption: true
+  keep_tokens: 2
+
+# Character-specific jobs
+jobs:
+  # ===== Luca Characters =====
+  - character_id: "alberto"
+    character_name: "Alberto Scorfano"
+    film: "luca"
+    style: "pixar"
+    priority: 1
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/lora_data/training_data_sdxl/alberto_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/luca_alberto"
+    output_name: "luca_alberto_sdxl"
+
+    # Override settings
+    repeats: 10
+    max_train_epochs: 14
+    network_dim: 128
+    network_alpha: 64
+
+  - character_id: "giulia"
+    character_name: "Giulia Marcovaldo"
+    film: "luca"
+    style: "pixar"
+    priority: 1
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/luca/lora_data/training_data_sdxl/giulia_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/luca_giulia"
+    output_name: "luca_giulia_sdxl"
+
+    repeats: 10
+    max_train_epochs: 14
+
+  # ===== Onward Characters =====
+  - character_id: "ian"
+    character_name: "Ian Lightfoot"
+    film: "onward"
+    style: "pixar"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/onward/lora_data/training_data_sdxl/ian_lightfoot_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/onward_ian"
+    output_name: "onward_ian_sdxl"
+
+    repeats: 10
+    max_train_epochs: 12
+
+  - character_id: "barley"
+    character_name: "Barley Lightfoot"
+    film: "onward"
+    style: "pixar"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/onward/lora_data/training_data_sdxl/barley_lightfoot_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/onward_barley"
+    output_name: "onward_barley_sdxl"
+
+    repeats: 10
+    max_train_epochs: 12
+
+  # ===== Turning Red =====
+  - character_id: "tyler"
+    character_name: "Tyler"
+    film: "turning_red"
+    style: "pixar"
+    priority: 3
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/turning_red/lora_data/training_data_sdxl/tyler_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/turning_red_tyler"
+    output_name: "turning_red_tyler_sdxl"
+
+    repeats: 8
+    max_train_epochs: 12
+
+  # ===== Up =====
+  - character_id: "russell"
+    character_name: "Russell"
+    film: "up"
+    style: "pixar"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/up/lora_data/training_data_sdxl/russell_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/up_russell"
+    output_name: "up_russell_sdxl"
+
+    repeats: 10
+    max_train_epochs: 14
+
+  # ===== Orion and the Dark =====
+  - character_id: "orion"
+    character_name: "Orion"
+    film: "orion"
+    style: "dreamworks"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/orion/lora_data/training_data_sdxl/orion_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/orion_orion"
+    output_name: "orion_orion_sdxl"
+
+    repeats: 10
+    max_train_epochs: 12
+
+  # ===== Elio Characters =====
+  - character_id: "elio"
+    character_name: "Elio Solis"
+    film: "elio"
+    style: "pixar"
+    priority: 1
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data_sdxl/elio_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/elio_elio"
+    output_name: "elio_elio_sdxl"
+
+    repeats: 10
+    max_train_epochs: 16
+
+  - character_id: "bryce"
+    character_name: "Bryce Markwell"
+    film: "elio"
+    style: "pixar"
+    priority: 1
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data_sdxl/bryce_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/elio_bryce"
+    output_name: "elio_bryce_sdxl"
+
+    repeats: 8
+    max_train_epochs: 12
+
+  - character_id: "caleb"
+    character_name: "Caleb"
+    film: "elio"
+    style: "pixar"
+    priority: 1
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data_sdxl/caleb_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/elio_caleb"
+    output_name: "elio_caleb_sdxl"
+
+    repeats: 6
+    max_train_epochs: 10
+
+  - character_id: "glordon"
+    character_name: "Glordon"
+    film: "elio"
+    style: "pixar"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data_sdxl/glordon_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/elio_glordon"
+    output_name: "elio_glordon_sdxl"
+
+    repeats: 8
+    max_train_epochs: 12
+    network_dim: 96  # Alien character, slightly different
+
+  # ===== Coco =====
+  - character_id: "miguel"
+    character_name: "Miguel Rivera"
+    film: "coco"
+    style: "pixar"
+    priority: 2
+
+    training_data_dir: "/mnt/data/ai_data/datasets/3d-anime/coco/lora_data/training_data_sdxl/miguel_identity"
+    output_dir: "/mnt/data/ai_data/models/lora/3d_characters_sdxl/coco_miguel"
+    output_name: "coco_miguel_sdxl"
+
+    repeats: 10
+    max_train_epochs: 14
+
+# Training phases (for staged training)
+training_phases:
+  phase_1_priority:
+    description: "High priority characters (main protagonists)"
+    characters: ["alberto", "giulia", "elio", "bryce", "caleb"]
+
+  phase_2_supporting:
+    description: "Supporting characters and additional films"
+    characters: ["ian", "barley", "russell", "orion", "glordon", "miguel"]
+
+  phase_3_advanced:
+    description: "Advanced characters (after SD1.5 completion)"
+    characters: ["tyler"]
+
+# Caption style guidelines
+caption_guidelines:
+  sdxl_token_target: "120-180 tokens"
+  mandatory_elements:
+    - character_identity
+    - animation_style (pixar/dreamworks)
+    - lighting_details
+    - material_properties
+    - camera_composition
+    - render_quality
+
+  avoid:
+    - hallucinated_details
+    - overly_abstract_descriptions
+    - tags_format (use natural language)
+
+# Workflow notes
+workflow:
+  step_1: "Expand SD1.5 captions to SDXL using LLMProvider API"
+  step_2: "Verify expanded captions (random sampling)"
+  step_3: "Train SDXL LoRAs using this config"
+  step_4: "Evaluate and compare with SD1.5 versions"
+  step_5: "Select best checkpoints for production"

@@ -1,0 +1,216 @@
+{
+  "film": {
+    "title": "Elio",
+    "year": 2025,
+    "studio": "Pixar Animation Studios",
+    "directors": ["Madeline Sharafian", "Domee Shi", "Adrian Molina"],
+    "theme": "loneliness and grief, belonging and soft masculinity, truth vs performance, diplomacy and empathy, coming-of-age sci-fi adventure",
+    "style": "3D computer-animated, science-fiction aesthetic, microscopic biology-inspired alien designs, Earth military base realism contrasted with colorful cosmic Communiverse",
+    "setting": "Montez Air Force Base and Earth (modern day), the Communiverse (intergalactic council hub in outer space)",
+    "visual_characteristics": "Earth: muted palettes, grounded lighting, military hardware; Communiverse: saturated neon colors, volumetric lighting, bizarre silhouettes, biomorphic halls inspired by viruses/bacteria/protozoa scaled up, glowing translucent forms"
+  },
+  "characters": {
+    "elio": {
+      "full_name": "Elio Solis",
+      "age": "11 years old",
+      "role": "protagonist, Earth's accidental ambassador",
+      "appearance": "short chubby pre-teen boy, warm medium tan skin (Latinx), thick dark brown/black fluffy hair cut short, large brown eyes (one covered by eyepatch for much of film), soft rounded features (Pixar bean body proportions)",
+      "outfit_default": "bright green T-shirt with cute alien face or UFO motif on chest, knee-length greenish shorts, white crew socks (slightly bunched), dark sneakers",
+      "outfit_cosmic_hero": "upturned metal colander helmet decorated with stickers/wires/makeshift antennae, flowing purple cape with green lining or patches, same alien T-shirt and shorts as baseline",
+      "outfit_variants": [
+        "camp_carver_uniform: blue or teal scout shirt with patches, matching sash, shorts, neckerchief",
+        "communiverse_ambassador: ceremonial robes and holographic accessories, looks like kid thrown into costume",
+        "eyepatch_status: dark patch over one eye (most scenes) vs both eyes visible (later scenes)"
+      ],
+      "personality": "imaginative and idealistic, socially anxious and conflict-avoidant, sarcastic coping style, empathetic and quick to read emotions, craves validation and belonging, stubborn when feels someone is unfair",
+      "distinctive_features": "eyepatch, colander helmet and purple cape, ham radio headset, green alien t-shirt, clutching electronics/radios as comfort objects",
+      "emotional_range": [
+        "lonely and withdrawn on Earth, narrating fantasies of alien rescue",
+        "excited/thrilled when first arriving at Communiverse",
+        "performative confidence when posturing as Earth's leader",
+        "vulnerable/breakdown when confessing he's a fraud to Glordon",
+        "supportive when standing by Glordon against Lord Grigon",
+        "tender reunion scenes with Olga"
+      ],
+      "relationships": {
+        "olga_solis": "aunt and guardian, complicated love as parent figure and authority, both learning to articulate grief",
+        "glordon": "first true peer who likes him for who he is, tentative emotional confessions, queer-coded dynamic with hand-holding and shared secrets",
+        "bryce_markwell": "potential friend derailed by social pressure, later becomes ally relaying signals to space",
+        "caleb": "main human antagonist, physical and verbal bully, never fully forgiven"
+      },
+      "signature_props": ["ham radios", "headsets", "microphones", "colander helmet", "purple cape", "sketchbook with alien doodles", "Communiverse gadgets"],
+      "trigger_words": ["elio_solis", "elio_pixar", "young_boy_eyepatch", "colander_helmet", "purple_cape", "alien_tshirt", "ham_radio"],
+      "negative_prompts": ["adult", "muscular", "alien", "no eyepatch (when eyepatch variant is intended)", "realistic photo"]
+    },
+    "glordon": {
+      "full_name": "Glordon",
+      "species": "Hylurgian (alien)",
+      "age": "alien boy (youth)",
+      "role": "deuteragonist, Elio's alien best friend, son of warlord Lord Grigon",
+      "appearance": "large rotund pill-shaped body with stubby arms and legs, smooth almost plush texture, pastel purple body with subtle spots or gradients, broad mouth full of blunt teeth, expressive tongue often visible, small eyes set close together, tiny horn nubs or spikes on head or back",
+      "personality": "big-hearted and excitable, conflict-averse and insecure, loyal once friendship is formed, occasionally reckless to prove himself, hates war despite being bred for it",
+      "distinctive_features": "huge soft huggable space creature appearance, part tardigrade/part hippo design, jiggles when moving, curls like pill bug when scared, marshmallow body contrasts with warrior armor",
+      "outfit_variants": [
+        "armored: Hylurgian armor harness or carapace signifying soldier role",
+        "relaxed: simple straps or accessories, soft body reads more clearly"
+      ],
+      "emotional_range": [
+        "happy: wide smile, tongue out, energetic poses",
+        "scared: curled in, hunched shoulders, eyes wide",
+        "defiant: standing between Elio and Grigon, squared stance, determined expression"
+      ],
+      "relationships": {
+        "elio_solis": "recognizes Elio as 'his person', teaches him Communiverse navigation, mutual support and intense platonic affection (can be read as romantic by viewers)",
+        "lord_grigon": "father who treats him as asset/bargaining chip, desperately wants approval but dreads what it means, final confrontation where Glordon refuses to be weapon",
+        "ooooo_and_ambassadors": "more comfortable with Communiverse bureaucracy than Elio, sides with peace-oriented factions"
+      },
+      "signature_scenes": [
+        "bursting into narrative seeming scary but instantly revealing softness",
+        "quiet confessions with Elio about parents and expectations",
+        "voluntarily accompanying Elio onto Grigon's ship",
+        "publicly refusing father's orders (climactic stand)"
+      ],
+      "trigger_words": ["glordon", "glordon_elio", "soft_alien_boy", "tardigrade_creature", "chubby_alien", "pastel_purple_alien", "hylurgian"],
+      "negative_prompts": ["human", "hard edges", "scary monster", "realistic", "furry"]
+    },
+    "bryce": {
+      "full_name": "Bryce Markwell",
+      "age": "early teens (12-13)",
+      "role": "supporting character, potential friend turned bully accomplice turned ally",
+      "appearance": "slim Black middle-schooler, slightly taller than Elio, darker brown skin, short textured hair (fade or curls), dark brown eyes",
+      "outfit_default": "red shirt with white accents or patterning, long light-blue pants with darker stripes, black sneakers",
+      "outfit_camp": "blue scout-style uniform similar to Elio's but with more merit badges on sash (better integrated socially)",
+      "personality": "friendly and curious, non-confrontational and conflict-avoidant, guilty conscience after bullying goes too far, technically inclined with radios, eager to make amends",
+      "distinctive_features": "posture tends to be hunched or turned toward Caleb when present (reflecting divided loyalties), ham radio equipment in hands",
+      "emotional_range": [
+        "curious when first approaching Elio about alien flyers",
+        "awkward laughing along with Caleb's bullying",
+        "guilty after Elio is hurt and abducted",
+        "helpful and proactive in third act signal relay"
+      ],
+      "relationships": {
+        "elio_solis": "starts as potential friend bonding over aliens and radios, failure to defend during bullying becomes emotional wound, later apology and concrete help shows growth",
+        "caleb": "unbalanced friendship dynamic, admires confidence but uncomfortable with cruelty, eventually breaks from Caleb's influence"
+      },
+      "story_arc": [
+        "beach radio scene: responds to ham-radio flyer, tunes frequencies with Elio",
+        "camp bullying: wears masks and participates under Caleb's lead, visible hesitation",
+        "aftermath: shock and guilt when Elio beamed up",
+        "redemption: uses radio equipment to help forward messages to Communiverse",
+        "closing: part of Elio's widening circle of friends"
+      ],
+      "trigger_words": ["bryce_markwell", "bryce_elio", "slim_black_boy", "red_white_shirt", "blue_striped_pants", "ham_radio_boy"],
+      "negative_prompts": ["adult", "muscular", "alien", "aggressive expression"]
+    },
+    "caleb": {
+      "full_name": "Caleb",
+      "age": "early teens (around 13)",
+      "role": "secondary antagonist, school bully",
+      "appearance": "taller and more solidly built than Elio and Bryce (athletic/sporty build), mid-tone skin, short hair (brown to dark-blond range)",
+      "outfit_default": "simple T-shirts and shorts, muted colors",
+      "outfit_camp": "blue scout shirt with patches, shorts, neckerchief (similar silhouette to Bryce but posed more aggressively with hands on hips, shoulders forward)",
+      "personality": "cruel and mocking, manipulative leader, status-focused and attention-seeking, emotionally avoidant (hides insecurities), performs cruelty to stay on top",
+      "distinctive_features": "smirks, eye-rolls, raised eyebrows, occasionally flashes genuine fear during supernatural events, taller imposing presence",
+      "emotional_range": [
+        "mocking: smirking, pointing, laughing at Elio",
+        "angry: shoving, escalating to physical confrontation",
+        "startled: brief stunned reaction when UFO appears"
+      ],
+      "relationships": {
+        "elio_solis": "primary bullying target, mocks eyepatch/dead parents/alien obsession, organizes mask-wearing scare leading to injury, Elio never forgives him",
+        "bryce_markwell": "treats as sidekick and audience, expects backing for cruel jokes, resents Bryce's hesitation",
+        "other_campers": "ringleader whose cues other kids follow"
+      },
+      "story_arc": [
+        "early teasing about alien flyers and obsession",
+        "mask chase through woods and cabins at night",
+        "physical confrontation where Elio's eye is injured (eyepatch origin)",
+        "post-abduction shock (even bullies shaken by supernatural)",
+        "late film: background presence, sees Bryce drifting away"
+      ],
+      "narrative_function": "grounds film's exploration of empathy in mundane school dynamics, represents toxic masculinity at middle-school level, human grounded fear paralleling cosmic threat of Lord Grigon",
+      "trigger_words": ["caleb_elio", "bully_boy", "tall_athletic_teen", "blue_scout_uniform", "smirking_expression", "camp_carver"],
+      "negative_prompts": ["friendly", "kind", "soft", "alien", "wholesome"]
+    }
+  },
+  "visual_style": {
+    "earth_aesthetic": {
+      "color_palette": ["muted grays", "military greens", "concrete beiges", "coastal blues", "warm indoor lighting for Elio's bedroom"],
+      "lighting": ["natural daylight", "fluorescent military corridors", "string lights and monitor glow in bedroom", "forest dappled light at camp"],
+      "materials": ["concrete", "metal hardware", "fabric (uniforms, camp gear)", "electronics (radios, wires, LEDs)", "wood (camp cabins)"],
+      "settings": [
+        "Montez Air Force Base: sterile corridors, bunkers, radar dishes",
+        "Camp Carver: wooded summer camp, cabins, canoes, open fields",
+        "Voyager Exhibit: small museum area with Golden Record phonograph",
+        "Elio's bedroom: cluttered with alien drawings, tangled radio gear, hand-built antennae"
+      ]
+    },
+    "communiverse_aesthetic": {
+      "color_palette": ["saturated neon", "cosmic purples", "bioluminescent greens", "electric blues", "vibrant pinks", "glowing golds"],
+      "lighting": ["volumetric shafts", "glowing alien surfaces", "swirling wormhole effects", "holographic projections", "nebula backdrops"],
+      "materials": ["translucent bio-organic forms", "gelatinous AI supercomputer (Ooooo)", "floating geometry", "segmented alien armor (Hylurgian)", "strange textured alien skin"],
+      "alien_design_inspiration": "microscopic organisms scaled up: viruses, bacteria, protozoa, tardigrades, rounded toy-like forms for side characters, menacing silhouettes for antagonists",
+      "settings": [
+        "ever-shifting kaleidoscopic space station",
+        "biomorphic halls with concentric circles echoing Golden Record",
+        "council chambers with floating podiums",
+        "Hylurgian flagship: angular weaponized interiors, cool metallic lighting"
+      ]
+    }
+  },
+  "caption_guidelines": {
+    "prefix_template": "a 3d animated character from Pixar's Elio (2025), {character_name}, {appearance_details}, smooth shading, {earth_or_space_context}",
+    "mandatory_keywords": ["3d animation", "pixar style", "elio film", "smooth shading"],
+    "context_suggestions": {
+      "earth": ["military base", "camp setting", "bedroom with electronics", "forest", "coastal area"],
+      "space": ["communiverse", "alien council", "cosmic background", "glowing nebula", "biomorphic architecture", "spaceship interior"]
+    },
+    "character_specific_tags": {
+      "elio": "include eyepatch status, cape/helmet when present, emotional state (lonely/excited/vulnerable)",
+      "glordon": "specify armored vs soft/bare, pose language (energetic/scared/defiant)",
+      "bryce": "context around bullying vs reconciliation to avoid emotional archetype collapse",
+      "caleb": "always combine with situational cues (bullying_scene, camp_carver, elio_present) to prevent generic boy confusion"
+    },
+    "token_limit": [40, 77],
+    "avoid_terms": ["2d anime", "flat shading", "low quality", "realistic photo", "concept art", "horror (for aliens)"],
+    "film_disambiguation": "use 'from elio (2025 pixar film)' or 'communiverse', 'montez_airbase' tags to avoid confusion with other Pixar kids"
+  },
+  "training_config": {
+    "recommended_dataset_size": {
+      "elio": "200-300 frames (main protagonist, multiple costume variants)",
+      "glordon": "150-200 frames (deuteragonist, alien design complexity)",
+      "bryce": "80-120 frames (supporting character, redemption arc)",
+      "caleb": "60-100 frames (antagonist, limited screen time focus)"
+    },
+    "augmentation_policy": {
+      "horizontal_flip": false,
+      "color_jitter": false,
+      "random_crop": true,
+      "brightness_adjustment": "minimal for Earth scenes, moderate for Communiverse neon"
+    },
+    "quality_filters": {
+      "blur_threshold": 100,
+      "min_size": 512,
+      "aspect_ratio_range": [0.75, 1.33]
+    },
+    "location_based_separation": {
+      "earth_blocks": "muted palettes, grounded lighting, military hardware, camp settings, human children",
+      "communiverse_blocks": "saturated neon colors, volumetric lighting, bizarre silhouettes, floating geometry"
+    },
+    "lora_training_notes": {
+      "elio_glordon_interaction": "consider second dataset of interaction shots to preserve chemistry beyond single-character crops",
+      "bryce_caleb_tagging": "carefully tag around bullying vs reconciliation to avoid collapsing into one emotional archetype",
+      "style_lora_opportunity": "Communiverse micro-organism-inspired alien aesthetic could be isolated as 'cosmic organic' style separate from Earth scenes"
+    }
+  },
+  "metadata": {
+    "created_by": "llm-provider-tooling-pipeline",
+    "version": "2.0.0",
+    "last_updated": "2025-11-19",
+    "data_source": "docs/films/elio/characters/ (character descriptions)",
+    "notes": "Character configurations for Pixar's Elio (2025). Built from official project documentation with detailed character profiles for Elio Solis, Glordon, Bryce Markwell, and Caleb. Optimized for 3D character LoRA training with sci-fi aesthetic and themes of belonging, soft masculinity, and diplomacy.",
+    "production_context": "Originally conceived by Adrian Molina (Coco) as semi-autobiographical story about feeling out of place on military base. Leadership changed during development (Domee Shi, Madeline Sharafian). Reported queer theme removal and rewrites. Released June 2025.",
+    "box_office": "~$154M worldwide, weakest Pixar opening but strong audience scores, later supported by streaming",
+    "themes_meta": "Many viewers read Elio and Glordon as queer-coded boys whose softness and outsider status echo LGBTQ+ experiences. Film explores grief after parental loss, military culture vs artistic sensitivity."
+  }
+}

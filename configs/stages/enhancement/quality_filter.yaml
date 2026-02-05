@@ -1,0 +1,38 @@
+# Quality Filter Configuration
+# Thresholds for automated image quality filtering
+
+blur_detection:
+  method: "laplacian"
+  threshold: 100  # Higher = stricter (2D animation default)
+  kernel_size: 3
+
+brightness:
+  min: 30
+  max: 240
+  method: "mean_luminance"
+
+resolution:
+  min_width: 256
+  min_height: 256
+  min_area: 65536  # 256x256
+
+composition:
+  enabled: true
+  min_face_size: 48  # Minimum face pixel size
+  max_occlusion: 0.3
+
+duplicate_detection:
+  enabled: true
+  method: "phash"
+  threshold: 12  # Lower = stricter
+
+noise_detection:
+  enabled: true
+  method: "estimate_sigma"
+  max_noise_level: 15
+
+output:
+  save_rejected: true
+  rejected_folder: "rejected"
+  save_report: true
+  report_format: "json"

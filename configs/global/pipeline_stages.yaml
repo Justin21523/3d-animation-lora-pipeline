@@ -1,0 +1,72 @@
+# 2D Animation Pipeline Stage Configuration
+# Defines all pipeline stages, their dependencies, and execution order
+
+version: "1.0"
+
+pipeline_stages:
+  - name: frame_extraction
+    enabled: true
+    description: "Extract frames from video using scene detection or interval sampling"
+    config_key: frame_extraction
+    dependencies: []
+    optional: false
+
+  - name: yolo_tracking
+    enabled: true
+    description: "YOLO object detection + multi-object tracking (ByteTrack)"
+    config_key: detection
+    dependencies:
+      - frame_extraction
+    optional: false
+
+  - name: toonout_segmentation
+    enabled: true
+    description: "ToonOut foreground/background segmentation per track"
+    config_key: segmentation
+    dependencies:
+      - yolo_tracking
+    optional: false
+
+  - name: dwpose_extraction
+    enabled: false  # Optional stage for ControlNet
+    description: "DWpose keypoint extraction for ControlNet pose conditioning"
+    config_key: pose
+    dependencies:
+      - yolo_tracking
+    optional: true
+
+  - name: identity_clustering
+    enabled: true
+    description: "Cluster character instances by identity (merge tracks of same character)"
+    config_key: clustering
+    dependencies:
+      - toonout_segmentation
+    optional: false
+
+  - name: dataset_building
+    enabled: true
+    description: "Build LoRA training dataset with captions"
+    config_key: dataset
+    dependencies:
+      - identity_clustering
+    optional: false
+
+  - name: lora_training
+    enabled: true
+    description: "Train LoRA adapter for character/style"
+    config_key: training
+    dependencies:
+      - dataset_building
+    optional: false
+
+# Stage execution settings
+execution:
+  skip_failed_dependencies: false  # Stop pipeline if any stage fails
+  save_progress: true              # Save progress after each stage
+  progress_file: "pipeline_progress.json"
+
+# Checkpoint/resume settings
+checkpoint:
+  enabled: true
+  checkpoint_dir: "checkpoints"
+  auto_save_interval: 300  # seconds (5 minutes)

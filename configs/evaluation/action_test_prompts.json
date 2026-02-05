@@ -1,0 +1,82 @@
+{
+  "test_set_name": "action_lora_evaluation",
+  "lora_type": "action",
+  "description": "Test prompts for evaluating Action LoRA dynamic motion control",
+  "test_prompts": [
+    {
+      "id": "action_001",
+      "prompt": "a 3d animated character, dynamic running action, forward motion, athletic stride, motion blur",
+      "category": "running",
+      "difficulty": "hard"
+    },
+    {
+      "id": "action_002",
+      "prompt": "a 3d animated character, jumping action pose, mid-air leap, energetic motion, dramatic lighting",
+      "category": "jumping",
+      "difficulty": "hard"
+    },
+    {
+      "id": "action_003",
+      "prompt": "a 3d animated character, waving gesture, hand raised, friendly action, cheerful motion",
+      "category": "waving",
+      "difficulty": "easy"
+    },
+    {
+      "id": "action_004",
+      "prompt": "a 3d animated character, pointing gesture, extended arm, directional action, focused pose",
+      "category": "pointing",
+      "difficulty": "medium"
+    },
+    {
+      "id": "action_005",
+      "prompt": "a 3d animated character, throwing motion, athletic action, arm extended, dynamic pose",
+      "category": "throwing",
+      "difficulty": "hard"
+    },
+    {
+      "id": "action_006",
+      "prompt": "a 3d animated character, catching action, arms reaching, grabbing motion, focused expression",
+      "category": "catching",
+      "difficulty": "medium"
+    },
+    {
+      "id": "action_007",
+      "prompt": "a 3d animated character, climbing motion, ascending action, hands gripping, active movement",
+      "category": "climbing",
+      "difficulty": "hard"
+    },
+    {
+      "id": "action_008",
+      "prompt": "a 3d animated character, dancing action, rhythmic movement, expressive motion, joyful energy",
+      "category": "dancing",
+      "difficulty": "medium"
+    }
+  ],
+  "generation_params": {
+    "num_inference_steps": 30,
+    "guidance_scale": 7.5,
+    "height": 1024,
+    "width": 1024,
+    "seed": 42,
+    "negative_prompt": "multiple people, static pose, blur, low quality, distorted, deformed"
+  },
+  "evaluation_metrics": {
+    "clip_similarity": {
+      "enabled": true,
+      "min_threshold": 0.28
+    },
+    "motion_clarity": {
+      "enabled": true,
+      "method": "optical_flow",
+      "min_threshold": 0.60
+    },
+    "action_recognition": {
+      "enabled": true,
+      "min_threshold": 0.70
+    },
+    "identity_consistency": {
+      "enabled": true,
+      "min_threshold": 0.85
+    }
+  }
+}

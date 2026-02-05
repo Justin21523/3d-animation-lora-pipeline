@@ -1,0 +1,78 @@
+{
+  "test_set_name": "pose_lora_evaluation",
+  "lora_type": "pose",
+  "description": "Test prompts for evaluating Pose LoRA accuracy and control",
+  "test_prompts": [
+    {
+      "id": "pose_001",
+      "prompt": "a 3d animated character, standing upright pose, arms at sides, feet together, front view, studio lighting",
+      "category": "standing",
+      "difficulty": "easy"
+    },
+    {
+      "id": "pose_002",
+      "prompt": "a 3d animated character, sitting pose, legs crossed, hands on knees, three-quarter view, soft lighting",
+      "category": "sitting",
+      "difficulty": "medium"
+    },
+    {
+      "id": "pose_003",
+      "prompt": "a 3d animated character, walking stride, mid-step, arms swinging naturally, side view, cinematic lighting",
+      "category": "walking",
+      "difficulty": "medium"
+    },
+    {
+      "id": "pose_004",
+      "prompt": "a 3d animated character, running pose, dynamic stance, forward lean, front view, dramatic lighting",
+      "category": "running",
+      "difficulty": "hard"
+    },
+    {
+      "id": "pose_005",
+      "prompt": "a 3d animated character, jumping pose, airborne, arms raised, side profile, action lighting",
+      "category": "jumping",
+      "difficulty": "hard"
+    },
+    {
+      "id": "pose_006",
+      "prompt": "a 3d animated character, crouching pose, knees bent, low stance, back view, moody lighting",
+      "category": "crouching",
+      "difficulty": "medium"
+    },
+    {
+      "id": "pose_007",
+      "prompt": "a 3d animated character, arms crossed pose, standing confident, front view, strong lighting",
+      "category": "standing",
+      "difficulty": "medium"
+    },
+    {
+      "id": "pose_008",
+      "prompt": "a 3d animated character, hands on hips pose, powerful stance, three-quarter view, dramatic lighting",
+      "category": "standing",
+      "difficulty": "medium"
+    }
+  ],
+  "generation_params": {
+    "num_inference_steps": 30,
+    "guidance_scale": 7.5,
+    "height": 1024,
+    "width": 1024,
+    "seed": 42,
+    "negative_prompt": "multiple people, blur, low quality, distorted, deformed, bad anatomy"
+  },
+  "evaluation_metrics": {
+    "clip_similarity": {
+      "enabled": true,
+      "min_threshold": 0.30
+    },
+    "pose_accuracy": {
+      "enabled": true,
+      "method": "rtm_pose",
+      "min_threshold": 0.80
+    },
+    "identity_consistency": {
+      "enabled": true,
+      "min_threshold": 0.85
+    }
+  }
+}

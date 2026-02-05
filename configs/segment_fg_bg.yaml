@@ -1,0 +1,8 @@
+frames_dir: "data_frames/frames"
+detections_path: "metadata/detections.parquet"
+output_fg_dir: "data_fg/rgba"
+output_bg_dir: "data_bg/with_holes"
+output_fg_metadata_path: "metadata/fg.parquet"
+output_bg_metadata_path: "metadata/bg.parquet"
+use_stub: true
+log_dir: "logs"

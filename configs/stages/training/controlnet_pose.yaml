@@ -1,0 +1,36 @@
+# ControlNet Pose Training Configuration
+# Train pose-conditioned generation for animation
+
+model:
+  base: "runwayml/stable-diffusion-v1-5"
+  controlnet_init: "lllyasviel/sd-controlnet-openpose"
+
+training:
+  learning_rate: 1.0e-5
+  lr_scheduler: "constant_with_warmup"
+  lr_warmup_steps: 500
+  max_train_steps: 10000
+  train_batch_size: 4
+  gradient_accumulation_steps: 2
+  mixed_precision: "fp16"
+
+dataset:
+  resolution: 512
+  conditioning_image_column: "conditioning_image"
+  image_column: "image"
+  caption_column: "text"
+
+conditioning:
+  type: "dwpose"  # or "openpose"
+  include_face: true
+  include_hands: true
+
+checkpointing:
+  save_every_n_steps: 1000
+  save_model_as: "safetensors"
+  keep_last_n: 3
+
+output:
+  logging_dir: "${warehouse.logs}/controlnet_training"
+  output_dir: "${warehouse.training}/controlnet/pose"
+  output_name: "pose_controlnet"

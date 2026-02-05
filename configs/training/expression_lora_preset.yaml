@@ -1,0 +1,82 @@
+# Expression LoRA Preset Configuration
+# Inherits from lora_base_config.yaml
+#
+# Purpose: Generic expression LoRA that works across different characters and films
+# Input: Expression-labeled subsets from multiple characters
+# Target: 1200-1800 images total (200 per expression × 6 expressions)
+# Priority: HIGH
+
+# Reference base config
+base_config: "lora_base_config.yaml"
+
+# Training overrides for expression LoRA
+training:
+  # Expression LoRAs need more epochs for generalization
+  max_train_epochs: 25
+  save_every_n_epochs: 5
+
+  # Batch settings
+  batch_size: 4
+  gradient_accumulation_steps: 1
+
+# Optimizer overrides
+optimizer:
+  learning_rate: 1.0e-4  # Standard rate for cross-character learning
+  unet_lr: 1.0e-4
+  text_encoder_lr: 5.0e-5
+
+# Network architecture for expression LoRA
+network:
+  # Lower dim for expressions (facial features only)
+  network_dim: 96
+  network_alpha: 48
+
+  # Convolution layers for subtle facial features
+  conv_dim: 48
+  conv_alpha: 24
+
+# Dataset requirements for expression LoRA
+dataset:
+  target_per_expression: 200
+  expressions: ["happy", "sad", "angry", "surprised", "neutral", "fearful"]
+
+  # Caption settings
+  caption_mode: "expression"
+  balance_expressions: true  # Ensure equal distribution
+
+  # Keep expression tags
+  keep_tokens: 3  # Keep style + expression tokens
+
+# Expression detection settings
+expression_detection:
+  model: "insightface_buffalo_l"
+  au_threshold: 0.6  # Action Unit threshold
+  clip_similarity_threshold: 0.75
+
+  # Expression mapping (AU-based)
+  expression_mappings:
+    happy: [6, 12]  # Cheek Raiser + Lip Corner Puller
+    sad: [1, 4, 15]  # Inner Brow Raiser + Brow Lowerer + Lip Corner Depressor
+    angry: [4, 5, 7, 23]  # Brow Lowerer + Upper Lid Raiser + Lid Tightener + Lip Tightener
+    surprised: [1, 2, 5, 26]  # Inner/Outer Brow Raiser + Upper Lid Raiser + Jaw Drop
+    neutral: []  # No strong AU activation
+    fearful: [1, 2, 4, 5, 20, 26]  # Brow actions + Lid actions + Lip Stretcher + Jaw Drop
+
+# Sampling prompts for expression testing
+sample:
+  sample_every_n_epochs: 5
+  sample_prompts:
+    - "a 3d animated character, pixar style, happy expression, smiling"
+    - "a 3d animated character, pixar style, sad expression, crying"
+    - "a 3d animated character, pixar style, angry expression, frowning"
+    - "a 3d animated character, pixar style, surprised expression, wide eyes"
+    - "a 3d animated character, pixar style, neutral expression, calm"
+    - "a 3d animated character, pixar style, fearful expression, scared"
+
+# Output configuration
+output:
+  output_name: "cross_character_expression_lora_{film_names}"
+  metadata:
+    lora_type: "cross_character_expression"
+    description: "Cross-character expression LoRA trained on multiple films"
+    tags: ["3d", "pixar", "expression", "multi-character"]

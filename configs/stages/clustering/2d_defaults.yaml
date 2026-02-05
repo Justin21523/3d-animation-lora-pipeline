@@ -1,0 +1,36 @@
+# 2D Animation Clustering Defaults
+# HDBSCAN parameters optimized for 2D character clustering
+
+algorithm:
+  type: "hdbscan"
+  min_cluster_size: 20  # Higher for 2D (more variance across episodes)
+  min_samples: 3
+  cluster_selection_epsilon: 0.0
+  cluster_selection_method: "eom"  # Excess of Mass
+
+embeddings:
+  model: "clip_vit_b32"  # ViT-B/32 for speed; ViT-L/14 for quality
+  batch_size: 32
+  normalize: true
+
+dimensionality_reduction:
+  enabled: true
+  method: "umap"
+  n_components: 50
+  n_neighbors: 15
+  min_dist: 0.1
+
+quality_filter:
+  enabled: true
+  min_resolution: 128
+  max_blur_score: 100  # Higher threshold for 2D
+
+face_detection:
+  enabled: true
+  backends: ["retinaface", "mtcnn", "haar"]
+  min_face_size: 32
+
+output:
+  save_visualization: true
+  save_cluster_report: true
+  noise_folder: "noise"

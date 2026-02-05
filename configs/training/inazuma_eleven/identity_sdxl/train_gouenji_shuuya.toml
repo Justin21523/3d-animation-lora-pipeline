@@ -1,0 +1,63 @@
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+sdxl = true
+
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+network_dropout = 0.0
+
+[paths]
+output_dir = "/mnt/data/training/lora/inazuma_eleven/gouenji_shuuya"
+output_name = "inazuma_gouenji_shuuya_identity_sdxl_lora"
+logging_dir = "/mnt/data/training/lora/inazuma_eleven/gouenji_shuuya/logs"
+dataset_config = "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/inazuma_eleven/identity_sdxl/datasets/gouenji_shuuya.toml"
+
+[training]
+optimizer_type = "AdamW8bit"
+mixed_precision = "bf16"
+full_bf16 = true
+save_precision = "bf16"
+save_model_as = "safetensors"
+
+train_batch_size = 1
+gradient_accumulation_steps = 2
+gradient_checkpointing = true
+max_grad_norm = 1.0
+
+learning_rate = 0.0001
+unet_lr = 0.0001
+text_encoder_lr = 0.0
+train_text_encoder = false
+network_train_unet_only = true
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+max_train_epochs = 8
+save_every_n_epochs = 2
+save_last_n_epochs = 3
+
+cache_latents = true
+cache_latents_to_disk = true
+vae_batch_size = 2
+
+cache_text_encoder_outputs = false
+cache_text_encoder_outputs_to_disk = false
+
+noise_offset = 0.05
+seed = 42
+max_token_length = 225
+clip_skip = 2
+
+sample_at_first = true
+sample_every_n_epochs = 2
+sample_sampler = "euler_a"
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/inazuma/inazuma_gouenji_shuuya_sample_prompts.txt"
+
+[performance]
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 2
+lowram = false

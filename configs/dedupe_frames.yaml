@@ -1,0 +1,4 @@
+frames_dir: "data_frames/frames"
+output_metadata_path: "metadata/frames_dedupe.parquet"
+hash_method: "sha1"
+log_dir: "logs"

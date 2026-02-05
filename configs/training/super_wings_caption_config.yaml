@@ -1,0 +1,96 @@
+# Super Wings Character-Specific Caption Configuration
+# Used by LLMProvider API caption generation to provide character context
+
+# Character descriptions (from docs/films/super-wings/characters/*.md)
+characters:
+  jet:
+    name: "Jett"
+    description: "Red jet plane with yellow propeller, main protagonist"
+    colors: "red body, yellow propeller, white accents"
+    style: "sleek jet design, friendly face"
+
+  jerome:
+    name: "Jerome"
+    description: "White helicopter with blue rotor, delivery supervisor"
+    colors: "white body, blue rotor blades, green accents"
+    style: "helicopter design, wise expression"
+
+  flip:
+    name: "Flip"
+    description: "Red stunt plane with sports theme, acrobatic expert"
+    colors: "red body with white stripes, blue cap with yellow trim"
+    style: "compact stunt plane, energetic, sporty"
+
+  bello:
+    name: "Bello"
+    description: "Orange propeller plane, friendly helper"
+    colors: "orange body, blue propeller"
+    style: "classic propeller plane design"
+
+  paul:
+    name: "Paul"
+    description: "Blue police plane, law enforcement"
+    colors: "blue body, police markings, white accents"
+    style: "police plane design, authoritative"
+
+  beard:
+    name: "Beard"
+    description: "Red emergency helicopter, rescue specialist"
+    colors: "red body, white cross markings"
+    style: "emergency helicopter design"
+
+  shark:
+    name: "Shark"
+    description: "Blue shark-themed plane, underwater specialist"
+    colors: "blue body, shark fin design, white belly"
+    style: "shark-inspired design, streamlined"
+
+  tank:
+    name: "Tank"
+    description: "Green tank-themed plane, construction expert"
+    colors: "green body, yellow accents, tank treads"
+    style: "tank-inspired design, sturdy"
+
+  tony:
+    name: "Tony"
+    description: "Orange racing plane, speed specialist"
+    colors: "orange body, racing stripes, white accents"
+    style: "racing plane design, aerodynamic"
+
+# Global 3D animation caption guidelines
+caption_style:
+  prefix: "a 3d animated character"
+  emphasis:
+    - "Pixar-style rendering"
+    - "smooth shading"
+    - "glossy materials"
+    - "cinematic lighting"
+    - "clean anti-aliased edges"
+
+  avoid:
+    - "realistic"
+    - "photographic"
+    - "2d anime"
+    - "hand-drawn"
+
+# Material descriptions (3D-specific)
+materials:
+  metal: "glossy metallic surface, specular highlights, reflective"
+  plastic: "smooth matte plastic, slight sheen"
+  glass: "transparent glass, refractions, reflections"
+
+# Lighting types (common in 3D animation)
+lighting:
+  studio: "even studio lighting, soft shadows, three-point setup"
+  outdoor: "bright daylight, warm sunlight, natural shadows"
+  dramatic: "dramatic side lighting, strong shadows, high contrast"
+  soft: "soft diffused lighting, minimal shadows, flat illumination"
+
+# Camera angles (3D terminology)
+camera_angles:
+  front: "front view, facing camera, symmetrical"
+  three_quarter: "three-quarter view, angled toward camera"
+  side: "side view, profile, perpendicular to camera"
+  back: "back view, facing away from camera"
+  low: "low angle, looking up, heroic perspective"
+  high: "high angle, looking down, bird's eye view"

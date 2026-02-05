@@ -7,8 +7,7 @@
 discovery:
   base_dir: "/mnt/data/ai_data/datasets/3d-anime"
   film_pattern: "*"  # Glob pattern for film directories
-  exclude:
-    - "luca"  # Already processed manually
+  exclude: []  # Process all films including luca
 
 jobs:
   # Job 1: SAM2 Instance Segmentation

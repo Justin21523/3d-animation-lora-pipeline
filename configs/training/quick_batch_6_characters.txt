@@ -1,0 +1,9 @@
+# Quick Batch Training - 6 Characters (4 Epochs Each)
+# Order: orion, elio, alberto, caleb, tyler, bryce
+# Each: 4 epochs, 2 checkpoints (Epoch 2, 4)
+configs/training/character_loras_sdxl/orion_orion_identity_sdxl.toml
+configs/training/character_loras_sdxl/elio_elio_identity_sdxl.toml
+configs/training/character_loras_sdxl/luca_alberto_identity_sdxl.toml
+configs/training/character_loras_sdxl/elio_caleb_identity_sdxl.toml
+configs/training/character_loras_sdxl/turning-red_tyler_identity_sdxl.toml
+configs/training/character_loras_sdxl/elio_bryce_identity_sdxl.toml

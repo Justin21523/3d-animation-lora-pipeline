@@ -1,0 +1,3 @@
+a 3d animated character, standing upright pose, front view, studio lighting --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, sitting pose, three-quarter view, soft lighting --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, walking stride, side view, cinematic lighting --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28

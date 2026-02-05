@@ -1,0 +1,73 @@
+# Face-Centric Identity Clustering Configuration
+# For grouping multi-character instances by WHO they are (identity)
+
+face_detection:
+  model: retinaface  # retinaface | mtcnn | yolov8_face
+  min_confidence: 0.7
+  nms_threshold: 0.4
+
+  # Face size filtering
+  min_face_size: 64  # pixels
+  max_face_size: null  # null = no limit
+
+face_recognition:
+  model: arcface_resnet100  # arcface_resnet100 | facenet_vggface2
+  normalize_embeddings: true
+  embedding_dim: 512
+
+  # Face alignment
+  align_faces: true
+  target_size: [160, 160]  # For InceptionResnetV1
+
+clustering:
+  algorithm: hdbscan  # hdbscan | kmeans | agglomerative
+
+  # HDBSCAN parameters (for 3D characters with consistent identity)
+  min_cluster_size: 12  # Smaller than 2D anime due to model consistency
+  min_samples: 2
+  metric: cosine
+  cluster_selection_method: eom  # eom | leaf
+  cluster_selection_epsilon: 0.0
+
+  # Alternative: KMeans (if number of characters known)
+  # kmeans_n_clusters: 5
+  # kmeans_random_state: 42
+
+quality_filter:
+  enable: true
+
+  # Face quality thresholds
+  min_face_size: 64
+  blur_threshold: 80  # Laplacian variance (3D allows some DoF blur)
+  brightness_range: [20, 235]  # Avoid over/underexposed faces
+
+  # Pose filtering
+  max_yaw_angle: 90  # degrees (allow profile views)
+  max_pitch_angle: 45
+  max_roll_angle: 30
+
+visualization:
+  enable: true
+  method: umap  # umap | tsne | pca
+
+  # UMAP parameters
+  umap_n_components: 2
+  umap_n_neighbors: 15
+  umap_min_dist: 0.1
+  umap_metric: cosine
+
+output:
+  save_metadata: true
+  save_visualization: true
+  save_embeddings: false  # Set true for debugging
+
+  # Cluster naming
+  prompt_for_names: true  # Interactive naming
+  auto_name: false  # Experimental: use CLIP text similarity
+  character_name_list: null  # Optional: provide list of expected names
+
+# Performance
+device: cuda  # cuda | cpu
+batch_size: 32
+num_workers: 4
+pin_memory: true

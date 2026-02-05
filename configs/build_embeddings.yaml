@@ -1,0 +1,7 @@
+target_type: "frame"
+input_metadata_path: "metadata/frames.parquet"
+output_dir: "embeddings/clip"
+output_metadata_path: "metadata/embeddings.parquet"
+dim: 16
+use_stub: true
+log_dir: "logs"

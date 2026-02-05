@@ -1,0 +1,234 @@
+# 2D/3D Animation Parameter Mapping
+# This file defines default parameters for 2D Western animation vs 3D Pixar-style animation
+# Used by ParameterConverter for automatic parameter adaptation
+
+version: "1.0"
+
+# === SEGMENTATION PARAMETERS ===
+segmentation:
+  alpha_threshold:
+    3d_default: 0.15  # Soft anti-aliased edges in 3D
+    2d_default: 0.25  # Sharp line art boundaries in 2D
+    description: "Transparency threshold for character extraction"
+    rationale: "2D animation has clean, bold outlines with hard edges, unlike 3D anti-aliasing"
+
+  blur_threshold:
+    3d_default: 80    # Tolerate cinematic DoF blur
+    2d_default: 100   # Stricter for 2D cell animation
+    description: "Maximum blur score for quality filtering (higher = stricter)"
+    rationale: "2D animation usually maintains focus; blur indicates quality issues"
+
+  edge_detection_mode:
+    3d_default: "soft_gradient"
+    2d_default: "hard_edge"
+    description: "Edge detection algorithm preference"
+    rationale: "2D uses distinct outlines; 3D has gradual shading transitions"
+
+  inpainting_strength:
+    3d_default: 0.7
+    2d_default: 0.5
+    description: "Inpainting aggressiveness for background fill"
+    rationale: "2D backgrounds are simpler and need less aggressive inpainting"
+
+  min_mask_size:
+    3d_default: 128
+    2d_default: 128
+    description: "Minimum mask size in pixels (same for both)"
+    rationale: "Same minimum character size requirement"
+
+# === CLUSTERING PARAMETERS ===
+clustering:
+  min_cluster_size:
+    3d_default: 10    # 3D models are consistent → smaller clusters
+    2d_default: 20    # 2D frames vary more → larger clusters needed
+    description: "HDBSCAN minimum cluster size"
+    rationale: "2D varies more across episodes/animators; 3D models are consistent"
+
+  min_samples:
+    3d_default: 2
+    2d_default: 4     # Need more samples for stylistic variation
+    description: "HDBSCAN minimum samples per cluster"
+    rationale: "2D needs more samples to account for style variation"
+
+  similarity_threshold:
+    3d_default: 0.70
+    2d_default: 0.75  # Stricter to separate similar characters
+    description: "Cosine similarity threshold for clustering"
+    rationale: "2D characters can look similar; stricter threshold prevents merging"
+
+  use_face_detection:
+    3d_default: true
+    2d_default: false  # Stylized 2D faces fail realistic detectors
+    description: "Enable face detection for identity clustering"
+    rationale: "Realistic face detectors don't work well on stylized 2D faces"
+
+  use_body_verification:
+    3d_default: false
+    2d_default: true   # Rely on full-body CLIP embeddings instead
+    description: "Use full-body features instead of face-only"
+    rationale: "2D clustering benefits from full character silhouette"
+
+# === QUALITY FILTERING PARAMETERS ===
+quality:
+  max_blur_score:
+    3d_default: 80
+    2d_default: 100
+    description: "Maximum acceptable blur score (reject if higher)"
+    rationale: "2D line art should be sharp; stricter rejection"
+
+  min_sharpness:
+    3d_default: 30
+    2d_default: 40
+    description: "Minimum sharpness score (reject if lower)"
+    rationale: "2D line art requires higher sharpness"
+
+  check_line_art_quality:
+    3d_default: false
+    2d_default: true   # NEW: Validate presence/quality of outlines
+    description: "Enable line art quality validation"
+    rationale: "2D-specific check for outline presence"
+
+  min_color_variance:
+    3d_default: null   # Not applicable
+    2d_default: 20     # NEW: Reject washed-out colors
+    description: "Minimum color variance to avoid washed-out frames"
+    rationale: "2D needs vibrant colors; reject faded frames"
+
+# === DATASET PREPARATION PARAMETERS ===
+dataset:
+  target_size:
+    3d_default: [200, 500]
+    2d_default: [500, 1000]
+    description: "Target dataset size range [min, max]"
+    rationale: "2D needs more examples due to stylistic inconsistency"
+
+  ideal_size:
+    3d_default: [400, 600]
+    2d_default: [1000, 1500]
+    description: "Ideal dataset size range for best results"
+    rationale: "2D benefits from larger datasets to capture variance"
+
+  dedup_threshold:
+    3d_default: 0.95
+    2d_default: 0.92   # More aggressive deduplication
+    description: "Perceptual hash similarity threshold for deduplication"
+    rationale: "TV shows have many static frames; more aggressive dedup needed"
+
+  dedup_hash_size:
+    3d_default: 16
+    2d_default: 12     # Slightly more aggressive
+    description: "Perceptual hash size (smaller = more aggressive)"
+    rationale: "Smaller hash for 2D to catch more near-duplicates"
+
+# === AUGMENTATION POLICY ===
+augmentation:
+  color_jitter:
+    enabled:
+      3d_default: false  # Breaks PBR materials
+      2d_default: true   # Helps 2D generalization
+    brightness:
+      3d_default: 0.0
+      2d_default: 0.1    # Mild brightness variation
+    contrast:
+      3d_default: 0.0
+      2d_default: 0.1    # Mild contrast variation
+    saturation:
+      3d_default: 0.0
+      2d_default: 0.05   # Very mild to preserve identity
+    hue:
+      3d_default: 0.0
+      2d_default: 0.0    # NEVER - breaks character identity
+    description: "Color jittering augmentation"
+    rationale: "2D colors vary across episodes; augmentation helps generalization"
+
+  horizontal_flip:
+    enabled:
+      3d_default: false
+      2d_default: false  # Both avoid due to asymmetry
+    asymmetry_check:
+      3d_default: false
+      2d_default: true   # NEW: Auto-detect asymmetric elements
+    description: "Horizontal flip augmentation"
+    rationale: "Both 2D and 3D characters often have asymmetric features (avoid flipping)"
+
+  rotation:
+    enabled:
+      3d_default: false
+      2d_default: true
+    range_degrees:
+      3d_default: 0
+      2d_default: 5      # Slight rotation simulates animation variance
+    description: "Rotation augmentation"
+    rationale: "Slight rotation helps 2D generalization across different frame angles"
+
+# === TRAINING PARAMETERS ===
+training:
+  max_epochs:
+    3d_default: 15
+    2d_default: 20     # More epochs to learn stylistic variation
+    description: "Maximum training epochs"
+    rationale: "2D needs more epochs due to higher style variance"
+
+  network_dim:
+    3d_default: 32
+    2d_default: 32     # Can increase to 64 for complex styles
+    description: "LoRA network dimension"
+    rationale: "Same default; can increase for 2D if style is complex"
+
+  network_alpha:
+    3d_default: 16
+    2d_default: 16     # Scale with network_dim
+    description: "LoRA network alpha (scaling factor)"
+    rationale: "Typically half of network_dim"
+
+  learning_rate:
+    3d_default: 1.0e-4
+    2d_default: 1.0e-4
+    description: "Learning rate"
+    rationale: "Same default for both"
+
+  early_stopping_patience:
+    3d_default: 3
+    2d_default: 5      # 2D has noisier loss curves
+    description: "Early stopping patience (epochs)"
+    rationale: "2D training loss is noisier; need more patience"
+
+# === CAPTIONING PARAMETERS ===
+captioning:
+  style_prefix:
+    3d_default: "a 3d animated character, pixar style, smooth shading"
+    2d_default: "a 2d animated character, western animation, cel shading"
+    description: "Caption prefix identifying animation style"
+    rationale: "Style-specific prefix for LoRA training"
+
+  style_tags:
+    3d_default: ["pixar style", "smooth shading", "pbr materials", "cinematic lighting"]
+    2d_default: ["western animation", "cel-shaded", "flat colors", "bold outlines", "hand-drawn"]
+    description: "Additional style tags for captions"
+    rationale: "Genre-appropriate tags for training"
+
+  emphasize_line_art:
+    3d_default: false
+    2d_default: true   # Mention line quality in captions
+    description: "Include line art quality in captions"
+    rationale: "2D-specific feature to emphasize in training"
+
+  max_caption_length:
+    3d_default: 77     # CLIP token limit
+    2d_default: 77
+    description: "Maximum caption length in tokens"
+    rationale: "Same CLIP token limit for both"
+
+# === POSE PARAMETERS (optional) ===
+pose:
+  model_type:
+    3d_default: "rtmpose"    # RTM-Pose for 3D
+    2d_default: "dwpose"     # DWpose for 2D ControlNet
+    description: "Pose estimation model"
+    rationale: "DWpose is more ControlNet-friendly for 2D"
+
+  keypoint_threshold:
+    3d_default: 0.3
+    2d_default: 0.4    # Slightly stricter for stylized poses
+    description: "Keypoint confidence threshold"
+    rationale: "2D stylized poses need higher confidence"

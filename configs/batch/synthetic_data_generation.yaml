@@ -1,0 +1,150 @@
+# ============================================================================
+# Synthetic Data Generation Pipeline Configuration
+# ============================================================================
+#
+# This config file controls the automated synthetic data generation pipeline
+# that creates training images using existing identity LoRAs.
+#
+# Usage:
+#   bash scripts/batch/run_synthetic_data_pipeline.sh \
+#     --config configs/batch/synthetic_data_generation.yaml
+#
+# Author: LLMProvider Tooling
+# Date: 2025-11-30
+# ============================================================================
+
+# Workspace settings
+# Store data in appropriate locations (NOT in 24h_lora_pipeline to avoid confusion)
+workspace:
+  root: "/mnt/data/ai_data/synthetic_lora_data"  # Main synthetic data workspace
+  subdirs:
+    logs: "logs"
+    checkpoints: "checkpoints"
+    generated_data: "generated_data"  # Generated images
+    filtered_data: "filtered_data"    # Quality-filtered images
+    datasets: "datasets"               # Final training datasets
+
+# Model paths
+models:
+  # SDXL base model
+  base_model: "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+
+  # Directory containing BEST identity LoRAs
+  # Expected naming: BEST_{character_name}_*.safetensors
+  identity_loras_dir: "/mnt/c/ai_models/lora_sdxl/BEST_CHECKPOINTS_COLLECTION"
+
+# Characters to process
+characters:
+  - alberto
+  - alberto_seamonster
+  - barley_lightfoot
+  - bryce
+  - caleb
+  - elio
+  - giulia
+  - ian_lightfoot
+  - luca
+  - luca_seamonster
+  - miguel
+  - orion
+  - russell
+  - tyler
+
+# Character descriptions (used for vocabulary generation)
+character_descriptions:
+  default: "a 3D animated character, pixar style"
+  alberto: "Alberto Scorfano, a young Italian teen with wild curly brown hair and sun-kissed tanned skin"
+  alberto_seamonster: "Alberto Scorfano in sea monster form, a purple and blue scaled sea creature with fins and aquatic features"
+  barley_lightfoot: "Barley Lightfoot, a large elf teenager with blue skin, purple hair and pointy ears"
+  bryce: "Bryce, a teenage boy with blonde spiky hair and athletic build"
+  caleb: "Caleb, a young boy with dark curly hair and curious expression"
+  elio: "Elio, a young boy with brown curly hair and expressive eyes"
+  giulia: "Giulia Marcovaldo, an Italian girl with red curly hair and freckles"
+  ian_lightfoot: "Ian Lightfoot, a young elf with blue skin, dark hair and pointed ears"
+  luca: "Luca Paguro, a young Italian boy with brown wavy hair and gentle features"
+  luca_seamonster: "Luca Paguro in sea monster form, a green and purple scaled aquatic creature with fins"
+  miguel: "Miguel Rivera, a Mexican boy with dark spiky hair and brown eyes"
+  orion: "Orion, a young character with distinctive features"
+  russell: "Russell, a young boy with round face and enthusiastic expression"
+  tyler: "Tyler, a teenage boy with distinctive hairstyle"
+
+# LoRA types to generate
+lora_types:
+  - pose
+  - expression
+  - action
+
+# Phase 1: Vocabulary Generation (v2.0 - expanded templates)
+vocabulary_generation:
+  num_prompts_per_type: 100  # Increased from 50 to 100 for v2.0
+  use_templates: true
+  template_variations: 5
+  ensure_template_coverage: true  # v2.0: Ensure all templates are used
+  seed: null  # null = random, or set specific seed for reproducibility
+
+# Phase 1.5: Caption Generation (v2.0 - new)
+caption_generation:
+  enabled: true
+  min_tokens: 60       # Increased for better SDXL training
+  max_tokens: 225
+  target_tokens: 100   # Target for auto-enhancement
+  auto_enhance: true   # Automatically add quality descriptors if too short
+  generic_subject: "a 3d animated character"
+  # Identity removal will automatically handle:
+  # - Character names (alberto, luca, etc.)
+  # - Film references (from Pixar Luca, etc.)
+  # - Demographics (Italian boy, Mexican teen, etc.)
+  # - Physical appearance (curly brown hair, blue eyes, etc.)
+  # - Species features (elf, sea monster, etc.)
+
+# Phase 2: Image Generation
+image_generation:
+  num_images_per_prompt: 10
+  num_inference_steps: 40  # Optimized based on parameter comparison testing
+  guidance_scale: 7.5      # Standard guidance scale
+  height: 1024
+  width: 1024
+  use_random_seeds: true  # Generate diverse images
+  # COMPREHENSIVE negative prompt - covers: realistic photos, multiple people, age issues, body deformations, blur, quality issues
+  negative_prompt: "multiple people, two people, group, crowd, duplicate character, duplicate person, clone, second person, extra character, photograph, photo, realistic, photorealistic, real person, real life, live action, hyperrealistic, real human, candid photo, portrait photo, stock photo, adult, elderly, old person, mature, grown-up, old man, baby, toddler, infant, young child, girl, female, woman, extra limbs, extra arms, extra legs, extra hands, extra fingers, missing limbs, missing arms, missing legs, missing hands, missing fingers, deformed, disfigured, distorted, malformed, mutated, mutation, bad anatomy, wrong anatomy, anatomically incorrect, blurry, out of focus, unfocused, fuzzy, hazy, soft focus, low quality, bad quality, worst quality, low resolution, low res, jpeg artifacts, compression artifacts, pixelated, grainy, noisy, watermark, text, signature, username, artist name, bad proportions, gross proportions, unnatural proportions"
+
+  # LoRA settings
+  lora_scale: 1.0
+
+  # Device
+  device: "cuda"
+
+# Retry and recovery settings
+resilience:
+  max_retries: 3
+  retry_delay_seconds: 60
+  gpu_recovery_delay_seconds: 120
+
+  # Checkpoint/resume
+  enable_checkpointing: true
+  checkpoint_filename: "pipeline_progress.json"
+
+# Logging
+logging:
+  main_log_pattern: "main_pipeline_{timestamp}.log"
+  status_log: "status.log"
+  error_log: "errors.log"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+
+# Conda environment
+conda:
+  env_name: "ai_env"
+
+# Expected output statistics (v2.0 - updated for 100 prompts per type)
+expected_output:
+  total_vocabularies: 42  # 14 characters × 3 lora_types
+  total_images_per_character: 3000  # 3 types × 100 prompts × 10 images
+  total_images_all: 42000  # 14 characters × 3000
+
+# Template statistics (v2.0)
+template_stats:
+  pose_templates: 66
+  expression_templates: 67
+  action_templates: 143
+  total_templates: 276
+  style_variations: 14

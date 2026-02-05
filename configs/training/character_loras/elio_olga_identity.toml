@@ -1,0 +1,85 @@
+# Olga Solis (Elio 2025) - Identity LoRA Training Config
+# Based on Trial 3.6 FINAL (proven best configuration)
+# Adjusted for 204 training images (augmented)
+# Optimized batch size for RTX 5080
+
+# Model
+pretrained_model_name_or_path = "/mnt/c/AI_LLM_projects/ai_warehouse/models/stable-diffusion/checkpoints/v1-5-pruned-emaonly.safetensors"
+output_name = "olga_solis_identity_lora"
+output_dir = "/mnt/data/ai_data/models/lora/elio/olga_identity"
+
+# Network architecture (Trial 3.6 proven settings)
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.1
+
+# Dataset (204 images with identity captions, 20 repeats = 4080 steps per epoch)
+train_data_dir = "/mnt/data/ai_data/datasets/3d-anime/elio/lora_data/training_data/olga_identity"
+caption_extension = ".txt"
+resolution = "512,512"
+enable_bucket = true
+min_bucket_reso = 256
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+shuffle_caption = false
+keep_tokens = 0
+
+# Training parameters (adjusted for 204 images)
+max_train_epochs = 15
+train_batch_size = 8
+gradient_accumulation_steps = 2
+save_every_n_epochs = 3
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Optimizer (Trial 3.6 proven settings)
+optimizer_type = "AdamW8bit"
+learning_rate = 6e-5
+unet_lr = 6e-5
+text_encoder_lr = 3e-5
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+# Regularization (Trial 3.6 proven settings)
+min_snr_gamma = 5.0
+noise_offset = 0.05
+max_grad_norm = 1.0
+
+# Data augmentation (conservative for 3D)
+color_aug = false
+flip_aug = false
+random_crop = true
+
+# Advanced settings
+mixed_precision = "fp16"
+gradient_checkpointing = true
+xformers = false
+sdpa = true
+max_data_loader_n_workers = 4
+persistent_data_loader_workers = true
+
+# Logging
+logging_dir = "/mnt/data/ai_data/models/lora/elio/olga_identity/logs"
+log_prefix = "olga_identity"
+log_with = "tensorboard"
+
+# Sample generation
+sample_prompts = "a 3d animated character, pixar style, olga solis, adult woman, portrait, neutral expression, studio lighting\na 3d animated character, pixar style, olga solis, full body, standing, natural lighting\na 3d animated character, pixar style, olga solis, close-up face, caring expression, soft lighting\na 3d animated character, pixar style, olga solis, three-quarter view, cinematic lighting\na 3d animated character, pixar style, olga solis, at air force base, natural lighting\na 3d animated character, pixar style, olga solis, aunt and guardian, warm lighting"
+sample_every_n_epochs = 3
+sample_sampler = "euler_a"
+
+# Training seed
+seed = 42
+
+# Metadata
+[metadata]
+character_name = "Olga Solis"
+character_source = "Pixar's Elio (2025)"
+film = "Elio"
+style = "3D Animation, Pixar Style"
+dataset_size = 204
+lora_type = "character_identity"
+trigger_words = "olga_solis, adult_woman, elio_aunt"
+notes = "Olga Solis Identity LoRA - Based on Trial 3.6 proven configuration. Dataset: 204 augmented character instances (93 original + augmented) with LLMProvider AI generated identity captions. Elio's aunt and guardian, supporting character."

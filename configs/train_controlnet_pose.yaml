@@ -1,0 +1,21 @@
+metadata_path: "controlnet_datasets/pose/metadata.parquet"
+output_dir: "checkpoints/controlnet_pose_stub"
+sd_model_path: null
+controlnet_model_path: null
+train_data_dir: null
+image_size: 64
+batch_size: 2
+learning_rate: 0.001
+max_steps: 10
+epochs: 1
+num_workers: 0
+use_stub: true
+enable_diffusers: false
+prompt: "pose control"
+resolution: 512
+dtype: "fp16"
+device: "cpu"
+stub_dataset_size: 8
+log_every_n: 5
+save_every_n: 0
+log_dir: "logs"

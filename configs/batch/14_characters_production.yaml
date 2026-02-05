@@ -1,0 +1,216 @@
+# Production Configuration for 14 Character Identity LoRAs
+# =========================================================
+#
+# This is the production configuration for generating synthetic data
+# from the 14 BEST identity LoRAs you have already trained.
+#
+# Expected Output:
+# - 14 characters × 3 types × 50 prompts × 10 images = 21,000 images
+# - After filtering (40-50% retention): ~10,000-15,000 images
+# - Estimated time: 18-24 hours
+#
+# Usage:
+#   cd /mnt/c/ai_projects/3d-animation-lora-pipeline
+#   bash scripts/batch/synthetic_data_generation/launch_in_tmux.sh \
+#     configs/batch/14_characters_production.yaml
+
+# ============================================================================
+# PATHS
+# ============================================================================
+
+# Directory containing your 14 BEST identity LoRAs
+identity_loras_dir: /mnt/c/ai_models/lora_sdxl/BEST_CHECKPOINTS_COLLECTION
+
+# Base SDXL model
+base_model_path: /mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors
+
+# Output workspace (will create complete directory structure)
+workspace_dir: /mnt/c/ai_projects/synthetic_data_14_characters
+
+# ============================================================================
+# GENERATION PARAMETERS - PRODUCTION QUALITY
+# ============================================================================
+
+# Number of prompts per type (pose/expression/action)
+# 50 prompts = good variety without being excessive
+num_prompts_per_type: 50
+
+# Images to generate per prompt
+# 10 images = good diversity with random seeds
+images_per_prompt: 10
+
+# Inference steps
+# 30 steps = good balance of quality and speed
+num_inference_steps: 30
+
+# Guidance scale
+# 7.5 = standard recommended value for SDXL
+guidance_scale: 7.5
+
+# ============================================================================
+# LORA TYPES
+# ============================================================================
+
+# Generate synthetic data for these LoRA types
+lora_types:
+  - pose        # Body poses and camera angles
+  - expression  # Facial expressions and emotions
+  - action      # Dynamic actions and activities
+
+# ============================================================================
+# RETRY AND RECOVERY SETTINGS
+# ============================================================================
+
+# Maximum retry attempts for failed tasks
+max_retries: 3
+
+# Delay between retries (seconds)
+retry_delay: 60
+
+# GPU recovery delay after crash (seconds)
+gpu_recovery_delay: 120
+
+# ============================================================================
+# QUALITY FILTERING PARAMETERS
+# ============================================================================
+
+filtering:
+  # Blur detection threshold (higher = stricter)
+  blur_threshold: 80
+
+  # Minimum image resolution (pixels)
+  min_resolution: 512
+
+  # Valid brightness range [min, max]
+  brightness_range: [0.2, 0.9]
+
+  # Minimum contrast threshold
+  contrast_threshold: 0.3
+
+  # Enable NSFW filtering
+  enable_nsfw_filter: true
+
+  # Require face detection (important for character LoRAs)
+  enable_face_detection: true
+
+  # Minimum face size (pixels)
+  min_face_size: 64
+
+  # Enable duplicate removal
+  enable_deduplication: true
+
+  # Similarity threshold for deduplication (higher = stricter)
+  similarity_threshold: 0.95
+
+  # Batch size for filtering (reduce if GPU OOM)
+  batch_size: 16
+
+# ============================================================================
+# DATASET ORGANIZATION PARAMETERS
+# ============================================================================
+
+dataset:
+  # Repeat count for training (bucket repeats)
+  repeat_count: 10
+
+  # Minimum acceptable resolution
+  min_resolution: 512
+
+  # Maximum resolution before downscaling
+  max_resolution: 2048
+
+  # Target resolution for training
+  target_resolution: 1024
+
+  # Resize images if needed
+  resize_if_needed: true
+
+  # Copy images (vs symlink)
+  copy_images: true
+
+  # Generate captions automatically
+  generate_captions: true
+
+  # Caption style template
+  caption_style: "3d_animation"
+
+# ============================================================================
+# CHARACTER NOTES (for reference)
+# ============================================================================
+
+# Your 14 characters:
+# 1. alberto (Luca - human form)
+# 2. alberto_seamonster (Luca - sea monster form)
+# 3. barley_lightfoot (Onward)
+# 4. bryce (Elio)
+# 5. caleb (Elio)
+# 6. elio (Elio - main character)
+# 7. giulia (Luca)
+# 8. ian_lightfoot (Onward)
+# 9. luca (Luca - human form)
+# 10. luca_seamonster (Luca - sea monster form)
+# 11. miguel (Coco)
+# 12. orion (Elio - adult character)
+# 13. russell (Up)
+# 14. tyler (Turning Red)
+
+# ============================================================================
+# EXPECTED TIMELINE
+# ============================================================================
+
+# Phase 1: Vocabulary Generation
+#   Duration: ~30 minutes
+#   Output: 14 chars × 3 types × 50 prompts = 2,100 prompts
+
+# Phase 2: Image Generation
+#   Duration: ~18-20 hours
+#   Output: 14 chars × 3 types × 50 prompts × 10 images = 21,000 images
+
+# Phase 3: Quality Filtering
+#   Duration: ~2-3 hours
+#   Expected retention: 40-50%
+#   Output: ~10,000-15,000 filtered images
+
+# Phase 4: Dataset Organization
+#   Duration: ~1 hour
+#   Output: 42 training-ready datasets (14 chars × 3 types)
+
+# Total estimated time: 22-24 hours
+
+# ============================================================================
+# POST-GENERATION WORKFLOW
+# ============================================================================
+
+# After generation completes:
+#
+# 1. Review filtered images manually (optional but recommended):
+#    - Check quality in filtered directories
+#    - Remove any problematic images
+#
+# 2. Review organized datasets:
+#    - Verify captions are appropriate
+#    - Check dataset sizes are balanced
+#
+# 3. Begin LoRA training:
+#    - Use training_launcher.py with prepared datasets
+#    - Train pose/expression/action LoRAs separately
+#    - Combine with identity LoRAs for final generation
+
+# ============================================================================
+# PERFORMANCE TUNING OPTIONS
+# ============================================================================
+
+# If pipeline is too slow:
+# - Reduce num_prompts_per_type to 30-40
+# - Reduce images_per_prompt to 5-7
+# - Reduce num_inference_steps to 25
+
+# If quality is insufficient:
+# - Increase num_inference_steps to 35-40
+# - Adjust filtering thresholds (blur_threshold, contrast_threshold)
+# - Review and adjust caption templates
+
+# If GPU runs out of memory:
+# - Reduce filtering.batch_size to 8
+# - Process characters sequentially instead of all at once
+# - Add delays between generation batches

@@ -1,0 +1,17 @@
+# Example Training Batch Configuration
+# Lines starting with # are comments and will be ignored
+# You can specify character names or full config paths
+
+# Train specific characters
+miguel
+bryce
+alberto
+
+# Or specify by movie (will train all characters from that movie)
+# coco
+# elio
+# luca
+
+# Or use full paths
+# configs/training/character_loras_sdxl/coco_miguel_identity_sdxl.toml
+# configs/training/character_loras_sdxl/elio_bryce_identity_sdxl.toml

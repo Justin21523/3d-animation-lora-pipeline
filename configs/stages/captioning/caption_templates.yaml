@@ -1,0 +1,61 @@
+# Caption Templates for Different Animation Styles
+# Used by both OpenAI and local VLM captioners
+
+templates:
+  # Character-focused templates
+  2d_character_simple: "a 2d animated {character_name}, {expression}, {pose}"
+  2d_character_detailed: "a 2d animated {character_name} character, {art_style}, {expression}, {pose}, {clothing}, {background}"
+
+  3d_character_simple: "a 3d animated {character_name}, pixar style, {expression}"
+  3d_character_detailed: "a 3d animated {character_name} character, pixar style, smooth shading, {expression}, {pose}, {lighting}"
+
+  # Scene templates
+  scene_simple: "{character_name} in {location}, {action}"
+  scene_detailed: "{character_name} in {location}, {action}, {mood}, {lighting}, {art_style}"
+
+# Style-specific prefixes
+prefixes:
+  simpsons: "a 2d animated character in the simpsons art style, yellow skin, cartoon"
+  family_guy: "a 2d animated character in family guy art style, cartoon"
+  rick_morty: "a 2d animated character in rick and morty art style, adult animation"
+  bobs_burgers: "a 2d animated character in bob's burgers art style, hand-drawn style"
+  pixar: "a 3d animated character, pixar style, smooth shading, cinematic lighting"
+  dreamworks: "a 3d animated character, dreamworks style, expressive, dynamic lighting"
+  disney_2d: "a 2d animated character, disney classic style, hand-drawn animation"
+  anime: "an anime character, japanese animation style, large eyes"
+
+# Common descriptors
+descriptors:
+  expressions:
+    - happy
+    - sad
+    - angry
+    - surprised
+    - neutral
+    - confused
+    - excited
+    - worried
+
+  poses:
+    - standing
+    - sitting
+    - walking
+    - running
+    - gesturing
+    - crossed arms
+    - hands on hips
+    - looking away
+
+  camera_angles:
+    - front view
+    - three-quarter view
+    - profile
+    - back view
+    - close-up
+    - full body
+    - waist up
+
+# Trigger words per character (to be filled per project)
+trigger_words:
+  default: "character_name"
+  # Add project-specific trigger words here

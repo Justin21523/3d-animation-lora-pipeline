@@ -1,0 +1,139 @@
+# VLM-based Caption Generation for 3D Characters
+# Schema-guided captioning emphasizing 3D rendering characteristics
+
+model:
+  name: qwen2_vl  # qwen2_vl | internvl2 | llava_next
+  variant: Qwen/Qwen2-VL-7B-Instruct  # Model checkpoint path or HuggingFace ID
+
+  # Quantization for memory efficiency
+  load_in_8bit: false
+  load_in_4bit: true  # Recommended for consumer GPUs
+  device_map: auto
+
+generation:
+  max_new_tokens: 512
+  temperature: 0.7
+  do_sample: false  # Deterministic for training captions
+  top_p: 0.9
+  top_k: 50
+
+  # Structured output
+  enforce_json: true  # Force JSON output format
+  retry_on_parse_error: true
+  max_retries: 3
+
+caption_schema:
+  # Fields to extract from VLM
+  fields:
+    - character  # Character name or "unknown"
+    - identity  # Distinctive visual features
+    - pose  # Body pose description
+    - view  # Camera viewing angle
+    - expression  # Facial expression
+    - materials  # 3D material descriptions (skin, clothing, hair)
+    - lighting  # Lighting setup (key, fill, rim)
+    - camera  # Camera properties (shot type, angle, DoF)
+    - background  # Background description or "transparent"
+    - final_caption  # Complete natural language caption
+
+  # Schema prompting template
+  prompt_template: |
+    Analyze this 3D animated character image and provide a structured description.
+
+    Character name: {character_name}
+
+    Please output a JSON object with these fields:
+    - character: character name or description
+    - identity: distinctive visual features (hair style/color, clothing, accessories)
+    - pose: body pose (standing, walking, running, sitting, etc.)
+    - view: camera view (front view, three-quarter view, profile view, back view)
+    - expression: facial expression (smiling, neutral, surprised, angry, etc.)
+    - materials: object with skin, clothing, hair material descriptions (3D rendering terms)
+    - lighting: object with key, fill, rim light descriptions
+    - camera: object with shot_type (close-up/medium/full body), angle, depth_of_field
+    - background: background description or "transparent" if isolated
+    - final_caption: complete natural language caption suitable for image generation training
+
+    Focus on 3D rendering characteristics: materials, lighting, camera properties.
+    Use precise 3D terminology (e.g., "subsurface scattering", "PBR materials", "rim lighting").
+
+    JSON:
+
+caption_refinement:
+  # Add character-specific prefix
+  add_prefix: true
+  prefix_template: "a 3d animated character, {character_name}, pixar style, smooth shading"
+
+  # Token length constraints (for SD-style training)
+  min_tokens: 40
+  max_tokens: 77
+  truncate_strategy: word_boundary  # word_boundary | character
+
+  # Style tags to ensure
+  required_tags:
+    - "3d animated character"
+    - "smooth shading"
+
+  optional_tags:
+    - "pixar style"
+    - "cgi render"
+    - "toy-like"
+    - "clean anti-aliased edges"
+
+  # Tags to avoid
+  forbidden_tags:
+    - "2d"
+    - "anime"
+    - "sketch"
+    - "painting"
+    - "illustration"
+
+quality_control:
+  # Hallucination detection
+  check_consistency: true
+  reject_on_hallucination: true
+
+  # Character name validation
+  validate_character_name: true
+  character_name_list: null  # Optional: provide expected character names
+
+  # Caption quality thresholds
+  min_caption_length: 100  # characters
+  max_caption_length: 400
+
+  # Automatic QC checks
+  check_for_negatives: true  # Reject captions with "no", "without", "lacking"
+  check_for_numbers: true  # Reject captions with frame numbers, dates
+
+batch_processing:
+  # Batch captioning settings
+  batch_size: 4  # VLM is memory-intensive
+  num_workers: 2
+  prefetch_factor: 2
+
+  # Sampling strategy
+  sample_per_cluster: null  # null = caption all, or specify N to sample
+  diverse_sampling: false  # Sample diverse poses/views if sampling
+
+  # Progress tracking
+  save_progress: true
+  checkpoint_interval: 50  # Save every N images
+
+output:
+  format: both  # txt | json | both
+
+  # Text file (.txt) - for training
+  txt_encoding: utf-8
+
+  # JSON file (.json) - for structured data
+  json_indent: 2
+  json_ensure_ascii: false
+
+  # Metadata
+  save_metadata: true
+  metadata_filename: captioning_metadata.json
+
+# Performance
+device: cuda
+torch_dtype: float16  # float16 | bfloat16 | float32
+compile_model: false  # Experimental: torch.compile() for speed

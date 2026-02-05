@@ -1,0 +1,88 @@
+# SDXL Character Identity LoRA Training Config
+# Character: Ian Lightfoot from Onward (Pixar)
+# Dataset: 343 images × 3 repeats = 1029 steps/epoch
+# Target: 5 epochs (5145 total steps)
+#
+# CONFIGURATION BASED ON ALBERTO'S SUCCESSFUL TRAINING:
+# - NO dropout (0.0) - dropout 0.1 caused training instability
+# - Conservative LR (0.0001)
+# - Single LR cycle (no warm restarts)
+# - Max 5 epochs (Alberto's epoch 4 was best, stop before overfitting)
+# - Save EVERY epoch to identify optimal checkpoint
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+v2 = false
+v_parameterization = false
+sdxl = true
+
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.0
+network_args = []
+
+[paths]
+train_data_dir = "/mnt/data/datasets/general/onward/lora_data/training_data_sdxl/ian_lightfoot_identity"
+output_dir = "/mnt/c/ai_models/lora_sdxl/onward/ian_lightfoot_identity"
+output_name = "ian_lightfoot_lora_sdxl"
+logging_dir = "/mnt/c/ai_models/lora_sdxl/onward/ian_lightfoot_identity/logs"
+log_prefix = "ian_lightfoot_sdxl"
+
+[training]
+optimizer_type = "AdamW8bit"
+mixed_precision = "bf16"
+full_bf16 = true
+gradient_checkpointing = true
+
+train_batch_size = 1
+gradient_accumulation_steps = 2
+
+learning_rate = 0.0001
+text_encoder_lr = 6e-05
+unet_lr = 0.0001
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 1
+lr_warmup_steps = 100
+
+min_snr_gamma = 5.0
+noise_offset = 0.05
+adaptive_noise_scale = 0.0
+multires_noise_iterations = 0
+multires_noise_discount = 0.3
+
+max_train_epochs = 5
+save_every_n_epochs = 1
+save_last_n_epochs = 5
+
+cache_latents = true
+cache_latents_to_disk = false
+vae_batch_size = 2
+
+[resolution]
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 128
+bucket_no_upscale = false
+
+[augmentation]
+color_aug = false
+flip_aug = false
+random_crop = false
+shuffle_caption = true
+keep_tokens = 1
+
+[sample_generation]
+# Disabled to maximize training speed - use manual testing instead
+
+[performance]
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 6
+lowram = false
+max_token_length = 225
+seed = 42
+clip_skip = 2
+max_grad_norm = 1.0

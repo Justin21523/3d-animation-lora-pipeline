@@ -1,0 +1,142 @@
+film:
+  title: Orion and the Dark
+  year: 2024
+  studio: DreamWorks Animation (Netflix)
+  directors:
+    - Sean Charmatz
+  theme: facing fears, anxiety, personification of darkness, growing up, understanding the unknown
+  style: 3D computer-animated, expressive cartoony design, high contrast lighting (day vs night themes), stylized character proportions, bold color contrasts
+  setting: Contemporary suburban America, mix of realistic environments and fantastical night realm
+  visual_characteristics: high contrast between bright daytime and mysterious nighttime, expressive character animation, stylized cartoony proportions, bold use of shadows and darkness as visual element, saturated colors in night scenes (purples, blues, deep oranges)
+
+characters:
+  orion:
+    full_name: Orion
+    age: 11 years old (elementary school)
+    role: protagonist, anxious boy learning to face his fears
+    appearance: young boy with short dark hair, fair/light skin, large expressive eyes (typical DreamWorks style), slight build, childlike proportions, often wearing casual everyday clothes
+    outfit_default: blue or green hoodie/jacket, jeans or casual pants, sneakers, backpack (school setting)
+    outfit_variants:
+      - pajamas (night scenes)
+      - school clothes (daytime scenes)
+      - winter jacket (outdoor scenes)
+    personality: highly anxious and fearful, overthinking and worried about everything, intelligent and imaginative, learns bravery through journey with Dark, empathetic once he understands others' perspectives, list-maker and planner
+    distinctive_features: large worried eyes, expressive anxious face, often hunched or tense posture reflecting anxiety, gestures nervously, modern contemporary clothing, relatable everyday kid appearance
+    emotional_range:
+      - anxious/fearful (default state early in film)
+      - overwhelmed by worries and lists of fears
+      - curious when exploring night realm
+      - empathetic when understanding Dark's perspective
+      - brave/determined during climactic moments
+      - relieved/peaceful after overcoming fears
+    relationships:
+      dark: personification of night/darkness who becomes friend and mentor, teaches Orion that fear is natural and can be managed
+      other_entities: meets other personifications (Sleep, Insomnia, Quiet, etc.) representing concepts related to night
+      parents: supportive but don't fully understand his anxiety
+    signature_props:
+      - list of fears (recurring visual motif)
+      - backpack
+      - flashlight
+      - nighttime/bedroom setting
+    trigger_words:
+      - orion_boy
+      - orion_dreamworks
+      - anxious_boy
+      - orion_and_the_dark
+      - orion_2024
+      - dreamworks_orion
+    negative_prompts:
+      - muscular
+      - adult
+      - confident posture
+      - realistic photo
+      - happy expression (unless contextual)
+
+visual_style:
+  color_palette:
+    - deep blues and purples (night scenes)
+    - bright yellows and oranges (daytime)
+    - rich dark shadows (darkness theme)
+    - warm interior lighting
+    - cool moonlight blues
+    - vibrant saturated colors in fantastical night realm
+  lighting:
+    - high contrast between light and dark (thematic)
+    - warm interior home lighting
+    - cool mysterious moonlight
+    - dramatic shadows (darkness as character)
+    - bright daytime scenes (safety/normal world)
+    - ethereal glowing lights in night realm
+  materials:
+    - smooth skin (cartoony stylized not photorealistic)
+    - fabric (everyday clothes, soft materials)
+    - environmental props (furniture, backpack, everyday objects)
+    - mystical night realm materials (glowing, translucent)
+  settings:
+    - suburban house interior (bedroom, living room, kitchen)
+    - elementary school
+    - neighborhood streets (day and night)
+    - fantastical night realm (abstract, dreamlike spaces)
+    - sky/clouds during night journey
+  artistic_influences: contemporary DreamWorks Animation style, cartoony expressiveness, high contrast lighting inspired by film noir and expressionism for night themes
+
+caption_guidelines:
+  prefix_template: a 3d animated character from DreamWorks' Orion and the Dark (2024), {character_name}, {appearance_details}, smooth shading, {day_or_night_context}
+  mandatory_keywords:
+    - 3d animation
+    - dreamworks style
+    - orion and the dark
+    - smooth shading
+    - cartoony proportions
+  context_suggestions:
+    - suburban neighborhood
+    - bedroom interior
+    - school setting
+    - nighttime scene
+    - fantastical night realm
+    - high contrast lighting
+    - dramatic shadows
+    - contemporary setting
+  character_specific_tags:
+    orion: specify emotional state (anxious/curious/brave), day vs night context, interaction with darkness/shadows, list-of-fears prop when relevant
+  token_limit:
+    - 40
+    - 77
+  avoid_terms:
+    - 2d anime
+    - flat shading
+    - low quality
+    - realistic photo
+    - photorealistic
+    - pixar style (wrong studio)
+    - confident expression (contradicts character)
+  film_disambiguation: use 'from orion and the dark (2024)', 'dreamworks animation', 'netflix film' to avoid confusion with constellation
+
+training_config:
+  recommended_dataset_size:
+    orion: 200-300 frames (protagonist, wide emotional range and scene variety)
+  augmentation_policy:
+    horizontal_flip: false
+    color_jitter: false
+    random_crop: true
+    brightness_adjustment: minimal (preserve day/night contrast themes)
+  quality_filters:
+    blur_threshold: 80
+    min_size: 512
+    aspect_ratio_range:
+      - 0.75
+      - 1.33
+  night_vs_day_handling:
+    note: Film has strong visual contrast between day (bright) and night (dark mysterious) scenes
+    both_contexts: include both daytime and nighttime scenes for versatility
+    lighting_variation: ensure dataset has variety of lighting conditions
+    avoid: extremely dark frames where character details are lost
+
+metadata:
+  created_by: llm-provider-tooling-pipeline
+  version: 1.0.0
+  last_updated: '2025-11-21'
+  data_source: Orion and the Dark film analysis and character documentation
+  notes: Character configuration for DreamWorks' Orion and the Dark (2024). Optimized for contemporary cartoony DreamWorks style with emphasis on expressive character animation and high contrast day/night lighting. Film focuses on childhood anxiety and personification of fears.
+  streaming_platform: Netflix (2024 release)
+  themes_meta: Film addresses childhood anxiety, fear of the unknown, and mental health themes in accessible way for children. Based on book by Emma Yarlett, adapted by Charlie Kaufman (known for meta, philosophical storytelling).

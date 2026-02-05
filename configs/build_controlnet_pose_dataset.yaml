@@ -1,0 +1,5 @@
+poses_metadata_path: "metadata/poses.parquet"
+output_dir: "controlnet_datasets/pose"
+output_metadata_path: "controlnet_datasets/pose/metadata.parquet"
+use_stub: true
+log_dir: "logs"

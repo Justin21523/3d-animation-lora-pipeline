@@ -1,0 +1,17 @@
+# Detection Dependencies
+# YOLO detection and ByteTrack tracking
+
+# Object detection
+ultralytics>=8.1.0
+
+# ByteTrack dependencies
+lap>=0.4.0
+cython_bbox>=0.1.3
+
+# Face detection and recognition
+insightface>=0.7.3
+onnxruntime-gpu>=1.16.0  # Use onnxruntime for CPU-only
+
+# CLIP for embedding-based clustering
+ftfy>=6.1.0
+regex>=2023.0.0

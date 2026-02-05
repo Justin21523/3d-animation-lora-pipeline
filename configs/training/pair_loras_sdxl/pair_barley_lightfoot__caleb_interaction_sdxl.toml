@@ -1,0 +1,97 @@
+# ============================================================================
+# SDXL Pair Interaction LoRA Template
+# ============================================================================
+#
+# Purpose:
+# - Learn stable 2-character composition and interaction for a specific pair.
+# - Intended to be used together with the two identity LoRAs at inference time.
+#
+# Dataset:
+# - 320 composite images (1024x1024) with captions
+# - Use repeats via folder name: {repeats}_{concept}/ (recommended repeats=5)
+#
+# Hardware:
+# - 16GB VRAM class GPU
+#
+# Notes:
+# - Keep tokens at the front (pair/left/right) and enable caption shuffle.
+# - Use relatively small rank to reduce identity leakage.
+# ============================================================================
+
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+vae = "/mnt/c/ai_models/stable-diffusion/vae/sdxl_vae.safetensors"
+sdxl = true
+
+[paths]
+train_data_dir = "/mnt/data/ai_data/synthetic_lora_data/training_data_sdxl_pairs/barley_lightfoot__caleb"
+output_dir = "/mnt/data/ai_data/models/lora_sdxl/interaction_pairs/barley_lightfoot__caleb"
+output_name = "pair_barley_lightfoot__caleb_interaction_lora_sdxl"
+logging_dir = "/mnt/data/ai_data/models/lora_sdxl/interaction_pairs/barley_lightfoot__caleb/logs"
+log_prefix = "pair_barley_lightfoot__caleb"
+log_with = "tensorboard"
+
+[network]
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+network_dropout = 0.0
+conv_dim = 32
+conv_alpha = 16
+
+[training]
+optimizer_type = "AdamW8bit"
+mixed_precision = "bf16"
+full_bf16 = true
+gradient_checkpointing = true
+
+train_batch_size = 1
+gradient_accumulation_steps = 2
+learning_rate = 8e-5
+text_encoder_lr = 5e-5
+unet_lr = 8e-5
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 2
+lr_warmup_steps = 100
+
+min_snr_gamma = 5.0
+noise_offset = 0.05
+
+max_train_epochs = 2
+save_every_n_epochs = 1
+save_last_n_epochs = 2
+save_model_as = "safetensors"
+
+cache_latents = true
+cache_latents_to_disk = false
+vae_batch_size = 2
+
+[resolution]
+resolution = "1024,1024"
+enable_bucket = false
+min_bucket_reso = 1024
+max_bucket_reso = 1024
+bucket_reso_steps = 64
+bucket_no_upscale = true
+
+[augmentation]
+color_aug = false
+flip_aug = false
+random_crop = false
+shuffle_caption = true
+keep_tokens = 3
+
+[performance]
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 8
+lowram = false
+max_token_length = 225
+seed = 42
+clip_skip = 2
+max_grad_norm = 1.0
+
+[sample_generation]
+sample_every_n_epochs = 1
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/lora_testing/pairs/barley_lightfoot__caleb.txt"
+sample_sampler = "euler_a"

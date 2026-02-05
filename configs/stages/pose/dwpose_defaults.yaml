@@ -1,0 +1,30 @@
+# DWpose Default Configuration
+# Standard pose estimation for animation characters
+
+model:
+  type: "dwpose"
+  path: "${models.pose.dwpose}"
+  device: "cuda"
+  backend: "onnx"  # "onnx" or "tensorrt"
+
+detection:
+  det_model: "yolox_l"
+  pose_model: "dw-ll_ucoco_384"
+  det_threshold: 0.5
+  
+keypoints:
+  format: "coco"  # 17 keypoints
+  include_face: true
+  include_hands: true
+  normalize: true
+
+processing:
+  batch_size: 8
+  max_persons: 5
+  nms_threshold: 0.5
+
+output:
+  save_visualization: true
+  save_keypoints: true
+  format: "json"
+  draw_skeleton: true

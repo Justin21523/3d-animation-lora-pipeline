@@ -1,0 +1,82 @@
+{
+  "test_set_name": "expression_lora_evaluation",
+  "lora_type": "expression",
+  "description": "Test prompts for evaluating Expression LoRA facial emotion control",
+  "test_prompts": [
+    {
+      "id": "expression_001",
+      "prompt": "a 3d animated character, close-up face, happy expression, bright smile, joyful eyes, soft lighting",
+      "category": "happy",
+      "difficulty": "easy"
+    },
+    {
+      "id": "expression_002",
+      "prompt": "a 3d animated character, facial portrait, sad expression, downcast eyes, frown, moody lighting",
+      "category": "sad",
+      "difficulty": "medium"
+    },
+    {
+      "id": "expression_003",
+      "prompt": "a 3d animated character, close-up face, surprised expression, wide eyes, open mouth, dramatic lighting",
+      "category": "surprised",
+      "difficulty": "medium"
+    },
+    {
+      "id": "expression_004",
+      "prompt": "a 3d animated character, facial portrait, angry expression, furrowed brow, intense gaze, harsh lighting",
+      "category": "angry",
+      "difficulty": "hard"
+    },
+    {
+      "id": "expression_005",
+      "prompt": "a 3d animated character, close-up face, neutral expression, calm gaze, relaxed face, studio lighting",
+      "category": "neutral",
+      "difficulty": "easy"
+    },
+    {
+      "id": "expression_006",
+      "prompt": "a 3d animated character, facial portrait, fearful expression, worried eyes, tense face, dark lighting",
+      "category": "fearful",
+      "difficulty": "hard"
+    },
+    {
+      "id": "expression_007",
+      "prompt": "a 3d animated character, close-up face, disgusted expression, wrinkled nose, grimace, natural lighting",
+      "category": "disgusted",
+      "difficulty": "hard"
+    },
+    {
+      "id": "expression_008",
+      "prompt": "a 3d animated character, facial portrait, excited expression, wide smile, sparkling eyes, bright lighting",
+      "category": "excited",
+      "difficulty": "medium"
+    }
+  ],
+  "generation_params": {
+    "num_inference_steps": 30,
+    "guidance_scale": 7.5,
+    "height": 1024,
+    "width": 1024,
+    "seed": 42,
+    "negative_prompt": "multiple people, full body, blur, low quality, distorted face, bad anatomy"
+  },
+  "evaluation_metrics": {
+    "clip_similarity": {
+      "enabled": true,
+      "min_threshold": 0.32
+    },
+    "expression_accuracy": {
+      "enabled": true,
+      "method": "fer",
+      "min_threshold": 0.70
+    },
+    "facial_quality": {
+      "enabled": true,
+      "min_threshold": 0.80
+    },
+    "identity_consistency": {
+      "enabled": true,
+      "min_threshold": 0.85
+    }
+  }
+}

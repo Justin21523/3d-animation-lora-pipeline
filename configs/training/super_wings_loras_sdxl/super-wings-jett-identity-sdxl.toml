@@ -1,0 +1,81 @@
+# SDXL Character Identity LoRA Training Config
+# Character: jett (Super Wings)
+# Dataset: 200 images × 7 repeats = 1400 steps/epoch
+# Target: 10 epochs (14000 total steps)
+[model]
+pretrained_model_name_or_path = "/mnt/c/ai_models/stable-diffusion/checkpoints/sd_xl_base_1.0.safetensors"
+v2 = false
+v_parameterization = false
+sdxl = true
+
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_dropout = 0.0
+network_args = []
+
+[paths]
+train_data_dir = "/mnt/data/datasets/general/super-wings/training_data_sdxl/jett_identity"
+output_dir = "/mnt/data/training/lora/super-wings/jett_identity"
+output_name = "super-wings-jett-identity-sdxl"
+logging_dir = "/mnt/data/training/lora/super-wings/jett_identity/logs"
+log_prefix = "super-wings-jett"
+log_with = "tensorboard"
+
+[training]
+optimizer_type = "AdamW8bit"
+mixed_precision = "bf16"
+full_bf16 = true
+gradient_checkpointing = true
+
+train_batch_size = 1
+gradient_accumulation_steps = 2
+learning_rate = 0.0001
+text_encoder_lr = 0.00006
+unet_lr = 0.0001
+
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 3
+lr_warmup_steps = 100
+
+min_snr_gamma = 5.0
+noise_offset = 0.05
+adaptive_noise_scale = 0.0
+multires_noise_iterations = 0
+multires_noise_discount = 0.3
+
+max_train_epochs = 15
+save_every_n_epochs = 3
+save_last_n_epochs = 9
+
+cache_latents = true
+cache_latents_to_disk = false
+vae_batch_size = 2
+[resolution]
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 768
+max_bucket_reso = 1280
+bucket_reso_steps = 128
+bucket_no_upscale = false
+
+[augmentation]
+color_aug = false
+flip_aug = false
+random_crop = false
+shuffle_caption = true
+keep_tokens = 1
+
+[sample_generation]
+sample_every_n_epochs = 2
+sample_prompts = "/mnt/c/ai_projects/3d-animation-lora-pipeline/prompts/lora_testing/elio_identity_test.txt"
+sample_sampler = "euler_a"
+
+[performance]
+persistent_data_loader_workers = true
+max_data_loader_n_workers = 6
+lowram = false
+max_token_length = 225
+seed = 42
+clip_skip = 2
+max_grad_norm = 1.0

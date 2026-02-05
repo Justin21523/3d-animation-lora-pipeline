@@ -1,0 +1,10 @@
+input_videos_dir: "data_raw"
+output_dir: "data_frames/frames"
+metadata_path: "metadata/frames.parquet"
+fps: 1.0
+use_stub: true
+stub_frame_count: 5
+stub_width: 512
+stub_height: 512
+overwrite: false
+log_dir: "logs"

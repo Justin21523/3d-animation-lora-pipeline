@@ -1,0 +1,278 @@
+{
+  "total_configs": 45,
+  "universal_configs": 3,
+  "character_configs": 42,
+  "output_dir": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras",
+  "configs": [
+    {
+      "name": "universal_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/universal_pose_sdxl.toml",
+      "images": 4577,
+      "priority": 1
+    },
+    {
+      "name": "universal_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/universal_action_sdxl.toml",
+      "images": 4982,
+      "priority": 1
+    },
+    {
+      "name": "universal_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/universal_expression_sdxl.toml",
+      "images": 3997,
+      "priority": 1
+    },
+    {
+      "name": "alberto_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_action_sdxl.toml",
+      "images": 291,
+      "priority": 2
+    },
+    {
+      "name": "alberto_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_expression_sdxl.toml",
+      "images": 209,
+      "priority": 2
+    },
+    {
+      "name": "alberto_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_pose_sdxl.toml",
+      "images": 113,
+      "priority": 2
+    },
+    {
+      "name": "alberto_seamonster_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_seamonster_action_sdxl.toml",
+      "images": 21,
+      "priority": 2
+    },
+    {
+      "name": "alberto_seamonster_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_seamonster_expression_sdxl.toml",
+      "images": 348,
+      "priority": 2
+    },
+    {
+      "name": "alberto_seamonster_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/alberto_seamonster_pose_sdxl.toml",
+      "images": 371,
+      "priority": 2
+    },
+    {
+      "name": "barley_lightfoot_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/barley_lightfoot_action_sdxl.toml",
+      "images": 374,
+      "priority": 2
+    },
+    {
+      "name": "barley_lightfoot_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/barley_lightfoot_expression_sdxl.toml",
+      "images": 389,
+      "priority": 2
+    },
+    {
+      "name": "barley_lightfoot_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/barley_lightfoot_pose_sdxl.toml",
+      "images": 362,
+      "priority": 2
+    },
+    {
+      "name": "bryce_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/bryce_action_sdxl.toml",
+      "images": 369,
+      "priority": 2
+    },
+    {
+      "name": "bryce_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/bryce_expression_sdxl.toml",
+      "images": 70,
+      "priority": 2
+    },
+    {
+      "name": "bryce_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/bryce_pose_sdxl.toml",
+      "images": 115,
+      "priority": 2
+    },
+    {
+      "name": "caleb_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/caleb_action_sdxl.toml",
+      "images": 291,
+      "priority": 2
+    },
+    {
+      "name": "caleb_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/caleb_expression_sdxl.toml",
+      "images": 28,
+      "priority": 2
+    },
+    {
+      "name": "caleb_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/caleb_pose_sdxl.toml",
+      "images": 71,
+      "priority": 2
+    },
+    {
+      "name": "elio_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/elio_action_sdxl.toml",
+      "images": 314,
+      "priority": 2
+    },
+    {
+      "name": "elio_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/elio_expression_sdxl.toml",
+      "images": 17,
+      "priority": 2
+    },
+    {
+      "name": "elio_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/elio_pose_sdxl.toml",
+      "images": 19,
+      "priority": 2
+    },
+    {
+      "name": "giulia_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/giulia_action_sdxl.toml",
+      "images": 531,
+      "priority": 2
+    },
+    {
+      "name": "giulia_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/giulia_expression_sdxl.toml",
+      "images": 323,
+      "priority": 2
+    },
+    {
+      "name": "giulia_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/giulia_pose_sdxl.toml",
+      "images": 412,
+      "priority": 2
+    },
+    {
+      "name": "ian_lightfoot_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/ian_lightfoot_action_sdxl.toml",
+      "images": 481,
+      "priority": 2
+    },
+    {
+      "name": "ian_lightfoot_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/ian_lightfoot_expression_sdxl.toml",
+      "images": 577,
+      "priority": 2
+    },
+    {
+      "name": "ian_lightfoot_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/ian_lightfoot_pose_sdxl.toml",
+      "images": 642,
+      "priority": 2
+    },
+    {
+      "name": "luca_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_action_sdxl.toml",
+      "images": 220,
+      "priority": 2
+    },
+    {
+      "name": "luca_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_expression_sdxl.toml",
+      "images": 410,
+      "priority": 2
+    },
+    {
+      "name": "luca_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_pose_sdxl.toml",
+      "images": 496,
+      "priority": 2
+    },
+    {
+      "name": "luca_seamonster_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_seamonster_action_sdxl.toml",
+      "images": 567,
+      "priority": 2
+    },
+    {
+      "name": "luca_seamonster_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_seamonster_expression_sdxl.toml",
+      "images": 445,
+      "priority": 2
+    },
+    {
+      "name": "luca_seamonster_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/luca_seamonster_pose_sdxl.toml",
+      "images": 737,
+      "priority": 2
+    },
+    {
+      "name": "miguel_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/miguel_action_sdxl.toml",
+      "images": 41,
+      "priority": 2
+    },
+    {
+      "name": "miguel_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/miguel_expression_sdxl.toml",
+      "images": 76,
+      "priority": 2
+    },
+    {
+      "name": "miguel_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/miguel_pose_sdxl.toml",
+      "images": 81,
+      "priority": 2
+    },
+    {
+      "name": "orion_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/orion_action_sdxl.toml",
+      "images": 443,
+      "priority": 2
+    },
+    {
+      "name": "orion_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/orion_expression_sdxl.toml",
+      "images": 198,
+      "priority": 2
+    },
+    {
+      "name": "orion_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/orion_pose_sdxl.toml",
+      "images": 205,
+      "priority": 2
+    },
+    {
+      "name": "russell_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/russell_action_sdxl.toml",
+      "images": 529,
+      "priority": 2
+    },
+    {
+      "name": "russell_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/russell_expression_sdxl.toml",
+      "images": 566,
+      "priority": 2
+    },
+    {
+      "name": "russell_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/russell_pose_sdxl.toml",
+      "images": 598,
+      "priority": 2
+    },
+    {
+      "name": "tyler_action",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/tyler_action_sdxl.toml",
+      "images": 510,
+      "priority": 2
+    },
+    {
+      "name": "tyler_expression",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/tyler_expression_sdxl.toml",
+      "images": 341,
+      "priority": 2
+    },
+    {
+      "name": "tyler_pose",
+      "config_path": "/mnt/c/ai_projects/3d-animation-lora-pipeline/configs/training/synthetic_loras/tyler_pose_sdxl.toml",
+      "images": 355,
+      "priority": 2
+    }
+  ]
+}

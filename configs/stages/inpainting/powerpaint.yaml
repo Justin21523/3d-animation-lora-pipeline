@@ -5,7 +5,8 @@
 inpainting:
   model: "powerpaint"
   version: "v2"
-  checkpoint: "/path/to/models/powerpaint_v2.safetensors"
+  # Prefer HF model ID unless you have a local checkpoint path.
+  checkpoint: "JunhaoZhuang/PowerPaint-v2-1"
   device: "cuda"
 
   # Character-aware prompting
@@ -149,3 +150,35 @@ logging:
   save_prompts: true  # Save generated prompts for debugging
   save_metrics: true
   metrics_file: "inpainting_metrics.json"
+
+# ----------------------------------------------------------------------------
+# Lightweight stage-style aliases (kept for config compatibility)
+# ----------------------------------------------------------------------------
+model:
+  type: "powerpaint"
+  path: "JunhaoZhuang/PowerPaint-v2-1"
+  device: "cuda"
+
+inference:
+  num_inference_steps: 50
+  guidance_scale: 7.5
+  strength: 0.8
+
+text_guidance:
+  enabled: true
+  default_prompt: "clean background, no characters, consistent lighting"
+  negative_prompt: "person, character, figure, face, body"
+
+quality:
+  use_refinement: true
+  temporal_consistency: true
+  max_resolution: 1024
+
+fallback:
+  enabled: true
+  method: "lama"
+
+output:
+  save_debug_masks: true
+  format: "png"
+  quality: 95

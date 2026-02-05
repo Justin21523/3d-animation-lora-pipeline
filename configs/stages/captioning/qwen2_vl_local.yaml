@@ -1,0 +1,35 @@
+# Qwen2-VL Local GPU Caption Generation Configuration
+# Requires: transformers, torch with CUDA
+
+model:
+  name: "Qwen/Qwen2-VL-7B-Instruct"
+  device: "cuda"
+  torch_dtype: "float16"
+  quantization: null  # "4bit", "8bit", or null
+
+generation:
+  max_new_tokens: 150
+  temperature: 0.3
+  do_sample: true
+  top_p: 0.9
+
+batching:
+  batch_size: 4
+  num_workers: 2
+
+prompts:
+  2d_character: |
+    Describe this 2D animated character for AI training.
+    Include: appearance, clothing, expression, pose, art style.
+    Be concise. Use comma-separated descriptors.
+    Start with "a 2d animated character".
+
+  3d_character: |
+    Describe this 3D animated character for AI training.
+    Include: appearance, clothing, expression, pose, lighting.
+    Start with "a 3d animated character, pixar style".
+
+output:
+  format: "text"
+  max_length: 77
+  save_metadata: true

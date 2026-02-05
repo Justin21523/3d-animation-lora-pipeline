@@ -1,0 +1,3 @@
+a 3d animated character, close-up face, happy expression, bright smile --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, facial portrait, sad expression, downcast eyes --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, close-up face, surprised expression, wide eyes --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28

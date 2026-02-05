@@ -1,0 +1,45 @@
+# LoRA SDXL Training Configuration
+# For high-resolution 2D character training
+
+model:
+  base: "stabilityai/stable-diffusion-xl-base-1.0"
+  vae: "madebyollin/sdxl-vae-fp16-fix"
+  refiner: null  # Optional: stabilityai/stable-diffusion-xl-refiner-1.0
+
+lora:
+  network_dim: 64
+  network_alpha: 32
+  target_modules: ["to_q", "to_v", "to_k", "to_out.0", "proj_in", "proj_out"]
+  
+training:
+  learning_rate: 5.0e-5
+  lr_scheduler: "cosine_with_restarts"
+  lr_warmup_steps: 200
+  max_train_steps: 3000
+  train_batch_size: 1
+  gradient_accumulation_steps: 8
+  mixed_precision: "bf16"
+  gradient_checkpointing: true
+  
+dataset:
+  resolution: 1024
+  center_crop: true
+  random_flip: true
+  caption_extension: ".txt"
+  bucket_resolution_steps: 64
+  min_bucket_resolution: 512
+  max_bucket_resolution: 1536
+
+augmentation:
+  color_jitter: 0.05
+  random_crop: 0.1
+
+checkpointing:
+  save_every_n_steps: 500
+  save_model_as: "safetensors"
+  keep_last_n: 3
+
+output:
+  logging_dir: "${warehouse.logs}/lora_sdxl_training"
+  output_dir: "${warehouse.training}/lora_sdxl/characters"
+  output_name: "character_lora_sdxl"

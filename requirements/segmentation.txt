@@ -1,16 +1,13 @@
-# Layered Segmentation Dependencies
-# For character/background separation in anime frames
+# Segmentation Dependencies
+# SAM2 and ToonOut character extraction
 
-# Core segmentation
-anime-segmentation>=1.1.0         # U²-Net and ISNet for anime character segmentation
-opencv-python>=4.8.0              # Image processing and traditional inpainting
+# SAM2 (Segment Anything 2)
+# Note: Install from source for latest version
+# pip install git+https://github.com/facebookresearch/segment-anything-2.git
 
-# Optional: High-quality inpainting
-# simple-lama-inpainting>=0.1.0   # LaMa inpainting (better quality, slower)
+# ONNX runtime for inference
+onnxruntime-gpu>=1.16.0  # Use onnxruntime for CPU-only
 
-# Already installed in base environment:
-# torch>=2.0.0
-# torchvision>=0.15.0
-# pillow>=10.0.0
-# numpy>=1.24.0
-# tqdm>=4.65.0
+# Image processing
+scikit-image>=0.21.0
+scipy>=1.11.0

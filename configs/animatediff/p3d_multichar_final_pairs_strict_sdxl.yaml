@@ -1,0 +1,32 @@
+# P3D multi-character final checkpoint + AnimateDiff SDXL motion module
+# Intended for batch video generation from caption .txt files (one prompt per file).
+
+# Use merged SDXL checkpoint (.safetensors/.ckpt)
+ckpt_path: /mnt/c/ai_models/stable-diffusion/checkpoints/p3d_multichar_sdxl_final_latest.safetensors
+
+# SDXL AnimateDiff motion module
+motion_module_path: /mnt/c/ai_models/video/animatediff/mm_sdxl_v10_beta.ckpt
+
+# Output size / length (can be overridden by batch script)
+height: 768
+width: 1024
+length: 16
+
+# Performance / memory
+enable_attention_slicing: false
+enable_vae_slicing: true
+enable_vae_tiling: false
+offload_mode: model
+offload_before_decode: true
+
+# Sampling defaults (can be overridden)
+seed: -1
+guidance_scale: 7.0
+steps: 30
+
+# Placeholder prompt; batch tool overwrites this per-caption
+prompt:
+  - "p3d_style, two characters, friendly interaction"
+n_prompt:
+  - ""
+

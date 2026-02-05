@@ -1,0 +1,256 @@
+# Project Configuration Template
+# Copy this file and customize for your project
+# Example: cp _template.yaml simpsons.yaml
+#
+# Last Updated: 2025-12-02
+
+# ============================================================================
+# PROJECT METADATA
+# ============================================================================
+
+project:
+  # Unique project identifier (lowercase, no spaces)
+  name: "project_name"
+
+  # Animation type: "2d" or "3d"
+  # This affects default parameters for segmentation, clustering, etc.
+  animation_type: "2d"
+
+  # Human-readable description
+  description: "Brief description of the project"
+
+  # Target characters to extract
+  characters:
+    - name: "character_1"
+      trigger_word: "char1_trigger"
+      description: "Main character description"
+
+    - name: "character_2"
+      trigger_word: "char2_trigger"
+      description: "Secondary character description"
+
+# ============================================================================
+# PATH CONFIGURATION
+# ============================================================================
+# All paths use AI_WAREHOUSE 3.0 structure
+# Use ${project.name} for project-specific subdirectories
+
+paths:
+  # Source data location (on /mnt/data)
+  base_dir: "/mnt/data/datasets/general/${project.name}"
+
+  # Input video (if extracting from video)
+  input_video: "${paths.base_dir}/source_video.mp4"
+
+  # Processing stages output
+  frames: "${paths.base_dir}/frames"
+  segmented: "${paths.base_dir}/segmented"
+  clustered: "${paths.base_dir}/clustered"
+  captions: "${paths.base_dir}/captions"
+
+  # Training data output (on /mnt/data)
+  training_data: "/mnt/data/training/lora/2d_characters/${project.name}"
+
+  # LoRA model outputs (on /mnt/c)
+  lora_output: "/mnt/c/ai_models/lora/${project.name}"
+  lora_sdxl_output: "/mnt/c/ai_models/lora_sdxl/${project.name}"
+
+  # Metadata and logs
+  metadata: "${paths.base_dir}/metadata"
+  logs: "/mnt/data/training/logs/${project.name}"
+
+# ============================================================================
+# FRAME EXTRACTION
+# ============================================================================
+
+frame_extraction:
+  # Mode: "scene" (detect scene changes) or "interval" (fixed fps)
+  mode: "scene"
+
+  # Scene detection threshold (0.0-1.0, lower = more sensitive)
+  scene_threshold: 0.3
+
+  # Minimum scene length in frames
+  min_scene_length: 15
+
+  # Output quality: "high", "medium", "low"
+  quality: "high"
+
+  # Alternative: interval-based extraction
+  # fps: 2  # Extract 2 frames per second
+
+# ============================================================================
+# MULTI-CHARACTER EXTRACTION
+# ============================================================================
+# This integrated stage handles: YOLO detection -> Tracking -> Segmentation -> Clustering
+
+multi_character_extraction:
+  # YOLO Detection + Multi-Object Tracking
+  tracking:
+    # Use stub mode for testing (no model weights needed)
+    use_stub: false
+
+    # Detection backend: "pytorch" or "onnx"
+    backend: "pytorch"
+
+    # Model to use (from models.yaml)
+    model: "yolov11n"
+
+    # Confidence threshold (0.0-1.0)
+    conf_threshold: 0.25
+
+    # Minimum track length to keep
+    min_track_length: 10
+
+    # Tracker type: "bytetrack", "botsort"
+    tracker_type: "bytetrack"
+
+  # Per-Track Segmentation
+  segmentation:
+    # Use stub mode for testing
+    use_stub: false
+
+    # Backend: "toonout", "sam2", "mobile_sam", "stub"
+    backend: "toonout"
+
+    # Model to use (for 2D, toonout is recommended)
+    model: "toonout"
+
+    # Alpha threshold (2D: 0.25, 3D: 0.15)
+    alpha_threshold: 0.25
+
+    # Blur threshold (2D: 100, 3D: 80)
+    blur_threshold: 100
+
+  # Identity Clustering
+  clustering:
+    # CLIP model for embeddings
+    clip_model: "vit_l_14"
+
+    # HDBSCAN parameters (2D defaults)
+    min_cluster_size: 20
+    min_samples: 3
+
+    # Similarity threshold for merging
+    similarity_threshold: 0.75
+
+    # Use face detection for identity
+    use_face_detection: true
+
+    # Device for clustering
+    device: "cuda"
+
+# ============================================================================
+# DATASET BUILDING
+# ============================================================================
+
+dataset:
+  # Target number of images per character
+  target_size: 500
+
+  # Deduplication threshold (0.0-1.0, higher = stricter)
+  dedup_threshold: 0.92
+
+  # Minimum quality score (0.0-1.0)
+  quality_min_score: 0.6
+
+  # Generate captions automatically
+  generate_captions: true
+
+  # VLM model for captioning
+  caption_model: "qwen2_vl_2b"
+
+  # Caption style prefix
+  caption_prefix: "a 2d animated character, western animation, cel shading"
+
+# ============================================================================
+# AUGMENTATION (2D-specific)
+# ============================================================================
+
+augmentation:
+  # Color jitter (2D: true, 3D: false)
+  color_jitter: true
+
+  # Horizontal flip (usually false to preserve asymmetry)
+  horizontal_flip: false
+
+  # Rotation range in degrees
+  rotation_range: 5
+
+  # Brightness variation
+  brightness_range: 0.1
+
+  # Contrast variation
+  contrast_range: 0.1
+
+# ============================================================================
+# LORA TRAINING
+# ============================================================================
+
+training:
+  # Base model (SD1.5 or SDXL)
+  base_model: "sdxl_base"
+
+  # Training epochs (2D may need more: 10-15)
+  epochs: 10
+
+  # Learning rate
+  learning_rate: 0.0001
+
+  # Text encoder learning rate
+  text_encoder_lr: 0.00006
+
+  # Batch size (reduce if OOM)
+  batch_size: 2
+
+  # Network dimension
+  network_dim: 32
+
+  # Network alpha
+  network_alpha: 16
+
+  # Save checkpoint every N epochs
+  save_every_n_epochs: 2
+
+  # Dropout (for 3D: 0.0, for 2D: can try 0.05)
+  dropout: 0.0
+
+  # Use gradient checkpointing (saves VRAM)
+  gradient_checkpointing: true
+
+# ============================================================================
+# EVALUATION
+# ============================================================================
+
+evaluation:
+  # Number of test images per checkpoint
+  num_test_images: 8
+
+  # Test prompts (use character trigger words)
+  prompts:
+    - "${project.characters[0].trigger_word}, standing, simple background"
+    - "${project.characters[0].trigger_word}, portrait, detailed"
+    - "${project.characters[0].trigger_word}, full body, action pose"
+
+  # Negative prompts
+  negative_prompt: "blurry, low quality, distorted, deformed, bad anatomy"
+
+  # Metrics to compute
+  metrics:
+    - "clip_score"
+    - "lpips_diversity"
+    - "fid"
+
+# ============================================================================
+# PARAMETER OVERRIDES
+# ============================================================================
+# Override specific 2D/3D defaults if needed
+
+overrides:
+  # Example: increase cluster size for shows with many similar characters
+  # clustering:
+  #   min_cluster_size: 25
+
+  # Example: lower alpha threshold for cleaner edges
+  # segmentation:
+  #   alpha_threshold: 0.30

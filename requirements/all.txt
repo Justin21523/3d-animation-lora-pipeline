@@ -1,17 +1,15 @@
-# Multi-Anime LoRA Training - All Requirements
-# Install all dependencies for complete functionality
+# All Dependencies
+# Install all optional modules for full pipeline functionality
 #
-# Usage: pip install -r requirements/all.txt
-#
-# For minimal installation, use individual files:
-#   - requirements/core.txt (essential dependencies)
-#   - requirements/segmentation.txt (U2-Net, YOLO, etc.)
-#   - requirements/clustering.txt (HDBSCAN, CLIP, etc.)
-#   - requirements/video.txt (OpenCV, PySceneDetect, etc.)
-#   - requirements/audio.txt (librosa, vocal separation, etc.)
+# Usage:
+#   pip install -r requirements/all.txt
 
 -r core.txt
+-r detection.txt
 -r segmentation.txt
 -r clustering.txt
+-r training.txt
+-r inpainting.txt
+-r enhancement.txt
 -r video.txt
--r audio.txt
+-r dev.txt

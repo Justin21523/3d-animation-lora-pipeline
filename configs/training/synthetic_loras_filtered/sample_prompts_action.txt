@@ -1,0 +1,3 @@
+a 3d animated character, running action, dynamic motion, forward momentum --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, jumping action pose, mid-air leap, energetic --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
+a 3d animated character, waving gesture, hand raised, friendly action --n low quality, blurry --w 1024 --h 1024 --d 1 --s 28
