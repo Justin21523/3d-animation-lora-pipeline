@@ -71,8 +71,9 @@ except ImportError:
 # Configuration
 # ============================================================================
 
-DEFAULT_CONFIG_DIR = Path("/mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/configs/projects")
-DEFAULT_DOCS_DIR = Path("/mnt/c/AI_LLM_projects/3d-animation-lora-pipeline/docs/projects")
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_CONFIG_DIR = PROJECT_ROOT / "configs/projects"
+DEFAULT_DOCS_DIR = PROJECT_ROOT / "docs/films"
 
 # CLIP Similarity Threshold Calibration (Cosine Similarity 0-1)
 # ============================================================
@@ -155,7 +156,7 @@ class CharacterFilter:
         Args:
             config: Filter configuration
             config_dir: Path to project configs directory (for storing embeddings)
-            docs_dir: Path to docs/projects directory (for reading reference images)
+            docs_dir: Path to docs/films directory (for reading reference images)
         """
         self.config = config
         self.config_dir = config_dir

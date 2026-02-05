@@ -2,47 +2,47 @@
 Model Paths Configuration Loader
 
 Centralized model path management for the entire pipeline.
+
+Notes:
+- The canonical registry lives at `configs/global/models.yaml`.
+- Prefer OmegaConf resolution so `${...}` interpolations work.
 """
 
-import yaml
 from pathlib import Path
-from string import Template
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def load_model_paths(config_path: str = None) -> Dict[str, Any]:
     """Load model paths configuration from YAML"""
 
     if config_path is None:
-        # Default config location
-        config_path = Path(__file__).parent.parent.parent.parent / "config" / "model_paths.yaml"
+        # Default config location (repo root)
+        config_path = Path(__file__).resolve().parents[3] / "configs" / "global" / "models.yaml"
     else:
         config_path = Path(config_path)
 
     if not config_path.exists():
         raise FileNotFoundError(f"Model paths config not found: {config_path}")
 
-    with open(config_path, 'r') as f:
-        config = yaml.safe_load(f)
+    # Prefer OmegaConf so `${...}` interpolations resolve.
+    try:
+        from omegaconf import OmegaConf
 
-    # Expand warehouse_root variable in all paths
-    warehouse_root = config.get('warehouse_root', '/mnt/c/AI_LLM_projects/ai_warehouse/models')
+        cfg = OmegaConf.load(config_path)
+        OmegaConf.resolve(cfg)
+        data = OmegaConf.to_container(cfg, resolve=True)
+        if not isinstance(data, dict):
+            raise ValueError(f"Expected dict config at {config_path}, got {type(data)}")
+        return data  # type: ignore[return-value]
+    except Exception:
+        # Fallback to plain YAML without interpolation resolution.
+        import yaml
 
-    def expand_path(value):
-        """Recursively expand ${warehouse_root} in paths"""
-        if isinstance(value, str):
-            return Template(value).safe_substitute(warehouse_root=warehouse_root)
-        elif isinstance(value, dict):
-            return {k: expand_path(v) for k, v in value.items()}
-        elif isinstance(value, list):
-            return [expand_path(item) for item in value]
-        else:
-            return value
-
-    # Expand all paths
-    expanded_config = expand_path(config)
-
-    return expanded_config
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        if not isinstance(config, dict):
+            raise ValueError(f"Expected dict config at {config_path}, got {type(config)}")
+        return config
 
 
 def get_model_path(category: str, model_name: str, config_path: str = None) -> str:

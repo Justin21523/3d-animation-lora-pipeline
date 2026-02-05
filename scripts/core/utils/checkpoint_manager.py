@@ -285,3 +285,187 @@ class CheckpointManager:
     def __repr__(self) -> str:
         """String representation."""
         return f"CheckpointManager(path={self.checkpoint_path}, processed={len(self)})"
+
+
+class IndexCheckpointManager:
+    """
+    Index-based checkpoint manager for batch processing with sequential indices.
+
+    Designed for pipelines that process items in a fixed order (e.g., list of prompts)
+    and need to resume from the last completed index.
+
+    Features:
+    - Track last completed index (0-based)
+    - Store custom metadata (seeds, config, etc.)
+    - Atomic checkpoint saves
+    - Auto-resume from last checkpoint
+
+    Example usage:
+        >>> checkpoint = IndexCheckpointManager("/path/to/checkpoints")
+        >>>
+        >>> # Check if resuming
+        >>> state = checkpoint.load()
+        >>> start_idx = 0
+        >>> if state:
+        ...     start_idx = state["last_completed_index"] + 1
+        ...     print(f"Resuming from index {start_idx}")
+        >>>
+        >>> # Process batch
+        >>> for i in range(start_idx, total_items):
+        ...     process_item(i)
+        ...     checkpoint.save(i, total_items, custom_field="value")
+        >>>
+        >>> # Clear after completion
+        >>> checkpoint.clear()
+    """
+
+    def __init__(self, checkpoint_dir: Path, filename: str = "checkpoint.json"):
+        """
+        Initialize index-based checkpoint manager.
+
+        Args:
+            checkpoint_dir: Directory to store checkpoint files
+            filename: Name of checkpoint file (default: checkpoint.json)
+        """
+        self.checkpoint_dir = Path(checkpoint_dir)
+        self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        self.checkpoint_file = self.checkpoint_dir / filename
+
+    def save(
+        self,
+        last_completed_index: int,
+        total_items: int,
+        **custom_fields: Any
+    ) -> None:
+        """
+        Save checkpoint atomically.
+
+        Args:
+            last_completed_index: Index of last successfully completed item (0-based)
+            total_items: Total number of items in batch
+            **custom_fields: Additional metadata to store in checkpoint
+
+        Example:
+            >>> checkpoint.save(
+            ...     last_completed_index=99,
+            ...     total_items=500,
+            ...     batch_name="character_images",
+            ...     seeds_generated=[42, 123, 456]
+            ... )
+        """
+        checkpoint_data = {
+            "version": "1.0",
+            "last_completed_index": last_completed_index,
+            "total_items": total_items,
+            "progress_percent": round((last_completed_index + 1) / total_items * 100, 2),
+            "timestamp": datetime.now().isoformat(),
+            **custom_fields
+        }
+
+        # Atomic write: write to temp file, then rename
+        temp_file = self.checkpoint_file.with_suffix('.tmp')
+        try:
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(checkpoint_data, f, indent=2, ensure_ascii=False)
+
+            # Atomic rename (overwrites existing checkpoint)
+            temp_file.replace(self.checkpoint_file)
+
+            logging.debug(
+                f"💾 Checkpoint saved: {last_completed_index + 1}/{total_items} "
+                f"({checkpoint_data['progress_percent']}%)"
+            )
+        except Exception as e:
+            logging.error(f"❌ Failed to save checkpoint: {e}")
+            if temp_file.exists():
+                temp_file.unlink()
+            raise
+
+    def load(self) -> Optional[Dict[str, Any]]:
+        """
+        Load checkpoint if it exists.
+
+        Returns:
+            Dictionary with checkpoint data, or None if no checkpoint exists
+
+        Example:
+            >>> state = checkpoint.load()
+            >>> if state:
+            ...     print(f"Resuming from index {state['last_completed_index'] + 1}")
+            ...     print(f"Custom field: {state.get('batch_name')}")
+        """
+        if not self.checkpoint_file.exists():
+            return None
+
+        try:
+            with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
+                checkpoint_data = json.load(f)
+
+            logging.info(
+                f"📂 Checkpoint loaded: index {checkpoint_data['last_completed_index']}, "
+                f"{checkpoint_data.get('progress_percent', 0)}% complete"
+            )
+            return checkpoint_data
+
+        except Exception as e:
+            logging.error(f"❌ Failed to load checkpoint: {e}")
+            # If checkpoint is corrupted, move it aside rather than delete
+            corrupted_file = self.checkpoint_file.with_suffix('.corrupted')
+            self.checkpoint_file.rename(corrupted_file)
+            logging.warning(f"⚠️  Corrupted checkpoint moved to: {corrupted_file}")
+            return None
+
+    def clear(self) -> None:
+        """
+        Clear checkpoint file (call after successful completion).
+
+        Example:
+            >>> # After batch job completes
+            >>> checkpoint.clear()
+        """
+        if self.checkpoint_file.exists():
+            self.checkpoint_file.unlink()
+            logging.info("🗑️  Checkpoint cleared")
+
+    def exists(self) -> bool:
+        """
+        Check if checkpoint exists.
+
+        Returns:
+            True if checkpoint file exists
+        """
+        return self.checkpoint_file.exists()
+
+    def get_resume_index(self) -> int:
+        """
+        Get the index to resume from (last_completed_index + 1).
+
+        Returns:
+            Index to resume from (0 if no checkpoint)
+
+        Example:
+            >>> start_idx = checkpoint.get_resume_index()
+            >>> for i in range(start_idx, total_items):
+            ...     process_item(i)
+            ...     checkpoint.save(i, total_items)
+        """
+        state = self.load()
+        if state is None:
+            return 0
+        return state["last_completed_index"] + 1
+
+    def get_progress_percent(self) -> float:
+        """
+        Get current progress percentage.
+
+        Returns:
+            Progress percentage (0.0 if no checkpoint)
+        """
+        state = self.load()
+        if state is None:
+            return 0.0
+        return state.get("progress_percent", 0.0)
+
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"IndexCheckpointManager(path={self.checkpoint_file})"

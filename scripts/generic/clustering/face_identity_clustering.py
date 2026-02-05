@@ -32,7 +32,7 @@ import json
 from datetime import datetime
 import cv2
 from sklearn.cluster import HDBSCAN
-from sklearn.decomposition import PCA
+import umap
 from sklearn.preprocessing import normalize
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -343,11 +343,17 @@ class IdentityClusterer:
         # Normalize embeddings
         embeddings_norm = normalize(embeddings, norm='l2')
 
-        # Optional PCA
-        if use_pca and embeddings.shape[1] > n_components:
-            print(f"   Applying PCA: {embeddings.shape[1]}D → {n_components}D")
-            pca = PCA(n_components=n_components)
-            embeddings_reduced = pca.fit_transform(embeddings_norm)
+        # Optional UMAP dimensionality reduction
+        if use_pca and embeddings.shape[0] > n_components:  # use_pca flag kept for compatibility
+            print(f"   Applying UMAP: {embeddings.shape[1]}D → {n_components}D")
+            reducer = umap.UMAP(
+                n_components=min(n_components, embeddings.shape[0] - 1),
+                n_neighbors=min(15, embeddings.shape[0] - 1),
+                min_dist=0.1,
+                metric='cosine',
+                random_state=42
+            )
+            embeddings_reduced = reducer.fit_transform(embeddings_norm)
         else:
             embeddings_reduced = embeddings_norm
 

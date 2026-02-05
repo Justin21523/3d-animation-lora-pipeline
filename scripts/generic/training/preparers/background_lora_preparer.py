@@ -1,0 +1,536 @@
+"""
+Background/Scene LoRA data preparer.
+
+Prepares training data for background/scene LoRA by:
+1. Extracting visual features from background/scene images
+2. Clustering by scene similarity (location, lighting, time of day)
+3. Filtering low-quality or character-contaminated images
+4. Generating scene-aware captions
+5. Assembling final dataset in Kohya format
+"""
+
+from pathlib import Path
+from typing import Optional, Dict, Any, List
+import numpy as np
+import logging
+import json
+import shutil
+from datetime import datetime
+
+import sys
+sys.path.append(str(Path(__file__).parent.parent))
+
+from base.feature_extractor import BaseFeatureExtractor
+from base.clusterer import BaseClusterer
+from base.caption_engine import BaseCaptionEngine
+from base.quality_filter import BaseQualityFilter, CompositeQualityFilter
+
+# Import implementations
+from feature_extractors import CLIPFeatureExtractor
+from clusterers import HDBSCANClusterer
+from caption_engines import TemplateCaptionEngine
+from quality_filters import BlurFilter, SizeFilter, PerceptualHashDeduplicator
+
+
+class BackgroundLoRAPreparer:
+    """
+    Background/Scene LoRA data preparation pipeline.
+
+    This preparer organizes background/scene images:
+    - Scene feature extraction (CLIP/DINOv2 for environment)
+    - Scene clustering (indoor/outdoor, lighting, location)
+    - Deduplication (scenes are often repetitive)
+    - Scene-aware caption generation (setting, lighting, atmosphere)
+    - Dataset assembly (Kohya format)
+
+    All components are configurable via config dict.
+    """
+
+    def __init__(
+        self,
+        input_dir: Path,
+        output_dir: Path,
+        scene_name: str,
+        config: Optional[Dict[str, Any]] = None
+    ):
+        """
+        Initialize background LoRA preparer.
+
+        Args:
+            input_dir: Directory containing background/scene images
+            output_dir: Output directory for prepared dataset
+            scene_name: Scene/location name for captions
+            config: Configuration dictionary with component settings
+        """
+        self.input_dir = Path(input_dir)
+        self.output_dir = Path(output_dir)
+        self.scene_name = scene_name
+        self.config = config or {}
+
+        self.logger = logging.getLogger(self.__class__.__name__)
+
+        # Create output directory
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Initialize components
+        self._initialize_components()
+
+    def _initialize_components(self):
+        """Initialize feature extractor, clusterer, filters, and caption engine."""
+
+        # Feature extractor (CLIP/DINOv2 for scene understanding)
+        extractor_config = self.config.get('feature_extractor', {})
+        extractor_type = extractor_config.get('type', 'clip')
+        device = self.config.get('device', 'cuda')
+
+        if extractor_type == 'clip':
+            self.feature_extractor = CLIPFeatureExtractor(extractor_config, device)
+        else:
+            from feature_extractors import (
+                EVACLIPFeatureExtractor,
+                DINOv2FeatureExtractor,
+                SigLIPFeatureExtractor,
+            )
+
+            extractors = {
+                'eva_clip': EVACLIPFeatureExtractor,
+                'dinov2': DINOv2FeatureExtractor,
+                'siglip': SigLIPFeatureExtractor,
+            }
+
+            if extractor_type not in extractors:
+                raise ValueError(
+                    f"Unknown extractor type '{extractor_type}'. "
+                    f"Supported: {list(extractors.keys())}"
+                )
+
+            self.feature_extractor = extractors[extractor_type](extractor_config, device)
+
+        self.logger.info(f"✓ Feature extractor initialized: {self.feature_extractor}")
+
+        # Clusterer (scene-based clustering)
+        clusterer_config = self.config.get('clusterer', {})
+        clusterer_type = clusterer_config.get('type', 'hdbscan')
+
+        if clusterer_type == 'hdbscan':
+            self.clusterer = HDBSCANClusterer(clusterer_config)
+        elif clusterer_type == 'kmeans':
+            from clusterers import KMeansClusterer
+            self.clusterer = KMeansClusterer(clusterer_config)
+        elif clusterer_type == 'spectral':
+            from clusterers import SpectralClusterer
+            self.clusterer = SpectralClusterer(clusterer_config)
+        else:
+            raise ValueError(f"Unknown clusterer type '{clusterer_type}'")
+
+        self.logger.info(f"✓ Clusterer initialized: {self.clusterer}")
+
+        # Quality filters (deduplication is crucial for backgrounds)
+        filter_configs = self.config.get('quality_filters', [])
+
+        if not filter_configs:
+            # Default filters for background LoRA
+            filter_configs = [
+                {'type': 'blur', 'threshold': 80.0},  # Allow some DoF blur
+                {'type': 'size', 'min_width': 512, 'min_height': 512},  # Larger for scenes
+                {'type': 'dedup', 'threshold': 5},  # Aggressive deduplication
+            ]
+
+        filters = []
+        for fconfig in filter_configs:
+            ftype = fconfig.get('type')
+
+            if ftype == 'blur':
+                filters.append(BlurFilter(fconfig))
+            elif ftype == 'size':
+                filters.append(SizeFilter(fconfig))
+            elif ftype == 'dedup':
+                filters.append(PerceptualHashDeduplicator(fconfig))
+            else:
+                self.logger.warning(f"Unknown filter type '{ftype}', skipping")
+
+        if filters:
+            self.quality_filter = CompositeQualityFilter(filters, mode='all')
+            self.logger.info(f"✓ Quality filters initialized: {len(filters)} filters")
+        else:
+            self.quality_filter = None
+            self.logger.info("✓ No quality filters configured")
+
+        # Caption engine (scene-aware templates)
+        caption_config = self.config.get('caption_engine', {})
+        caption_type = caption_config.get('type', 'template')
+
+        # Add scene name to caption config
+        caption_config['character_name'] = self.scene_name  # Reuse for scene name
+        # Add scene-specific prefix
+        if 'prefix' not in caption_config:
+            caption_config['prefix'] = 'a 3d rendered environment'
+
+        if caption_type == 'template':
+            self.caption_engine = TemplateCaptionEngine(caption_config)
+        elif caption_type == 'qwen2_vl':
+            from caption_engines import Qwen2VLCaptionEngine
+            self.caption_engine = Qwen2VLCaptionEngine(caption_config, device)
+        elif caption_type == 'internvl2':
+            from caption_engines import InternVL2CaptionEngine
+            self.caption_engine = InternVL2CaptionEngine(caption_config, device)
+        elif caption_type == 'llm_provider':
+            from caption_engines import LLMProviderAPICaptionEngine
+            self.caption_engine = LLMProviderAPICaptionEngine(caption_config)
+        else:
+            raise ValueError(f"Unknown caption engine type '{caption_type}'")
+
+        self.logger.info(f"✓ Caption engine initialized: {self.caption_engine}")
+
+    def prepare(self) -> Dict[str, Any]:
+        """
+        Execute the full background LoRA data preparation pipeline.
+
+        Returns:
+            Dictionary with preparation results and metadata
+        """
+        self.logger.info("=" * 60)
+        self.logger.info(f"Background LoRA Preparation: {self.scene_name}")
+        self.logger.info("=" * 60)
+
+        start_time = datetime.now()
+
+        # Step 1: Load images
+        image_paths = self._load_images()
+        self.logger.info(f"Step 1: Loaded {len(image_paths)} images")
+
+        # Step 2: Quality filtering (including aggressive deduplication)
+        if self.quality_filter:
+            image_paths = self._filter_images(image_paths)
+            self.logger.info(f"Step 2: {len(image_paths)} images passed quality filters")
+        else:
+            self.logger.info("Step 2: Quality filtering skipped")
+
+        if len(image_paths) == 0:
+            raise ValueError("No images remaining after quality filtering")
+
+        # Step 3: Feature extraction (scene features)
+        features = self._extract_features(image_paths)
+        self.logger.info(f"Step 3: Extracted features with shape {features.shape}")
+
+        # Step 4: Clustering by scene similarity
+        labels = self._cluster_features(features)
+        self.logger.info(f"Step 4: Clustered into {self.clusterer.n_clusters_} scene groups")
+
+        # Step 5: Organize by scene cluster
+        scene_groups = self._organize_clusters(image_paths, labels)
+        self.logger.info(f"Step 5: Organized {len(scene_groups)} scene groups")
+
+        # Step 6: Generate scene-aware captions
+        self._generate_captions(scene_groups)
+        self.logger.info(f"Step 6: Generated captions for all scene groups")
+
+        # Step 7: Assemble dataset
+        dataset_info = self._assemble_dataset(scene_groups)
+        self.logger.info(f"Step 7: Assembled dataset in {self.output_dir}")
+
+        # Step 8: Save metadata
+        metadata = self._save_metadata(dataset_info, start_time)
+        self.logger.info(f"Step 8: Saved metadata")
+
+        # Cleanup
+        self.feature_extractor.cleanup()
+        self.caption_engine.cleanup()
+
+        elapsed = (datetime.now() - start_time).total_seconds()
+        self.logger.info("=" * 60)
+        self.logger.info(f"✓ Preparation completed in {elapsed:.1f}s")
+        self.logger.info("=" * 60)
+
+        return metadata
+
+    def _load_images(self) -> List[Path]:
+        """Load all image files from input directory."""
+        image_extensions = {'.png', '.jpg', '.jpeg', '.webp'}
+        image_paths = [
+            f for f in self.input_dir.glob('*')
+            if f.suffix.lower() in image_extensions
+        ]
+
+        if not image_paths:
+            raise ValueError(f"No images found in {self.input_dir}")
+
+        return sorted(image_paths)
+
+    def _filter_images(self, image_paths: List[Path]) -> List[Path]:
+        """Apply quality filters to images."""
+        self.logger.info("Applying quality filters (including deduplication)...")
+
+        results = self.quality_filter.filter_batch(image_paths, show_progress=True)
+
+        # Keep images that passed all filters
+        filtered_paths = [
+            path for path, (passed, reason) in zip(image_paths, results)
+            if passed
+        ]
+
+        # Log filter statistics
+        stats = self.quality_filter.get_filter_stats()
+        self.logger.info(
+            f"Quality filtering: {stats['total_passed']}/{stats['total_processed']} "
+            f"passed ({stats['pass_rate']:.1f}%)"
+        )
+
+        return filtered_paths
+
+    def _extract_features(self, image_paths: List[Path]) -> np.ndarray:
+        """Extract features from images."""
+        self.logger.info("Extracting scene features...")
+
+        batch_size = self.config.get('batch_size', 32)
+        features = self.feature_extractor.extract_batch(
+            image_paths,
+            batch_size=batch_size,
+            show_progress=True
+        )
+
+        return features
+
+    def _cluster_features(self, features: np.ndarray) -> np.ndarray:
+        """Cluster features by scene similarity."""
+        self.logger.info("Clustering by scene...")
+
+        labels = self.clusterer.fit_predict(features)
+
+        # Log cluster info
+        cluster_info = self.clusterer.get_cluster_info()
+        self.logger.info(f"Clustering results: {cluster_info}")
+
+        return labels
+
+    def _organize_clusters(
+        self,
+        image_paths: List[Path],
+        labels: np.ndarray
+    ) -> Dict[int, List[Path]]:
+        """Organize images by scene cluster label."""
+
+        scene_groups = {}
+
+        for path, label in zip(image_paths, labels):
+            if label == -1:  # Noise
+                continue
+
+            if label not in scene_groups:
+                scene_groups[label] = []
+
+            scene_groups[label].append(path)
+
+        # Sort by size (largest first)
+        scene_groups = dict(sorted(scene_groups.items(), key=lambda x: len(x[1]), reverse=True))
+
+        return scene_groups
+
+    def _generate_captions(self, scene_groups: Dict[int, List[Path]]):
+        """Generate scene-aware captions for all images."""
+        self.logger.info("Generating scene-aware captions...")
+
+        # Process all images
+        all_images = []
+        for group_id, images in scene_groups.items():
+            all_images.extend(images)
+
+        # Generate captions in batch
+        batch_size = self.config.get('caption_batch_size', 8)
+        captions = self.caption_engine.generate_batch(
+            all_images,
+            batch_size=batch_size,
+            show_progress=True
+        )
+
+        # Save captions as .txt files next to images
+        for image_path, caption in zip(all_images, captions):
+            caption_path = image_path.with_suffix('.txt')
+            caption_path.write_text(caption, encoding='utf-8')
+
+    def _assemble_dataset(self, scene_groups: Dict[int, List[Path]]) -> Dict[str, Any]:
+        """Assemble final dataset in Kohya format."""
+        self.logger.info("Assembling background dataset...")
+
+        # Kohya format: output_dir / {repeats}_{scene_name}_background / images and captions
+        repeats = self.config.get('repeats', 5)  # Lower repeats for backgrounds
+        dataset_dir = self.output_dir / f"{repeats}_{self.scene_name}_background"
+        dataset_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy all images and captions
+        total_images = 0
+
+        for group_id, image_paths in scene_groups.items():
+            for image_path in image_paths:
+                # Copy image
+                dest_image = dataset_dir / image_path.name
+                shutil.copy2(image_path, dest_image)
+
+                # Copy caption
+                caption_path = image_path.with_suffix('.txt')
+                if caption_path.exists():
+                    dest_caption = dataset_dir / caption_path.name
+                    shutil.copy2(caption_path, dest_caption)
+
+                total_images += 1
+
+        dataset_info = {
+            'dataset_dir': str(dataset_dir),
+            'num_images': total_images,
+            'num_scene_groups': len(scene_groups),
+            'repeats': repeats,
+            'group_sizes': {int(k): len(v) for k, v in scene_groups.items()}
+        }
+
+        return dataset_info
+
+    def _save_metadata(
+        self,
+        dataset_info: Dict[str, Any],
+        start_time: datetime
+    ) -> Dict[str, Any]:
+        """Save preparation metadata."""
+
+        metadata = {
+            'preparer_type': 'background_lora',
+            'scene_name': self.scene_name,
+            'input_dir': str(self.input_dir),
+            'output_dir': str(self.output_dir),
+            'timestamp': datetime.now().isoformat(),
+            'elapsed_seconds': (datetime.now() - start_time).total_seconds(),
+            'config': self.config,
+            'dataset_info': dataset_info,
+            'components': {
+                'feature_extractor': str(self.feature_extractor),
+                'clusterer': str(self.clusterer),
+                'caption_engine': str(self.caption_engine),
+            }
+        }
+
+        metadata_path = self.output_dir / 'preparation_metadata.json'
+        with open(metadata_path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2, ensure_ascii=False)
+
+        return metadata
+
+
+# CLI entry point
+def main():
+    """Command-line interface for background LoRA preparer."""
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Prepare background/scene LoRA training data"
+    )
+
+    parser.add_argument(
+        '--input-dir',
+        type=Path,
+        required=True,
+        help='Input directory containing background images'
+    )
+
+    parser.add_argument(
+        '--output-dir',
+        type=Path,
+        required=True,
+        help='Output directory for prepared dataset'
+    )
+
+    parser.add_argument(
+        '--scene-name',
+        type=str,
+        required=True,
+        help='Scene/location name for captions'
+    )
+
+    parser.add_argument(
+        '--feature-extractor',
+        type=str,
+        default='clip',
+        choices=['clip', 'eva_clip', 'dinov2', 'siglip'],
+        help='Feature extractor to use (default: clip)'
+    )
+
+    parser.add_argument(
+        '--clusterer',
+        type=str,
+        default='hdbscan',
+        choices=['hdbscan', 'kmeans', 'spectral'],
+        help='Clustering algorithm (default: hdbscan)'
+    )
+
+    parser.add_argument(
+        '--caption-engine',
+        type=str,
+        default='template',
+        choices=['template', 'qwen2_vl', 'internvl2', 'llm_provider'],
+        help='Caption generation engine (default: template)'
+    )
+
+    parser.add_argument(
+        '--min-cluster-size',
+        type=int,
+        default=15,
+        help='Minimum cluster size for HDBSCAN (default: 15)'
+    )
+
+    parser.add_argument(
+        '--repeats',
+        type=int,
+        default=5,
+        help='Kohya repeats value (default: 5 for backgrounds)'
+    )
+
+    parser.add_argument(
+        '--device',
+        type=str,
+        default='cuda',
+        help='Device to use (default: cuda)'
+    )
+
+    args = parser.parse_args()
+
+    # Build config
+    config = {
+        'device': args.device,
+        'repeats': args.repeats,
+        'feature_extractor': {
+            'type': args.feature_extractor,
+        },
+        'clusterer': {
+            'type': args.clusterer,
+            'min_cluster_size': args.min_cluster_size
+        },
+        'caption_engine': {
+            'type': args.caption_engine
+        }
+    }
+
+    # Setup logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+    # Run preparer
+    preparer = BackgroundLoRAPreparer(
+        input_dir=args.input_dir,
+        output_dir=args.output_dir,
+        scene_name=args.scene_name,
+        config=config
+    )
+
+    metadata = preparer.prepare()
+
+    print("\n" + "=" * 60)
+    print("✓ Background LoRA preparation completed!")
+    print("=" * 60)
+    print(f"Dataset: {metadata['dataset_info']['dataset_dir']}")
+    print(f"Images: {metadata['dataset_info']['num_images']}")
+    print(f"Scene groups: {metadata['dataset_info']['num_scene_groups']}")
+    print("=" * 60)
+
+
+if __name__ == '__main__':
+    main()

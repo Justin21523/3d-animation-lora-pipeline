@@ -213,56 +213,101 @@ def process_single_background(
         print(f"❌ Error processing {background_path.name}: {e}")
         return False
 
-def load_lama_model(device: str):
+def patch_version_check():
     """
-    Load LaMa model for inference.
+    Patch packaging.version.Version to handle non-string inputs.
+    This works around the lightning_utilities scipy version check bug.
     """
     try:
-        # Add LaMa to Python path
-        lama_path = Path(__file__).parent / "lama"
-        if str(lama_path) not in sys.path:
-            sys.path.insert(0, str(lama_path))
+        from packaging import version
+        original_init = version.Version.__init__
 
+        def patched_init(self, version_str):
+            # Convert to string if not already
+            if not isinstance(version_str, str):
+                version_str = str(version_str)
+            original_init(self, version_str)
+
+        version.Version.__init__ = patched_init
+    except Exception:
+        pass  # Silently ignore if patch fails
+
+def load_lama_model(device: str):
+    """
+    Load LaMa model for inference directly without trainers module.
+    """
+    try:
         import torch
-        import yaml
-        from saicinpainting.training.trainers import load_checkpoint
+        from omegaconf import OmegaConf
 
-        # Checkpoint path
-        checkpoint_path = Path.home() / ".cache" / "lama" / "big-lama" / "big-lama" / "models" / "best.ckpt"
+        # Apply version check patch first
+        patch_version_check()
 
-        if not checkpoint_path.exists():
-            raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
+        # Add LaMa modules to path
+        lama_code_path = Path(__file__).parent / "lama"
+        if str(lama_code_path) not in sys.path:
+            sys.path.insert(0, str(lama_code_path))
 
-        # Load checkpoint (weights_only=False for older checkpoints)
+        # Try clean checkpoint first (no pytorch_lightning dependencies)
+        clean_checkpoint_path = Path("/mnt/c/AI_LLM_projects/ai_warehouse/models/inpainting/lama/checkpoints/lama_generator_clean.pth")
+        original_checkpoint_path = Path("/mnt/c/AI_LLM_projects/ai_warehouse/models/inpainting/lama/checkpoints/best.ckpt")
+
+        # Determine which checkpoint to use
+        if clean_checkpoint_path.exists():
+            checkpoint_path = clean_checkpoint_path
+            is_clean = True
+            print(f"Using clean checkpoint: {checkpoint_path.name}")
+        elif original_checkpoint_path.exists():
+            checkpoint_path = original_checkpoint_path
+            is_clean = False
+            print(f"Using original checkpoint: {checkpoint_path.name}")
+        else:
+            raise FileNotFoundError(f"No checkpoint found. Tried:\n  - {clean_checkpoint_path}\n  - {original_checkpoint_path}")
+
+        # Load checkpoint
         checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
 
-        # Get generator config from hyper_parameters
-        from omegaconf import OmegaConf
-        generator_config_raw = checkpoint['hyper_parameters']['generator']
+        # Handle clean vs original checkpoint formats
+        if is_clean:
+            # Clean checkpoint: direct state_dict + config
+            gen_state_dict = checkpoint['state_dict']
+            generator_config = checkpoint['config']
+        else:
+            # Original checkpoint: nested Lightning format
+            # Get generator config from OmegaConf
+            from omegaconf import OmegaConf
+            generator_config_raw = checkpoint['hyper_parameters']['generator']
 
-        # Convert OmegaConf to plain dict
-        generator_config = OmegaConf.to_container(generator_config_raw, resolve=False)
+            # Convert OmegaConf to dict, resolving all interpolations
+            generator_config_full = OmegaConf.to_container(generator_config_raw, resolve=True)
 
-        # Remove 'kind' key (it's not a constructor parameter)
-        generator_config.pop('kind', None)
+            # Filter to only valid FFCResNetGenerator parameters
+            valid_params = ['input_nc', 'output_nc', 'ngf', 'n_downsampling', 'n_blocks',
+                           'max_features', 'add_out_act', 'init_conv_kwargs',
+                           'downsample_conv_kwargs', 'resnet_conv_kwargs', 'spatial_transform_kwargs',
+                           'norm_layer', 'activation_layer', 'padding_type']
+            generator_config = {k: v for k, v in generator_config_full.items() if k in valid_params}
 
-        # Resolve OmegaConf interpolations
-        generator_config['downsample_conv_kwargs']['ratio_gin'] = 0
-        generator_config['downsample_conv_kwargs']['ratio_gout'] = 0
-        generator_config['resnet_conv_kwargs']['ratio_gout'] = 0.75
+            # Extract generator weights from state_dict
+            state_dict = checkpoint['state_dict']
+            gen_state_dict = {}
+            for k, v in state_dict.items():
+                if k.startswith('generator.'):
+                    gen_state_dict[k.replace('generator.', '')] = v
 
-        # Build generator directly
+        # Import generator directly
         from saicinpainting.training.modules.ffc import FFCResNetGenerator
         generator = FFCResNetGenerator(**generator_config)
 
-        # Load weights (filter to only generator weights)
-        state_dict = checkpoint['state_dict']
-        gen_state_dict = {}
-        for k, v in state_dict.items():
-            if k.startswith('generator.'):
-                gen_state_dict[k.replace('generator.', '')] = v
+        # Load weights (strict=False to handle architecture variations)
+        missing_keys, unexpected_keys = generator.load_state_dict(gen_state_dict, strict=False)
 
-        generator.load_state_dict(gen_state_dict, strict=True)
+        if missing_keys or unexpected_keys:
+            print(f"⚠️  Weight loading with some mismatches:")
+            if missing_keys:
+                print(f"   Missing keys: {len(missing_keys)}")
+            if unexpected_keys:
+                print(f"   Unexpected keys: {len(unexpected_keys)}")
         generator.eval()
         generator.to(device)
 

@@ -133,6 +133,6 @@ As part of Phase 3 generalization:
 
 ## See Also
 
-- **Documentation**: `docs/projects/luca/` - Luca-specific guides and notes
+- **Documentation**: `docs/films/luca/` - Luca character descriptions and notes
 - **Main README**: Project root README for overall architecture
 - **Generic tools**: `scripts/generic/` for reusable components

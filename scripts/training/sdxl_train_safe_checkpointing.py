@@ -20,14 +20,30 @@ Usage:
         --config configs/training/sdxl_16gb_optimized.toml
 """
 
-import sys
 import os
-import functools
-from typing import Any, Tuple
+import sys
 import torch
 
+def _detect_kohya_root() -> str:
+    env_root = os.environ.get("KOHYA_ROOT")
+    if env_root and os.path.exists(env_root):
+        return env_root
+
+    candidates = [
+        "/mnt/c/ai_tools/kohya_ss",
+        "/mnt/c/AI_LLM_projects/kohya_ss",
+        "/mnt/c/ai_projects/kohya_ss",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    raise FileNotFoundError(
+        "Kohya root not found. Set env var KOHYA_ROOT to your kohya_ss directory."
+    )
+
+
 # Add sd-scripts to path
-KOHYA_ROOT = "/mnt/c/AI_LLM_projects/kohya_ss"
+KOHYA_ROOT = _detect_kohya_root()
 sys.path.insert(0, os.path.join(KOHYA_ROOT, "sd-scripts"))
 
 def safe_gradient_checkpointing_func(*args, **kwargs):
@@ -74,17 +90,17 @@ def main():
 
     # Import training modules
     import sdxl_train_network
-    import train_network
 
     # Call the actual training function
     parser = sdxl_train_network.setup_parser()
     args = parser.parse_args()
 
-    import train_util
+    from library import train_util
     train_util.verify_command_line_training_args(args)
     args = train_util.read_config_from_file(args, parser)
 
-    train_network.train(args)
+    trainer = sdxl_train_network.SdxlNetworkTrainer()
+    trainer.train(args)
 
 if __name__ == "__main__":
     main()
