@@ -11,6 +11,7 @@ A comprehensive toolkit for training high-quality LoRA models for **3D animated 
 - **Quality Training Data**: Automated dataset preparation with augmentation
 - **LoRA Training**: Integration with Kohya_ss for optimized training
 - **Evaluation Tools**: Comprehensive LoRA quality testing
+- **CPU-Only Pose Data Preparation**: MediaPipe-powered pose detection that runs in parallel with GPU training (60+ FPS on 32-thread CPU)
 
 ## Optimized for 3D Animation
 
@@ -58,12 +59,14 @@ conda run -n ai_env python sd-scripts/train_network.py \
 
 ## Project Structure
 
-- **scripts/core**: Core utilities (logging, config, paths)
-- **scripts/generic**: Reusable tools (video, segmentation, clustering, training)
-- **scripts/3d_anime**: 3D animation-specific tools
-- **scripts/evaluation**: LoRA testing and quality metrics
-- **docs/**: Comprehensive documentation
-- **configs/**: Training configurations
+- **scripts/core/pipeline**: 3D pipeline CLI (`python -m scripts.core.pipeline ...`)
+- **scripts/run_pipeline.py**: 2D pipeline CLI (`python scripts/run_pipeline.py ...`)
+- **scripts/batch**: Batch/nohup launchers (incl. Wan2.1 dataset + training)
+- **scripts/training**: SDXL/Kohya training orchestration & monitoring
+- **scripts/generic**: Reusable tools (segmentation, clustering, inpainting, training utils)
+- **anime_pipeline/**: Packaged pipeline library (2D-focused modules)
+- **docs/**: Documentation and guides
+- **configs/**: Shared configuration
 - **requirements/**: Python dependencies
 
 ## Requirements
@@ -79,10 +82,19 @@ pip install -r requirements/all.txt
 
 ## Documentation
 
-- **Main Guide**: `.llm_provider/llm_provider.md`
+- **Quick Start**: `docs/guides/quick_start.md`
 - **Tool Guides**: `docs/guides/tools/`
-- **3D-Specific**: `docs/3d_anime_specific/`
+- **3D Training**: `docs/3d-training/`
 - **Setup**: `docs/setup/`
+
+## Maintenance
+
+Repo-local generated artifacts can get very large over time (especially `outputs/` and `logs/`).
+
+```bash
+# Safe cleanup of repo-local artifacts (keeps active Wan2.1 training log if running)
+bash scripts/maintenance/cleanup_repo_artifacts.sh
+```
 
 ## Data Organization
 
@@ -95,6 +107,31 @@ All data is stored in centralized warehouse:
 ├── models/lora/3d_characters/   # Trained LoRA models
 └── lora_evaluation/             # Evaluation results
 ```
+
+## ComfyUI Integration
+
+ComfyUI is installed at `/mnt/c/ai_tools/comfyui/` for visual workflow design and LoRA testing.
+
+**Quick Start:**
+```bash
+/mnt/c/ai_tools/comfyui/start_comfyui.sh
+# Access at http://localhost:8188
+```
+
+**Pre-configured Workflows:**
+- LoRA checkpoint comparison testing
+- Multi-character scene composition
+- Video generation pipeline
+- ControlNet pose control
+
+**Features:**
+- Visual node-based workflow design
+- InstantID & IPAdapter for character consistency
+- RIFE frame interpolation for video generation
+- SAM segmentation integration via Impact Pack
+- Python API for automated testing
+
+See [docs/guides/comfyui/COMFYUI_INTEGRATION.md](docs/guides/comfyui/COMFYUI_INTEGRATION.md) for detailed setup and usage.
 
 ## Key Tools
 
@@ -117,6 +154,8 @@ All data is stored in centralized warehouse:
 - `prepare_training_data.py` - Dataset organization
 - `generate_captions_blip2.py` - Auto-caption generation
 - `augment_small_clusters.py` - Data augmentation
+- `prepare_pose_lora_data.py` - Pose LoRA dataset preparation (CPU/GPU)
+- Batch scripts: `prepare_all_pose_lora_cpu.sh` - Automated batch pose data prep (32-thread optimized)
 
 ### Evaluation
 - `test_lora_checkpoints.py` - Test LoRA quality
@@ -140,7 +179,14 @@ Adjust for 3D characteristics:
 
 ### Caption Style
 
-Use 3D-specific prompts:
+For identity LoRAs, captions must explicitly teach the attributes you want the LoRA to learn (e.g., age/gender).
+
+Guidelines:
+- Start captions with the trigger token (e.g., `yuwen`) and any required identity tags (e.g., `12-year-old boy, child`), then style tokens (e.g., `pixar style`).
+- Keep the rest factual and descriptive (face/eyes/hair/clothing/accessories/pose/camera/lighting).
+- Avoid redundant repeats of style tokens and the trigger token inside the generated tag list.
+
+Example 3D tags:
 ```
 "a 3D animated character with smooth shading, pixar style"
 "rendered 3d character model, studio lighting, high quality animation"

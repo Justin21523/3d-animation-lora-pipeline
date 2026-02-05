@@ -25,6 +25,7 @@ venv/
 ENV/
 env/
 .venv
+.python-version
 
 # IDE
 .vscode/
@@ -46,6 +47,19 @@ prompts/
 logs/
 *.log
 nohup.out
+
+# 2D pipeline stage outputs
+data_raw/
+data_frames/
+data_detect/
+data_pose/
+data_fg/
+data_bg/
+data_restored/
+embeddings/
+lora_datasets/
+controlnet_datasets/
+metadata/
 
 # Outputs (models, datasets, results)
 outputs/
