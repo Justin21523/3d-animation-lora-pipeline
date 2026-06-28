@@ -1,59 +1,168 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3D Animation Character LoRA Pipeline — Interactive Demo</title>
-<meta name="description" content="End-to-end data pipeline turning 3D animation footage into trainable character LoRAs">
-<style>
-:root{--bg:#0a0b10;--panel:#13151d;--panel2:#1a1d28;--line:#262a38;--txt:#e7e9f2;--mut:#9aa0b4;--acc:#F472B6;--acc2:#38BDF8}
-*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--txt);font:15px/1.6 'Inter',system-ui,'Noto Sans TC',sans-serif}
-a{color:var(--acc)}.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-.badge{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:#11131b}
-header.hero{padding:72px 0 36px;background:radial-gradient(900px 380px at 70% -10%,#F472B622,transparent),radial-gradient(700px 300px at 0% 10%,#38BDF81f,transparent)}
-h1{font-size:clamp(30px,5vw,48px);margin:16px 0 8px;font-weight:800;letter-spacing:-.02em}
-.tag{color:var(--mut);font-size:18px;max-width:680px}
-.cta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
-.btn{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#0a0b10;font-weight:700;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;text-decoration:none;display:inline-flex;gap:8px;align-items:center}
-.btn.ghost{background:#11131b;color:var(--txt);border:1px solid var(--line)}
-section{padding:40px 0;border-top:1px solid var(--line)}
-.h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--mut);margin:0 0 18px}
-.demo{display:grid;grid-template-columns:340px 1fr;gap:18px}@media(max-width:780px){.demo{grid-template-columns:1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
-.field label{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px}
-.field input,.field select,.field textarea{width:100%;background:#0d0f16;border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:10px;font:inherit}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.chip{font-size:12px;color:var(--mut);background:#11131b;border:1px solid var(--line);border-radius:999px;padding:5px 10px}
-.out{min-height:280px;display:grid;place-items:center;text-align:center;color:var(--mut)}
-.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.thumb{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:end;padding:8px;font-size:11px;color:#fff;text-shadow:0 1px 4px #000}
-.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.metric{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
-.metric .v{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.metric .k{color:var(--mut);font-size:12px;margin-top:4px}
-.steps{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.step{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13px}.arrow{color:var(--mut)}
-.feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}.feat .card h3{margin:0 0 6px;font-size:15px}.feat .card p{margin:0;color:var(--mut);font-size:13px}
-footer{padding:40px 0 64px;color:var(--mut);font-size:13px}.note{font-size:12px;color:var(--mut);margin-top:10px}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid #fff5;border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
-</style></head><body>
-<header class="hero"><div class="wrap">
-<span class="badge">Interactive Demo · Generative AI · LoRA</span>
-<h1>3D Animation Character LoRA Pipeline</h1><p class="tag">End-to-end data pipeline turning 3D animation footage into trainable character LoRAs</p>
-<div class="cta"><a class="btn" href="#try">▶ Try the demo</a><a class="btn ghost" href="https://github.com/Justin21523/3d-animation-lora-pipeline">View Source</a><a class="btn ghost" href="https://justin21523.github.io/en/projects/3d-animation-lora-pipeline">← Portfolio</a></div>
-<p class="note">⚠ This is an interactive <b>demo/showcase</b> with representative sample results — the full system runs heavy models (GPU) and is not executed in-browser.</p>
-</div></header>
-<main class="wrap">
-<section id="try"><div class="h2">Live Playground (mock)</div><div class="demo">
-<div class="card"><div style="font-weight:700">Compose a 3D character LoRA pipeline run</div>
-<div class="field"><label>Trigger token</label><input value="yuwen" placeholder="Identity / trigger token, e.g. yuwen"></div><div class="field"><label>Source film style</label><select><option>Pixar</option><option>DreamWorks</option><option>Disney 3D</option><option>Illumination</option><option>Blue Sky</option><option>Custom 3D</option></select></div><div class="field"><label>Training target</label><select><option>SDXL identity LoRA</option><option>ControlNet pose</option><option>AnimateDiff</option></select></div><div class="field"><label>Caption mode</label><select><option>BLIP2 + trigger token</option><option>BLIP2 + identity tags</option><option>manual review</option></select></div>
-<button class="btn" style="margin-top:16px;width:100%" id="go">Build pipeline config</button>
-</div>
-<div class="card"><div class="h2" style="margin:0 0 12px">Output</div><div class="out" id="out"><div>Configure inputs and run to see a representative result.</div></div></div>
-</div></section>
-<section><div class="h2">Sample Results</div><div class="gal"><div class="thumb" style="background:linear-gradient(135deg,#7c5cff,#00d4ff)">Scene-detected frame extraction</div><div class="thumb" style="background:linear-gradient(135deg,#ff6b6b,#ffd93d)">Multi-layer segmentation</div><div class="thumb" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">CLIP + HDBSCAN clustering</div><div class="thumb" style="background:linear-gradient(135deg,#f472b6,#a78bfa)">BLIP2 auto-captioning</div><div class="thumb" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">SDXL LoRA training</div><div class="thumb" style="background:linear-gradient(135deg,#10b981,#3b82f6)">ComfyUI LoRA comparison</div></div></section>
-<section><div class="h2">Benchmarks & Metrics</div><div class="metrics"><div class="metric"><div class="v">7</div><div class="k">orchestrated pipeline stages</div></div><div class="metric"><div class="v">60+</div><div class="k">FPS CPU pose prep (32 threads)</div></div><div class="metric"><div class="v">LPIPS / FID</div><div class="k">quality metrics</div></div><div class="metric"><div class="v">v1.0.0</div><div class="k">working prototype</div></div></div></section>
-<section><div class="h2">Pipeline / Architecture</div><div class="steps"><span class="step">Extract frames from the 3D film with scene detection and RIFE interpolation</span><span class="arrow">→</span><span class="step">Multi-layer depth-aware segmentation (U²-Net / SAM / ISNet) with LaMa background inpainting</span><span class="arrow">→</span><span class="step">Cluster characters via CLIP embeddings + HDBSCAN + UMAP, then interactive human review</span><span class="arrow">→</span><span class="step">Auto-caption with BLIP2 using a trigger-token / identity-tag strategy</span><span class="arrow">→</span><span class="step">Prepare the dataset and pose data (MediaPipe/DWPose on CPU, parallel to GPU)</span><span class="arrow">→</span><span class="step">Train SDXL LoRA, ControlNet pose, or AnimateDiff via Kohya_ss / Diffusers</span><span class="arrow">→</span><span class="step">Evaluate checkpoints with LPIPS/FID and compare in ComfyUI workflows</span></div></section>
-<section><div class="h2">Key Capabilities</div><div class="feat"><div class="card"><h3>Config-driven orchestrator</h3><p>YAML/TOML multi-stage orchestrator with resource monitoring, progress tracking, and checkpoint resume.</p></div><div class="card"><h3>3D-tuned segmentation</h3><p>Lower alpha (0.15) and blur (80) thresholds plus depth-aware matting for smooth 3D shading and lighting.</p></div><div class="card"><h3>Automatic character grouping</h3><p>CLIP + HDBSCAN + UMAP cluster characters with smaller cluster sizes, refined via interactive review.</p></div><div class="card"><h3>Identity-aware captioning</h3><p>BLIP2 captions led by trigger token and identity tags (age/gender) to prevent feature drift in identity LoRAs.</p></div><div class="card"><h3>CPU-parallel pose prep</h3><p>MediaPipe/DWPose pose extraction at 60+ FPS on 32 threads, running alongside GPU LoRA training.</p></div><div class="card"><h3>ComfyUI evaluation</h3><p>LoRA checkpoint comparison, ControlNet pose control, and video generation tests with LPIPS/FID metrics.</p></div></div></section>
-<section><div class="h2">Tech Stack</div><div class="chips"><span class="chip">Python</span><span class="chip">PyTorch</span><span class="chip">Diffusers</span><span class="chip">Kohya_ss / sd-scripts</span><span class="chip">CLIP</span><span class="chip">HDBSCAN / UMAP</span><span class="chip">BLIP2</span><span class="chip">Segment Anything</span><span class="chip">ControlNet</span><span class="chip">ComfyUI</span></div></section>
-</main>
-<footer class="wrap">3D Animation Character LoRA Pipeline · interactive showcase · <a href="https://github.com/Justin21523/3d-animation-lora-pipeline">GitHub</a> · <a href="https://github.com/Justin21523/3d-animation-lora-pipeline#readme">README</a> · <a href="https://justin21523.github.io/en/projects/3d-animation-lora-pipeline">justin21523.github.io</a></footer>
-<script>
-var OUT="<div style=\"width:100%\"><div class=\"gal\"><div class=\"thumb\" style=\"background:linear-gradient(135deg,#22c55e,#06b6d4)\">Clean character dataset (segmented + captioned frames)</div><div class=\"thumb\" style=\"background:linear-gradient(135deg,#f472b6,#a78bfa)\">Trained SDXL character LoRA weights</div><div class=\"thumb\" style=\"background:linear-gradient(135deg,#f59e0b,#ef4444)\">LPIPS / FID quality report</div><div class=\"thumb\" style=\"background:linear-gradient(135deg,#10b981,#3b82f6)\">ComfyUI comparison workflow</div></div><p class=\"note\" style=\"text-align:left\">Mock output. A real run extracts frames from a full 3D film, segments and clusters characters, auto-captions with BLIP2, then trains SDXL/ControlNet/AnimateDiff LoRAs via Kohya/Diffusers on a CUDA GPU; this is a personal research prototype (v1.0.0), not a hosted service.</p></div>";
-document.getElementById('go').onclick=function(){var o=document.getElementById('out');o.innerHTML='<div><span class="spin"></span><div style="margin-top:10px">Running pipeline…</div></div>';setTimeout(function(){o.innerHTML=OUT},900)};
-</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D Animation LoRA Pipeline Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-manifest="demo-data/manifest.json">
+    <header class="topbar">
+      <div>
+        <strong>3D Animation LoRA Pipeline</strong>
+        <span>Portfolio Demo</span>
+      </div>
+      <nav aria-label="Page sections">
+        <a href="#pipeline">Pipeline</a>
+        <a href="#results">Results</a>
+        <a href="#media">Media</a>
+        <a href="#scenarios">Scenarios</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#runbook">Runbook</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CPU-safe demo for a production-style ML pipeline</p>
+          <h1>Animation LoRA training data, from raw footage to demo-ready artifacts.</h1>
+          <p class="lede">
+            This project demonstrates a file-driven computer vision pipeline for preparing animated
+            character LoRA datasets: extraction, tracking, segmentation, pose, embeddings, dataset
+            assembly, inference samples, and animation export.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#pipeline">View pipeline</a>
+            <a class="button" href="#results">See results</a>
+            <a class="button" href="#runbook">Run locally</a>
+          </div>
+        </div>
+        <div class="signal-panel" aria-label="Demo readiness summary">
+          <div class="metric">
+            <span id="stages-complete">10/10</span>
+            <label>Stages complete</label>
+          </div>
+          <div class="metric">
+            <span id="metadata-rows">66</span>
+            <label>Metadata rows</label>
+          </div>
+          <div class="metric">
+            <span id="image-artifacts">55</span>
+            <label>Image artifacts</label>
+          </div>
+          <div class="status-pill" id="demo-status">Demo ready</div>
+        </div>
+      </section>
+
+      <section class="section product-strip" id="results">
+        <div class="section-head">
+          <p class="eyebrow">Product results</p>
+          <h2>Public, synthetic outputs that look like a finished ML demo</h2>
+          <p id="results-headline">
+            The generated assets are safe to publish and designed for screenshots, walkthroughs,
+            and portfolio review.
+          </p>
+        </div>
+        <div class="result-hero">
+          <figure>
+            <img id="before-after-image" src="assets/demo/pipeline-before-after.png" alt="Synthetic frame to training sample workflow" />
+            <figcaption>Frame-to-sample transformation</figcaption>
+          </figure>
+          <div class="result-metrics" id="result-metrics"></div>
+        </div>
+        <div class="gallery" id="result-gallery" aria-label="Generated demo output gallery"></div>
+      </section>
+
+      <section class="section" id="pipeline">
+        <div class="section-head">
+          <p class="eyebrow">End-to-end flow</p>
+          <h2>Inspectable pipeline stages</h2>
+          <p>
+            The public demo uses synthetic/stub outputs so reviewers can inspect the system without
+            private media, GPU weights, or API keys.
+          </p>
+        </div>
+        <div class="stage-grid" id="stage-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="section split" id="scenarios">
+        <div class="section-head">
+          <p class="eyebrow">Demo scenarios</p>
+          <h2>Built for screenshots and walkthroughs</h2>
+          <p>
+            These scenarios map the engineering work to what an interviewer can understand in a few
+            minutes.
+          </p>
+        </div>
+        <div class="scenario-list" id="scenario-list"></div>
+      </section>
+
+      <section class="section deliverables">
+        <div class="section-head">
+          <p class="eyebrow">Deliverables</p>
+          <h2>What this demo now proves</h2>
+        </div>
+        <div class="deliverable-grid" id="deliverable-grid"></div>
+      </section>
+
+      <section class="section media-section" id="media">
+        <div class="section-head">
+          <p class="eyebrow">Screenshots and video</p>
+          <h2>Ready-to-share review assets</h2>
+          <p>
+            These files are committed with the static site so the remote repository contains the
+            demo page, screenshots, and a short walkthrough video.
+          </p>
+        </div>
+        <div class="video-panel">
+          <video controls preload="metadata" poster="assets/screenshots/demo-home-desktop.png">
+            <source src="assets/video/demo-walkthrough.mp4" type="video/mp4" />
+          </video>
+          <a class="button primary" href="assets/video/demo-walkthrough.mp4" download>Download video</a>
+        </div>
+        <div class="screenshot-grid" id="screenshot-grid"></div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-head">
+          <p class="eyebrow">Architecture</p>
+          <h2>Config-driven ML workflow</h2>
+        </div>
+        <div class="architecture">
+          <article>
+            <h3>Pipeline Core</h3>
+            <p>Python modules and CLI wrappers coordinate stage execution, metadata, and artifacts.</p>
+          </article>
+          <article>
+            <h3>Model Layer</h3>
+            <p>YOLO, ToonOut/SAM-style segmentation, DWPose, CLIP embeddings, LoRA training, and evaluation adapters.</p>
+          </article>
+          <article>
+            <h3>Data Contracts</h3>
+            <p>YAML/TOML configs and parquet metadata keep stage inputs and outputs reproducible.</p>
+          </article>
+          <article>
+            <h3>Demo Layer</h3>
+            <p>Static JSON powers this public-facing walkthrough, while the real pipeline remains file-based.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section runbook" id="runbook">
+        <div class="section-head">
+          <p class="eyebrow">Runbook</p>
+          <h2>Local demo commands</h2>
+        </div>
+        <div class="code-list">
+          <pre><code>pip install -r requirements/core.txt -r requirements/dev.txt</code></pre>
+          <pre><code>bash bash/run_full_pipeline_stub.sh</code></pre>
+          <pre><code>python scripts/demo/run_demo_pipeline.py --skip-pipeline</code></pre>
+          <pre><code>python -m http.server 8080 -d portfolio-web</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
