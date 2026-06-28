@@ -14,6 +14,7 @@
       </div>
       <nav aria-label="Page sections">
         <a href="#pipeline">Pipeline</a>
+        <a href="#results">Results</a>
         <a href="#scenarios">Scenarios</a>
         <a href="#architecture">Architecture</a>
         <a href="#runbook">Runbook</a>
@@ -32,6 +33,7 @@
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#pipeline">View pipeline</a>
+            <a class="button" href="#results">See results</a>
             <a class="button" href="#runbook">Run locally</a>
           </div>
         </div>
@@ -50,6 +52,25 @@
           </div>
           <div class="status-pill" id="demo-status">Demo ready</div>
         </div>
+      </section>
+
+      <section class="section product-strip" id="results">
+        <div class="section-head">
+          <p class="eyebrow">Product results</p>
+          <h2>Public, synthetic outputs that look like a finished ML demo</h2>
+          <p id="results-headline">
+            The generated assets are safe to publish and designed for screenshots, walkthroughs,
+            and portfolio review.
+          </p>
+        </div>
+        <div class="result-hero">
+          <figure>
+            <img id="before-after-image" src="assets/demo/pipeline-before-after.png" alt="Synthetic frame to training sample workflow" />
+            <figcaption>Frame-to-sample transformation</figcaption>
+          </figure>
+          <div class="result-metrics" id="result-metrics"></div>
+        </div>
+        <div class="gallery" id="result-gallery" aria-label="Generated demo output gallery"></div>
       </section>
 
       <section class="section" id="pipeline">
@@ -74,6 +95,14 @@
           </p>
         </div>
         <div class="scenario-list" id="scenario-list"></div>
+      </section>
+
+      <section class="section deliverables">
+        <div class="section-head">
+          <p class="eyebrow">Deliverables</p>
+          <h2>What this demo now proves</h2>
+        </div>
+        <div class="deliverable-grid" id="deliverable-grid"></div>
       </section>
 
       <section class="section" id="architecture">

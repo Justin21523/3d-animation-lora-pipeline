@@ -26,6 +26,14 @@ Open `http://localhost:8080`.
 
 The static site in `portfolio-web/` is suitable for GitHub Pages, Netlify, Vercel, or the included Nginx Dockerfile.
 
+The demo generator also creates product-style synthetic assets under `portfolio-web/assets/demo/`:
+
+- character dataset sheet
+- frame-to-training-sample before/after
+- training metrics snapshot
+- checkpoint evaluation matrix
+- generated motion strip
+
 ## Pipeline Stages
 
 The demo-safe flow runs these stages:
@@ -105,6 +113,7 @@ Common external requirements:
 - CPU/stub pipeline: works.
 - Static demo website: available in `portfolio-web/`.
 - Demo manifest: `portfolio-web/demo-data/manifest.json`.
+- Product-style demo assets: available in `portfolio-web/assets/demo/`.
 - 3D pipeline status command: safe to run for config/status inspection.
 - Heavy tests and real training flows: require environment-specific dependency/model setup.
 

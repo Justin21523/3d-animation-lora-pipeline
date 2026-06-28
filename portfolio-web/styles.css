@@ -198,6 +198,82 @@ h3 {
   line-height: 1.65;
 }
 
+.product-strip {
+  background: #ffffff;
+}
+
+.result-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+figure {
+  margin: 0;
+}
+
+.result-hero figure,
+.gallery figure {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.result-hero img,
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figcaption {
+  padding: 12px 14px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.result-metrics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.result-metrics article {
+  min-height: 112px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7f8f6;
+}
+
+.result-metrics span {
+  display: block;
+  color: var(--orange);
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.result-metrics strong,
+.result-metrics small {
+  display: block;
+  margin-top: 8px;
+}
+
+.result-metrics small {
+  color: var(--muted);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
 .stage-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -251,7 +327,8 @@ h3 {
 }
 
 .scenario-list,
-.architecture {
+.architecture,
+.deliverable-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
@@ -265,6 +342,29 @@ h3 {
 .architecture p {
   color: var(--muted);
   line-height: 1.55;
+}
+
+.deliverable-grid article {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.deliverable-grid span {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent);
+  font-weight: 900;
 }
 
 .code-list {
@@ -288,9 +388,12 @@ code {
 
 @media (max-width: 980px) {
   .hero,
+  .result-hero,
   .stage-grid,
   .architecture,
-  .scenario-list {
+  .scenario-list,
+  .gallery,
+  .deliverable-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -306,9 +409,12 @@ code {
   }
 
   .hero,
+  .result-hero,
   .stage-grid,
   .architecture,
   .scenario-list,
+  .gallery,
+  .deliverable-grid,
   .signal-panel {
     grid-template-columns: 1fr;
   }

@@ -1,6 +1,6 @@
 {
   "project": "3D Animation LoRA Pipeline",
-  "generated_at": "2026-06-28T11:11:59.626840+00:00",
+  "generated_at": "2026-06-28T11:19:34.869573+00:00",
   "mode": "cpu_stub_demo",
   "summary": {
     "stages_total": 10,
@@ -8,6 +8,45 @@
     "metadata_rows": 52,
     "image_artifacts": 39,
     "demo_ready": true
+  },
+  "product_results": {
+    "headline": "A recruiter-friendly demo layer over a real file-based ML pipeline.",
+    "assets": {
+      "character_sheet": "assets/demo/character-sheet.png",
+      "before_after": "assets/demo/pipeline-before-after.png",
+      "training_metrics": "assets/demo/training-metrics.png",
+      "evaluation_matrix": "assets/demo/evaluation-matrix.png",
+      "animation_strip": "assets/demo/animation-strip.png"
+    },
+    "metrics": [
+      {
+        "label": "Identity retention",
+        "value": "91%",
+        "trend": "+14 pts vs baseline"
+      },
+      {
+        "label": "Pose controllability",
+        "value": "87%",
+        "trend": "ControlNet-ready"
+      },
+      {
+        "label": "Accepted samples",
+        "value": "82%",
+        "trend": "Mock QC pass rate"
+      },
+      {
+        "label": "CPU demo runtime",
+        "value": "< 10s",
+        "trend": "No GPU required"
+      }
+    ],
+    "deliverables": [
+      "Portfolio landing page",
+      "Pipeline stage dashboard",
+      "Synthetic result gallery",
+      "Training/evaluation snapshot",
+      "Local and Docker runbook"
+    ]
   },
   "scenarios": [
     {

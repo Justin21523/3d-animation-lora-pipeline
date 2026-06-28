@@ -52,8 +52,63 @@ function renderScenarios(data) {
     .join("");
 }
 
+function renderProductResults(data) {
+  if (!data || !data.product_results) return;
+  const results = data.product_results;
+  const headline = document.getElementById("results-headline");
+  if (headline) headline.textContent = results.headline;
+
+  const beforeAfter = document.getElementById("before-after-image");
+  if (beforeAfter && results.assets.before_after) {
+    beforeAfter.src = results.assets.before_after;
+  }
+
+  const metrics = document.getElementById("result-metrics");
+  if (metrics) {
+    metrics.innerHTML = results.metrics
+      .map(
+        (metric) => `
+          <article>
+            <span>${metric.value}</span>
+            <strong>${metric.label}</strong>
+            <small>${metric.trend}</small>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  const gallery = document.getElementById("result-gallery");
+  if (gallery) {
+    const cards = [
+      ["Character dataset sheet", results.assets.character_sheet],
+      ["Training metrics", results.assets.training_metrics],
+      ["Checkpoint matrix", results.assets.evaluation_matrix],
+      ["Animation strip", results.assets.animation_strip],
+    ];
+    gallery.innerHTML = cards
+      .map(
+        ([label, src]) => `
+          <figure>
+            <img src="${src}" alt="${label}" loading="lazy" />
+            <figcaption>${label}</figcaption>
+          </figure>
+        `
+      )
+      .join("");
+  }
+
+  const deliverables = document.getElementById("deliverable-grid");
+  if (deliverables) {
+    deliverables.innerHTML = results.deliverables
+      .map((item) => `<article><span>✓</span><strong>${item}</strong></article>`)
+      .join("");
+  }
+}
+
 loadManifest().then((data) => {
   renderSummary(data);
   renderStages(data);
   renderScenarios(data);
+  renderProductResults(data);
 });
