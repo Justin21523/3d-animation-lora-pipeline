@@ -132,9 +132,9 @@ def _save_product_assets(asset_dir: Path = ASSET_DIR) -> Dict[str, str]:
     small_font = _load_font(15)
 
     palettes = {
-        "luca": {"skin": (246, 190, 136), "hair": (88, 64, 47), "cloth": (49, 131, 171), "line": (31, 42, 50)},
-        "giulia": {"skin": (241, 179, 125), "hair": (174, 71, 45), "cloth": (236, 187, 55), "line": (31, 42, 50)},
-        "alberto": {"skin": (225, 169, 116), "hair": (50, 57, 72), "cloth": (219, 88, 55), "line": (31, 42, 50)},
+        "Subject A": {"skin": (246, 190, 136), "hair": (88, 64, 47), "cloth": (49, 131, 171), "line": (31, 42, 50)},
+        "Subject B": {"skin": (241, 179, 125), "hair": (174, 71, 45), "cloth": (236, 187, 55), "line": (31, 42, 50)},
+        "Subject C": {"skin": (225, 169, 116), "hair": (50, 57, 72), "cloth": (219, 88, 55), "line": (31, 42, 50)},
     }
 
     # Character sheet
@@ -145,7 +145,7 @@ def _save_product_assets(asset_dir: Path = ASSET_DIR) -> Dict[str, str]:
     for idx, (name, palette) in enumerate(palettes.items()):
         x0 = 60 + idx * 400
         _rounded(draw, (x0, 150, x0 + 340, 690), 18, (255, 255, 255), (216, 225, 231), 2)
-        draw.text((x0 + 26, 174), name.title(), fill=(17, 94, 89), font=body_font)
+        draw.text((x0 + 26, 174), name, fill=(17, 94, 89), font=body_font)
         for pose_idx, pose in enumerate(("idle", "run", "jump")):
             cx = x0 + 88 + pose_idx * 84
             _draw_character(draw, (cx, 330), 0.82, palette, pose)

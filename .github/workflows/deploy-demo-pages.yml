@@ -1,0 +1,63 @@
+name: Deploy Demo Site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "portfolio-web/**"
+      - "docker/portfolio.*"
+      - ".github/workflows/deploy-demo-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: demo-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate static assets
+        run: |
+          test -f portfolio-web/index.html
+          test -f portfolio-web/demo-data/manifest.json
+          test -f portfolio-web/assets/video/demo-walkthrough.mp4
+          test -f portfolio-web/assets/screenshots/demo-home-desktop.png
+
+      - name: Build Docker smoke image
+        run: docker build -f docker/portfolio.Dockerfile -t 3d-animation-lora-pipeline-demo .
+
+      - name: Publish portfolio-web to gh-pages
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          rm -rf /tmp/demo-pages
+          git fetch origin gh-pages --depth=1 || true
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git worktree add /tmp/demo-pages origin/gh-pages
+          else
+            git worktree add --detach /tmp/demo-pages
+            git -C /tmp/demo-pages checkout --orphan gh-pages
+          fi
+
+          rsync -av --delete --exclude ".git" portfolio-web/ /tmp/demo-pages/
+          touch /tmp/demo-pages/.nojekyll
+
+          git -C /tmp/demo-pages add -A
+          if git -C /tmp/demo-pages diff --cached --quiet; then
+            echo "No demo site changes to publish."
+          else
+            git -C /tmp/demo-pages commit -m "Deploy portfolio demo"
+            git -C /tmp/demo-pages push origin HEAD:gh-pages
+          fi
