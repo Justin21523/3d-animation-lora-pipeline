@@ -274,6 +274,44 @@ figcaption {
   margin-top: 18px;
 }
 
+.media-section {
+  background: #ffffff;
+}
+
+.video-panel {
+  display: grid;
+  gap: 14px;
+  max-width: 980px;
+  margin-bottom: 18px;
+}
+
+video {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #172026;
+  box-shadow: var(--shadow);
+}
+
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.screenshot-grid figure {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.screenshot-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .stage-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -393,6 +431,7 @@ code {
   .architecture,
   .scenario-list,
   .gallery,
+  .screenshot-grid,
   .deliverable-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -414,6 +453,7 @@ code {
   .architecture,
   .scenario-list,
   .gallery,
+  .screenshot-grid,
   .deliverable-grid,
   .signal-panel {
     grid-template-columns: 1fr;

@@ -33,6 +33,7 @@ The demo generator also creates product-style synthetic assets under `portfolio-
 - training metrics snapshot
 - checkpoint evaluation matrix
 - generated motion strip
+- browser screenshots and a short MP4 walkthrough
 
 ## Pipeline Stages
 
@@ -114,6 +115,7 @@ Common external requirements:
 - Static demo website: available in `portfolio-web/`.
 - Demo manifest: `portfolio-web/demo-data/manifest.json`.
 - Product-style demo assets: available in `portfolio-web/assets/demo/`.
+- Screenshots and video: available in `portfolio-web/assets/screenshots/` and `portfolio-web/assets/video/`.
 - 3D pipeline status command: safe to run for config/status inspection.
 - Heavy tests and real training flows: require environment-specific dependency/model setup.
 

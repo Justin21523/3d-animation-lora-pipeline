@@ -27,6 +27,16 @@ def test_product_demo_assets_exist():
         assert asset_path.exists(), relative_path
         assert asset_path.stat().st_size > 1000, relative_path
 
+    media = data["product_results"]["media"]
+    for relative_path in media["screenshots"]:
+        asset_path = ROOT / "portfolio-web" / relative_path
+        assert asset_path.exists(), relative_path
+        assert asset_path.stat().st_size > 1000, relative_path
+
+    video_path = ROOT / "portfolio-web" / media["video"]
+    assert video_path.exists()
+    assert video_path.stat().st_size > 10000
+
 
 def test_portfolio_site_entrypoint_exists():
     index_path = ROOT / "portfolio-web" / "index.html"
@@ -35,4 +45,5 @@ def test_portfolio_site_entrypoint_exists():
     assert "Animation LoRA Pipeline" in html
     assert "demo-data/manifest.json" in html
     assert 'id="results"' in html
+    assert 'id="media"' in html
     assert "pipeline" in html.lower()

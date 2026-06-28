@@ -104,6 +104,20 @@ function renderProductResults(data) {
       .map((item) => `<article><span>✓</span><strong>${item}</strong></article>`)
       .join("");
   }
+
+  const screenshotGrid = document.getElementById("screenshot-grid");
+  if (screenshotGrid && results.media && results.media.screenshots) {
+    screenshotGrid.innerHTML = results.media.screenshots
+      .map(
+        (src) => `
+          <figure>
+            <img src="${src}" alt="Demo website screenshot" loading="lazy" />
+            <figcaption>${src.split("/").pop()}</figcaption>
+          </figure>
+        `
+      )
+      .join("");
+  }
 }
 
 loadManifest().then((data) => {

@@ -302,6 +302,14 @@ def build_manifest() -> Dict[str, Any]:
                 "Training/evaluation snapshot",
                 "Local and Docker runbook",
             ],
+            "media": {
+                "screenshots": [
+                    "assets/screenshots/demo-home-desktop.png",
+                    "assets/screenshots/demo-results-desktop.png",
+                    "assets/screenshots/demo-home-mobile.png",
+                ],
+                "video": "assets/video/demo-walkthrough.mp4",
+            },
         },
         "scenarios": [
             {
