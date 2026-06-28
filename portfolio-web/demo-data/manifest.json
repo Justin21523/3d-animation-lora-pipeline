@@ -1,0 +1,126 @@
+{
+  "project": "3D Animation LoRA Pipeline",
+  "generated_at": "2026-06-28T11:11:59.626840+00:00",
+  "mode": "cpu_stub_demo",
+  "summary": {
+    "stages_total": 10,
+    "stages_complete": 10,
+    "metadata_rows": 52,
+    "image_artifacts": 39,
+    "demo_ready": true
+  },
+  "scenarios": [
+    {
+      "id": "stub-e2e",
+      "title": "CPU-safe end-to-end pipeline",
+      "description": "Runs the full file-based pipeline without GPU weights or private media."
+    },
+    {
+      "id": "dataset-prep",
+      "title": "Training dataset assembly",
+      "description": "Shows how frames become foregrounds, poses, embeddings, and LoRA-ready rows."
+    },
+    {
+      "id": "portfolio-review",
+      "title": "Interview walkthrough",
+      "description": "Uses static artifacts and metrics so reviewers can understand the system quickly."
+    }
+  ],
+  "stages": [
+    {
+      "order": 1,
+      "id": "extract_frames",
+      "label": "Frame extraction",
+      "status": "complete",
+      "metadata": "metadata/frames.parquet",
+      "rows": 5,
+      "images": 5
+    },
+    {
+      "order": 2,
+      "id": "dedupe_frames",
+      "label": "Perceptual dedupe",
+      "status": "complete",
+      "metadata": "metadata/frames_dedupe.parquet",
+      "rows": 5,
+      "images": 0
+    },
+    {
+      "order": 3,
+      "id": "run_yolo_tracking",
+      "label": "Detection and tracking",
+      "status": "complete",
+      "metadata": "metadata/detections.parquet",
+      "rows": 5,
+      "images": 0
+    },
+    {
+      "order": 4,
+      "id": "segment_fg_bg",
+      "label": "Foreground/background split",
+      "status": "complete",
+      "metadata": "metadata/fg.parquet",
+      "rows": 5,
+      "images": 10
+    },
+    {
+      "order": 5,
+      "id": "extract_pose",
+      "label": "Pose conditioning",
+      "status": "complete",
+      "metadata": "metadata/poses.parquet",
+      "rows": 5,
+      "images": 5
+    },
+    {
+      "order": 6,
+      "id": "build_embeddings",
+      "label": "Embedding index",
+      "status": "complete",
+      "metadata": "metadata/embeddings.parquet",
+      "rows": 5,
+      "images": 0
+    },
+    {
+      "order": 7,
+      "id": "build_lora_dataset",
+      "label": "LoRA dataset",
+      "status": "complete",
+      "metadata": "lora_datasets/characters/metadata.parquet",
+      "rows": 5,
+      "images": 0
+    },
+    {
+      "order": 8,
+      "id": "build_controlnet_dataset",
+      "label": "ControlNet dataset",
+      "status": "complete",
+      "metadata": "controlnet_datasets/pose/metadata.parquet",
+      "rows": 5,
+      "images": 0
+    },
+    {
+      "order": 9,
+      "id": "infer_lora_controlnet",
+      "label": "Inference samples",
+      "status": "complete",
+      "metadata": "outputs/inference/metadata.parquet",
+      "rows": 4,
+      "images": 4
+    },
+    {
+      "order": 10,
+      "id": "animation_export",
+      "label": "Animation, upscale, interpolation",
+      "status": "complete",
+      "metadata": "outputs/animation/frames/metadata.parquet",
+      "rows": 8,
+      "images": 15
+    }
+  ],
+  "commands": {
+    "run_demo": "bash bash/run_full_pipeline_stub.sh",
+    "generate_manifest": "python scripts/demo/run_demo_pipeline.py --skip-pipeline",
+    "serve_site": "python -m http.server 8080 -d portfolio-web"
+  }
+}

@@ -139,7 +139,8 @@ def cmd_status(args):
     print(f"Pipeline Status: {args.project}")
     print("="*60)
     print(f"Progress: {progress['progress_percent']:.1f}%")
-    print(f"Completed: {progress['completed_stages']}/{progress['total_stages']} stages")
+    completed = progress.get('completed_stages', progress.get('completed', 0))
+    print(f"Completed: {completed}/{progress['total_stages']} stages")
     print()
 
     # Show stage details

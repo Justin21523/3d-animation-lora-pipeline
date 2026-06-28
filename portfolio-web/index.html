@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D Animation LoRA Pipeline Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-manifest="demo-data/manifest.json">
+    <header class="topbar">
+      <div>
+        <strong>3D Animation LoRA Pipeline</strong>
+        <span>Portfolio Demo</span>
+      </div>
+      <nav aria-label="Page sections">
+        <a href="#pipeline">Pipeline</a>
+        <a href="#scenarios">Scenarios</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#runbook">Runbook</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CPU-safe demo for a production-style ML pipeline</p>
+          <h1>Animation LoRA training data, from raw footage to demo-ready artifacts.</h1>
+          <p class="lede">
+            This project demonstrates a file-driven computer vision pipeline for preparing animated
+            character LoRA datasets: extraction, tracking, segmentation, pose, embeddings, dataset
+            assembly, inference samples, and animation export.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#pipeline">View pipeline</a>
+            <a class="button" href="#runbook">Run locally</a>
+          </div>
+        </div>
+        <div class="signal-panel" aria-label="Demo readiness summary">
+          <div class="metric">
+            <span id="stages-complete">10/10</span>
+            <label>Stages complete</label>
+          </div>
+          <div class="metric">
+            <span id="metadata-rows">66</span>
+            <label>Metadata rows</label>
+          </div>
+          <div class="metric">
+            <span id="image-artifacts">55</span>
+            <label>Image artifacts</label>
+          </div>
+          <div class="status-pill" id="demo-status">Demo ready</div>
+        </div>
+      </section>
+
+      <section class="section" id="pipeline">
+        <div class="section-head">
+          <p class="eyebrow">End-to-end flow</p>
+          <h2>Inspectable pipeline stages</h2>
+          <p>
+            The public demo uses synthetic/stub outputs so reviewers can inspect the system without
+            private media, GPU weights, or API keys.
+          </p>
+        </div>
+        <div class="stage-grid" id="stage-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="section split" id="scenarios">
+        <div class="section-head">
+          <p class="eyebrow">Demo scenarios</p>
+          <h2>Built for screenshots and walkthroughs</h2>
+          <p>
+            These scenarios map the engineering work to what an interviewer can understand in a few
+            minutes.
+          </p>
+        </div>
+        <div class="scenario-list" id="scenario-list"></div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-head">
+          <p class="eyebrow">Architecture</p>
+          <h2>Config-driven ML workflow</h2>
+        </div>
+        <div class="architecture">
+          <article>
+            <h3>Pipeline Core</h3>
+            <p>Python modules and CLI wrappers coordinate stage execution, metadata, and artifacts.</p>
+          </article>
+          <article>
+            <h3>Model Layer</h3>
+            <p>YOLO, ToonOut/SAM-style segmentation, DWPose, CLIP embeddings, LoRA training, and evaluation adapters.</p>
+          </article>
+          <article>
+            <h3>Data Contracts</h3>
+            <p>YAML/TOML configs and parquet metadata keep stage inputs and outputs reproducible.</p>
+          </article>
+          <article>
+            <h3>Demo Layer</h3>
+            <p>Static JSON powers this public-facing walkthrough, while the real pipeline remains file-based.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section runbook" id="runbook">
+        <div class="section-head">
+          <p class="eyebrow">Runbook</p>
+          <h2>Local demo commands</h2>
+        </div>
+        <div class="code-list">
+          <pre><code>pip install -r requirements/core.txt -r requirements/dev.txt</code></pre>
+          <pre><code>bash bash/run_full_pipeline_stub.sh</code></pre>
+          <pre><code>python scripts/demo/run_demo_pipeline.py --skip-pipeline</code></pre>
+          <pre><code>python -m http.server 8080 -d portfolio-web</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

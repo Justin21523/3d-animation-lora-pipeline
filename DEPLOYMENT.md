@@ -1,26 +1,57 @@
 # Deployment
 
-Status: Not deployed yet (template).
+This project should be deployed as a static portfolio/demo site. The ML pipeline itself remains a local or workstation workflow because real runs require GPU weights, private media, and large generated artifacts.
 
-- Planned URL: `https://neojustin.dothost.net/p/3d-animation-lora-pipeline/`
-- Planned docker-compose service name: `3d-animation-lora-pipeline`
-- Planned server checkout path: `/home/neojustin/justin-portfolio/projects/3d-animation-lora-pipeline`
+## Recommended: GitHub Pages
 
-## Deploy (when dockerized)
-1) Add Docker config to this repo (committed).
-2) Add a service to `/home/neojustin/justin-portfolio/docker-compose.yml` with name `3d-animation-lora-pipeline`.
-3) Build + start on the server:
+Publish the `portfolio-web/` directory.
+
+Typical setup:
+
+1. Commit `portfolio-web/`.
+2. In GitHub repository settings, enable Pages.
+3. Use a GitHub Actions workflow or a Pages source that serves the static directory.
+
+Local preview:
+
 ```bash
-cd /home/neojustin/justin-portfolio
-docker-compose up -d --build 3d-animation-lora-pipeline
+python -m http.server 8080 -d portfolio-web
 ```
 
-## Update after code changes (once deployed)
+## Netlify or Vercel
+
+Use these settings:
+
+- Build command: none
+- Publish directory: `portfolio-web`
+- Framework preset: static site
+
+## Docker/Nginx
+
+The included Dockerfile serves `portfolio-web/` through Nginx.
+
 ```bash
-cd /home/neojustin/justin-portfolio
-docker-compose up -d --build 3d-animation-lora-pipeline
+docker build -f docker/portfolio.Dockerfile -t 3d-animation-lora-pipeline-demo .
+docker run --rm -p 8080:80 3d-animation-lora-pipeline-demo
 ```
 
-Reference workflow:
-- `/home/justin/web-projects/justin-portfolio/docs/deployment/update-workflow.md`
+Then open `http://localhost:8080`.
 
+## Demo Data Refresh
+
+Regenerate CPU-safe pipeline outputs and update the static manifest:
+
+```bash
+bash bash/run_full_pipeline_stub.sh
+python scripts/demo/run_demo_pipeline.py --skip-pipeline
+```
+
+The manifest is written to:
+
+```text
+portfolio-web/demo-data/manifest.json
+```
+
+## Not Recommended as Primary Demo
+
+Render/Railway-style app hosting is unnecessary for the portfolio site because there is no persistent backend service. Real ML execution should stay on a GPU workstation or a dedicated batch environment.

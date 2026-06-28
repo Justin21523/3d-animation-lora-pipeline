@@ -94,11 +94,17 @@ class PowerPaintInpainter:
         device: str = "cuda",
         config: Optional[PowerPaintConfig] = None,
         logger: Optional[logging.Logger] = None,
+        stub_mode: Optional[bool] = None,
     ):
         self.config = config or PowerPaintConfig()
         if model_path:
             self.config.model_path = model_path
         self.config.device = device
+        if stub_mode is not None:
+            self.config.use_stub = stub_mode
+            if stub_mode:
+                self.config.backend = "stub"
+                self.config.save_comparison = False
 
         self.logger = logger or setup_logging("powerpaint_inpainter", self.config.log_dir)
         self.pipeline = None
@@ -106,6 +112,11 @@ class PowerPaintInpainter:
 
         if not self.use_stub:
             self._load_pipeline()
+
+    @property
+    def stub_mode(self) -> bool:
+        """Backward-compatible alias for older tests and callers."""
+        return self.use_stub
 
     def _load_pipeline(self) -> None:
         """Load PowerPaint pipeline."""

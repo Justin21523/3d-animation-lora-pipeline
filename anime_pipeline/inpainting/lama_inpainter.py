@@ -76,11 +76,17 @@ class LaMaInpainter:
         device: str = "cuda",
         config: Optional[LaMaConfig] = None,
         logger: Optional[logging.Logger] = None,
+        stub_mode: Optional[bool] = None,
     ):
         self.config = config or LaMaConfig()
         if model_path:
             self.config.model_path = model_path
         self.config.device = device
+        if stub_mode is not None:
+            self.config.use_stub = stub_mode
+            if stub_mode:
+                self.config.backend = "stub"
+                self.config.save_comparison = False
 
         self.logger = logger or setup_logging("lama_inpainter", self.config.log_dir)
         self.model = None
@@ -88,6 +94,11 @@ class LaMaInpainter:
 
         if not self.use_stub:
             self._load_model()
+
+    @property
+    def stub_mode(self) -> bool:
+        """Backward-compatible alias for older tests and callers."""
+        return self.use_stub
 
     def _load_model(self) -> None:
         """Load LaMa model."""
@@ -490,6 +501,18 @@ class LaMaInpainter:
             return 0.0
         except Exception:
             return 0.0
+
+    def compute_quality_score(
+        self,
+        original: np.ndarray,
+        inpainted: np.ndarray,
+        mask: Optional[np.ndarray] = None,
+    ) -> float:
+        """Return a compact 0..1 quality score from PSNR and SSIM."""
+        psnr = self.compute_psnr(original, inpainted, mask)
+        ssim = self.compute_ssim(original, inpainted, mask)
+        psnr_score = 1.0 if psnr == float("inf") else max(0.0, min(psnr / 40.0, 1.0))
+        return float((psnr_score + max(0.0, min(ssim, 1.0))) / 2.0)
 
     def _save_comparison(
         self,
